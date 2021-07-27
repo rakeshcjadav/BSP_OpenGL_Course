@@ -2,11 +2,20 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <stdio.h>
+#include <string>
+#include <format>
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+#include "WinUtils.h"
 
 unsigned int CreateMeshUsingVBO(int& indexCount);
 unsigned int CreateMeshUsingVBOnEBO(int & indexCount);
-unsigned int  CreateShaders();
-void RenderMesh_Elements(unsigned int meshID, int indexCount, unsigned int programID, bool bWireframe, float* color);
+unsigned int CreateShaders();
+unsigned int LoadTexture(std::string strTextureName, std::string extension);
+void RenderMesh_Elements(
+    unsigned int meshID, int indexCount, 
+    unsigned int programID, unsigned int textureID, 
+    bool bWireframe, float* color);
 void RenderMesh_Arrays(unsigned int meshID, int vertexCount, unsigned int programID, float* color);
 
 int main()
@@ -17,12 +26,15 @@ int main()
     if (!glfwInit())
         return -1;
 
+    int Width = 1920;
+    int Height = 1080;
+
     // OpenGL 3.3.0
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(800, 600, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(Width, Height, "Hello World", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -44,7 +56,7 @@ int main()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Tranparent blend or Alpha blend or Tranparent
     //glEnable(GL_SCISSOR_TEST);
 
-    glViewport(0, 0, 800, 600);
+    glViewport(0, 0, Width, Height);
 
     int indexCount;
     unsigned int mesh = CreateMeshUsingVBOnEBO(indexCount);
@@ -52,6 +64,12 @@ int main()
 
     int vertexCount;
     unsigned int arrayMesh = CreateMeshUsingVBO(vertexCount);
+
+    unsigned int texture = LoadTexture("minion-transparent-background-9.png", "jpg");
+    LogMessage(std::format("Texture iD : {0}", texture));
+
+    int MainTexLocation = glGetUniformLocation(program, "MainTex");
+    glUniform1i(MainTexLocation, 0);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -62,8 +80,8 @@ int main()
         float meshColor[] = {0.5f, 0.2f, 0.0f, 0.5f};
         float wireframeColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
         // Render Mesh
-        RenderMesh_Elements(mesh, indexCount, program, false, meshColor);
-        RenderMesh_Elements(mesh, indexCount, program, true, wireframeColor);
+        RenderMesh_Elements(mesh, indexCount, program, texture, false, meshColor);
+        RenderMesh_Elements(mesh, indexCount, program, texture, true, wireframeColor);
 
         RenderMesh_Arrays(arrayMesh, vertexCount, program, meshColor);
 
@@ -79,7 +97,10 @@ int main()
 	return 0;
 }
 
-void RenderMesh_Elements(unsigned int meshID, int indexCount, unsigned int programID, bool bWireframe, float * color)
+void RenderMesh_Elements(
+    unsigned int meshID, int indexCount, 
+    unsigned int programID, unsigned int textureID, 
+    bool bWireframe, float * color)
 {
     if (bWireframe)
     {
@@ -95,9 +116,18 @@ void RenderMesh_Elements(unsigned int meshID, int indexCount, unsigned int progr
     }
 
     glBindVertexArray(meshID);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, textureID);
     glUseProgram(programID);
     //int SomeDataLocation = glGetUniformLocation(programID, "SomeData");
     //glUniform1f(SomeDataLocation, 0.1f);
+    
+    double currentTime = glfwGetTime();
+    float fScale = 0.1f + 1.5f *fabsf(sinf(0.05f*currentTime));
+
+    int ScaleLocation = glGetUniformLocation(programID, "Scale");
+    glUniform1f(ScaleLocation, fScale);
+
     int ColorLocation = glGetUniformLocation(programID, "Color");
     //glUniform4f(ColorLocation, 0.5f, 0.2f, 0.0f, 1.0f);
     //float color[] = { 0.5f, 0.2f, 0.0f, 1.0f };
@@ -124,10 +154,10 @@ void RenderMesh_Arrays(unsigned int meshID, int vertexCount, unsigned int progra
 unsigned int CreateMeshUsingVBOnEBO(int & indexCount)
 {
     float vertices[] = {
-        -0.5f, -0.5f, 0.0f, // 0
-         0.5f, -0.5f, 0.0f, // 1
-         0.5f,  0.5f, 0.0f, // 2
-         -0.5f,  0.5f, 0.0f, // 3
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // 0
+         0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // 1
+         0.5f,  0.5f, 0.0f, 1.0f, 1.0f, // 2
+         -0.5f,  0.5f, 0.0f, 0.0f, 1.0f // 3
     };
 
     unsigned int indices[] = {
@@ -144,8 +174,11 @@ unsigned int CreateMeshUsingVBOnEBO(int & indexCount)
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices) /* Bytes */, vertices, GL_STATIC_DRAW);
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
+
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+        glEnableVertexAttribArray(1);
 
         unsigned int EBO;
         glGenBuffers(1, &EBO);
@@ -187,14 +220,19 @@ unsigned int CreateShaders()
     const char* vertexShaderSource = 
         "#version 330 core\n"
         "layout (location = 0) in vec3 aPos;\n"
+        "layout (location = 1) in vec2 TexCoord;\n"
         "out float value;\n"
         "uniform vec4 Color;\n"
         "out vec4 outColor;\n"
+        "out vec2 outTexCoord;\n"
+        "uniform float Scale;\n"
         "void main()\n"
         "{\n"
+        "   mat4 scaleMatrix = mat4(Scale, 0.0f, 0.0f, 0.0f, 0.0f, Scale, 0.0f, 0.0f, 0.0f, 0.0f, Scale, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);\n"
         "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
         "   value = aPos.x;\n"
         "   outColor = Color * vec4(1.0f, aPos.y+0.5f, 1.0f, 1.0);\n"
+        "   outTexCoord = TexCoord;\n"
         "}\0";
 
     unsigned int vertexShader;
@@ -220,9 +258,14 @@ unsigned int CreateShaders()
         "in float value;\n"
         "//uniform vec4 Color;\n"
         "in vec4 outColor;\n"
+        "in vec2 outTexCoord;\n"
+        "uniform sampler2D MainTex;\n"
+        "uniform float Scale;\n"
         "void main()\n"
         "{\n"
-        "    FragColor = outColor;\n"
+        "    vec2 uv = outTexCoord;\n"
+        "    FragColor = texture(MainTex, uv);\n"
+        "    //FragColor = vec4(outTexCoord, 0.0f, 1.0f);\n"
         "}\0";
 
     unsigned int fragmentShader;
@@ -262,4 +305,73 @@ unsigned int CreateShaders()
     glDeleteShader(fragmentShader);
 
     return shaderProgram;
+}
+
+unsigned int LoadTexture(std::string strTextureName, std::string extension)
+{
+    int width, height, nrChannels;
+    std::string filePath = GetTexturesPath() + strTextureName;
+    stbi_set_flip_vertically_on_load(true);
+    unsigned char* data = stbi_load(filePath.c_str(), &width, &height, &nrChannels, 0);
+
+    if (data == nullptr)
+    {
+        LogMessage(std::format("[Texture Load]: Failed to load {0} texture", filePath).c_str());
+        return 0;
+    }
+
+    LogMessage(std::format(
+        "[Texture Load]: {0} loaded successfully, width {1} & height {2} & channels {3}", 
+        strTextureName, width, height, nrChannels).c_str());
+
+    GLint format = GL_RGB;
+    if (nrChannels > 3)
+        format = GL_RGBA;
+
+
+    unsigned int texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data); // 24 bits 
+ 
+    // Texture wrapping : Default mode : REPEAT in both directions
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    //(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    // Mirrored repeat in both directions
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+
+    // Clamp to edge
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    // Clamp to border
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+
+    //float borderColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
+    //glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+
+    
+    
+    
+    // Bi-Linear Filters
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    // Tri-Linear filters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+
+    //glBindTexture(GL_TEXTURE_2D, 0);
+    stbi_image_free(data);
+
+    return texture;
 }
