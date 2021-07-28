@@ -15,6 +15,7 @@ unsigned int LoadTexture(std::string strTextureName, std::string extension);
 void RenderMesh_Elements(
     unsigned int meshID, int indexCount, 
     unsigned int programID, unsigned int textureID, 
+    unsigned int secondTextureID,
     bool bWireframe, float* color);
 void RenderMesh_Arrays(unsigned int meshID, int vertexCount, unsigned int programID, float* color);
 
@@ -68,8 +69,9 @@ int main()
     unsigned int texture = LoadTexture("minion-transparent-background-9.png", "jpg");
     LogMessage(std::format("Texture iD : {0}", texture));
 
-    int MainTexLocation = glGetUniformLocation(program, "MainTex");
-    glUniform1i(MainTexLocation, 0);
+    unsigned int texture2 = LoadTexture("minion.jpg", "jpg");
+
+   
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -80,8 +82,8 @@ int main()
         float meshColor[] = {0.5f, 0.2f, 0.0f, 0.5f};
         float wireframeColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
         // Render Mesh
-        RenderMesh_Elements(mesh, indexCount, program, texture, false, meshColor);
-        RenderMesh_Elements(mesh, indexCount, program, texture, true, wireframeColor);
+        RenderMesh_Elements(mesh, indexCount, program, texture, texture2, false, meshColor);
+        RenderMesh_Elements(mesh, indexCount, program, texture, texture2, true, wireframeColor);
 
         RenderMesh_Arrays(arrayMesh, vertexCount, program, meshColor);
 
@@ -99,7 +101,7 @@ int main()
 
 void RenderMesh_Elements(
     unsigned int meshID, int indexCount, 
-    unsigned int programID, unsigned int textureID, 
+    unsigned int programID, unsigned int textureID, unsigned int secondTextureID,
     bool bWireframe, float * color)
 {
     if (bWireframe)
@@ -118,15 +120,29 @@ void RenderMesh_Elements(
     glBindVertexArray(meshID);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureID);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, secondTextureID);
     glUseProgram(programID);
+
     //int SomeDataLocation = glGetUniformLocation(programID, "SomeData");
     //glUniform1f(SomeDataLocation, 0.1f);
     
     double currentTime = glfwGetTime();
     float fScale = 0.1f + 1.5f *fabsf(sinf(0.05f*currentTime));
 
+    float fSineTime = 0.5f*sinf(currentTime);
+
+    int MainTexLocation = glGetUniformLocation(programID, "MainTex");
+    glUniform1i(MainTexLocation, 0);
+
+    int SecondTexLocation = glGetUniformLocation(programID, "SecondTex");
+    glUniform1i(SecondTexLocation, 1);
+
     int ScaleLocation = glGetUniformLocation(programID, "Scale");
     glUniform1f(ScaleLocation, fScale);
+
+    int SineTimeLocation = glGetUniformLocation(programID, "SineTime");
+    glUniform1f(SineTimeLocation, fSineTime);
 
     int ColorLocation = glGetUniformLocation(programID, "Color");
     //glUniform4f(ColorLocation, 0.5f, 0.2f, 0.0f, 1.0f);
@@ -252,7 +268,7 @@ unsigned int CreateShaders()
         }
     }
 
-    const char * fragmentShaderSource = 
+    const char* fragmentShaderSource =
         "#version 330 core\n"
         "out vec4 FragColor;\n"
         "in float value;\n"
@@ -260,11 +276,34 @@ unsigned int CreateShaders()
         "in vec4 outColor;\n"
         "in vec2 outTexCoord;\n"
         "uniform sampler2D MainTex;\n"
+        "uniform sampler2D SecondTex;\n"
         "uniform float Scale;\n"
+        "uniform float SineTime;\n"
+        "void Unity_PolarCoordinates_float(vec2 UV, vec2 Center,\n"
+        "    float RadialScale, float LengthScale, out vec2 Out) {\n"
+        "    vec2 delta = UV - Center;\n"
+        "    float radius = length(delta) * 2 * RadialScale;\n"
+        "    float angle = atan(delta.x, delta.y) * 1.0 / 6.28 * LengthScale;\n"
+        "    Out = vec2(radius, angle);\n"
+        "}\n"
         "void main()\n"
         "{\n"
         "    vec2 uv = outTexCoord;\n"
-        "    FragColor = texture(MainTex, uv);\n"
+        "    //FragColor = texture(MainTex, uv);\n"
+        "    vec4 colorSecond = texture(SecondTex, uv);\n"
+        "    vec4 colorMain = texture(MainTex, uv);\n"
+        "    //FragColor = colorMain * colorMain.a + colorSecond * (1.0 - colorMain.a);\n"
+       
+        "    float Dist = pow(1.0-distance(uv, vec2(0.5)),2);\n"
+        "    FragColor = vec4(Dist);\n"
+        "    Unity_PolarCoordinates_float(outTexCoord, vec2(0.5), 1.0, 1.0, uv);\n"
+        "    //FragColor = vec4(uv, 0.0f, 1.0f);\n"
+        "    if(uv.y < SineTime)\n"
+        "        FragColor = colorSecond;\n"
+        "    else\n"
+        "        FragColor = colorMain;\n"
+        "    vec2 invertedY = vec2(2.0*outTexCoord.x, outTexCoord.y);\n"
+        "    FragColor = texture(MainTex, invertedY);\n"
         "    //FragColor = vec4(outTexCoord, 0.0f, 1.0f);\n"
         "}\0";
 
@@ -335,8 +374,8 @@ unsigned int LoadTexture(std::string strTextureName, std::string extension)
     glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data); // 24 bits 
  
     // Texture wrapping : Default mode : REPEAT in both directions
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    //(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
     glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -345,8 +384,8 @@ unsigned int LoadTexture(std::string strTextureName, std::string extension)
     //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 
     // Clamp to edge
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     // Clamp to border
     //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
