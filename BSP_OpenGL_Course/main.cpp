@@ -302,7 +302,7 @@ unsigned int CreateShaders()
         "        FragColor = colorSecond;\n"
         "    else\n"
         "        FragColor = colorMain;\n"
-        "    vec2 invertedY = vec2(2.0*outTexCoord.x, outTexCoord.y);\n"
+        "    vec2 invertedY = vec2(outTexCoord.x, outTexCoord.y);\n"
         "    FragColor = texture(MainTex, invertedY);\n"
         "    //FragColor = vec4(outTexCoord, 0.0f, 1.0f);\n"
         "}\0";
