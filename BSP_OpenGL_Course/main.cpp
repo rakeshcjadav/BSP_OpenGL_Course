@@ -8,6 +8,21 @@
 #include "stb_image.h"
 #include "WinUtils.h"
 
+#include <glm/vec3.hpp> // glm::vec3
+#include <glm/vec4.hpp> // glm::vec4
+#include <glm/mat4x4.hpp> // glm::mat4
+#include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
+#include <glm/gtx/string_cast.hpp> // glm::to_string
+glm::mat4 camera(float Translate, glm::vec2 const& Rotate)
+{
+    glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.f);
+    glm::mat4 View = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -Translate));
+    View = glm::rotate(View, Rotate.y, glm::vec3(-1.0f, 0.0f, 0.0f));
+    View = glm::rotate(View, Rotate.x, glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::mat4 Model = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f));
+    return Projection * View * Model;
+}
+
 unsigned int CreateMeshUsingVBO(int& indexCount);
 unsigned int CreateMeshUsingVBOnEBO(int & indexCount);
 unsigned int CreateShaders();
@@ -21,6 +36,31 @@ void RenderMesh_Arrays(unsigned int meshID, int vertexCount, unsigned int progra
 
 int main()
 {
+    //glm::mat4 cameraMat = camera(1.0f, glm::vec2(2.0f, 1.0f));
+    glm::mat4 identityMat = glm::identity<glm::mat4>();
+    //glm::mat4 scaleMat = glm::scale(identityMat, glm::vec3(2.0f, 1.0f, 1.0f));
+    //LogMessage("Scale: " + glm::to_string(scaleMat));
+
+   // glm::mat4 translateMat = glm::translate(identityMat, glm::vec3(5.0f, 0.0f, 0.0f));
+    //LogMessage("Translation: " + glm::to_string(translateMat));
+
+    glm::mat4 rotationMat = glm::rotate(identityMat, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    LogMessage("Rotation: " + glm::to_string(rotationMat));
+
+    glm::vec4 point0(2.0f, 2.0f, 0.0f, 0.0f);
+    glm::vec4 point1(-2.0f, 2.0f, 0.0f, 0.0f);
+    glm::vec4 point2(2.0f, -2.0f, 0.0f, 0.0f);
+    glm::vec4 point3(-2.0f, -2.0f, 0.0f, 0.0f);
+    //LogMessage("Point : " + glm::to_string(point));
+    glm::vec4 newpoint0 = rotationMat * point0;
+    glm::vec4 newpoint1 = rotationMat * point1;
+    glm::vec4 newpoint2 = rotationMat * point2;
+    glm::vec4 newpoint3 = rotationMat * point3;
+    LogMessage("Transformed Point0 : " + glm::to_string(newpoint0));
+    LogMessage("Transformed Point1 : " + glm::to_string(newpoint1));
+    LogMessage("Transformed Point2 : " + glm::to_string(newpoint2));
+    LogMessage("Transformed Point3 : " + glm::to_string(newpoint3));
+
     GLFWwindow* window;
 
     /* Initialize the library */
@@ -127,7 +167,7 @@ void RenderMesh_Elements(
     //int SomeDataLocation = glGetUniformLocation(programID, "SomeData");
     //glUniform1f(SomeDataLocation, 0.1f);
     
-    double currentTime = glfwGetTime();
+    float currentTime = (float)glfwGetTime();
     float fScale = 0.1f + 1.5f *fabsf(sinf(0.05f*currentTime));
 
     float fSineTime = 0.5f*sinf(currentTime);
@@ -244,7 +284,10 @@ unsigned int CreateShaders()
         "uniform float Scale;\n"
         "void main()\n"
         "{\n"
-        "   mat4 scaleMatrix = mat4(Scale, 0.0f, 0.0f, 0.0f, 0.0f, Scale, 0.0f, 0.0f, 0.0f, 0.0f, Scale, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);\n"
+        "   mat4 scaleMatrix = mat4(Scale, 0.0f, 0.0f, 0.0f, "
+        "                           0.0f, Scale, 0.0f, 0.0f, "
+        "                           0.0f, 0.0f, Scale, 0.0f, "
+        "                           0.0f, 0.0f, 0.0f, 1.0f);\n"
         "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
         "   value = aPos.x;\n"
         "   outColor = Color * vec4(1.0f, aPos.y+0.5f, 1.0f, 1.0);\n"
