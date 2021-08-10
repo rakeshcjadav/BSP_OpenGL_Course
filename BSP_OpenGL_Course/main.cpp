@@ -21,7 +21,6 @@ glm::mat4 camera(float Translate, glm::vec2 const& Rotate)
 
 unsigned int CreateMeshUsingVBO(int& indexCount);
 unsigned int CreateMeshUsingVBOnEBO(int & indexCount);
-unsigned int CreateShaders();
 unsigned int LoadTexture(std::string strTextureName, std::string extension);
 void RenderMesh_Elements(
     unsigned int meshID, int indexCount, 
@@ -160,12 +159,8 @@ void RenderMesh_Elements(
     glBindTexture(GL_TEXTURE_2D, textureID);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, secondTextureID);
-    //glUseProgram(programID);
+
     pProgram->Use();
-
-
-    //int SomeDataLocation = glGetUniformLocation(programID, "SomeData");
-    //glUniform1f(SomeDataLocation, 0.1f);
     
     float currentTime = (float)glfwGetTime();
     float fScale = 0.1f + 1.5f *fabsf(sinf(0.05f*currentTime));
@@ -174,52 +169,15 @@ void RenderMesh_Elements(
 
     pProgram->SetUniform("MainTex", 0);
     pProgram->SetUniform("SecondTex", 1);
-    /*
-    int MainTexLocation = glGetUniformLocation(programID, "MainTex");
-    glUniform1i(MainTexLocation, 0);
-
-    int SecondTexLocation = glGetUniformLocation(programID, "SecondTex");
-    glUniform1i(SecondTexLocation, 1);
-    */
     pProgram->SetUniform("Scale", fScale);
     pProgram->SetUniform("SineTime", fSineTime);
-    /*
-    int ScaleLocation = glGetUniformLocation(programID, "Scale");
-    glUniform1f(ScaleLocation, fScale);
-
-    int SineTimeLocation = glGetUniformLocation(programID, "SineTime");
-    glUniform1f(SineTimeLocation, fSineTime);
-    */
-    //glm::mat4 identityMat = glm::identity<glm::mat4>();
-    //glm::mat4 translateMat = glm::translate(identityMat, glm::vec3(-0.5f, 0.0f, 0.0f));
-    //glm::mat4 scaleMat = glm::scale(identityMat, glm::vec3(2.0f, 1.0f, 1.0f));
-    //glm::mat4 rotationMat = glm::rotate(identityMat, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    //glm::mat4 transformMat = translateMat * rotationMat * scaleMat;
     glm::mat4 transformMat = glm::identity<glm::mat4>();
     // Order : Scale -> Rotate -> Translate
     transformMat = glm::translate(transformMat, glm::vec3(0.0f, 0.0f, 0.0f));
     transformMat = glm::rotate(transformMat, glm::radians(90.0f* fScale), glm::vec3(0.0f, 0.0f, 1.0f));
     transformMat = glm::scale(transformMat, glm::vec3(2.0f, 2.0f, 1.0f));
-    /*
-    int TranslateMatLocation = glGetUniformLocation(programID, "TranslateMat");
-    glUniformMatrix4fv(TranslateMatLocation, 1, GL_FALSE, glm::value_ptr(translateMat));
-
-    int ScaleMatLocation = glGetUniformLocation(programID, "ScaleMat");
-    glUniformMatrix4fv(ScaleMatLocation, 1, GL_FALSE, glm::value_ptr(scaleMat));
-
-    int RotationMatLocation = glGetUniformLocation(programID, "RotationMat");
-    glUniformMatrix4fv(RotationMatLocation, 1, GL_FALSE, glm::value_ptr(rotationMat));
-    */
     pProgram->SetUniform("TransformMat", transformMat);
-    //int TransformMatLocation = glGetUniformLocation(programID, "TransformMat");
-    //glUniformMatrix4fv(TransformMatLocation, 1, GL_FALSE, glm::value_ptr(transformMat));
-
-    //int ColorLocation = glGetUniformLocation(programID, "Color");
-    //glUniform4f(ColorLocation, 0.5f, 0.2f, 0.0f, 1.0f);
-    //float color[] = { 0.5f, 0.2f, 0.0f, 1.0f };
-    //glUniform4fv(ColorLocation, 1, color);
     pProgram->SetUniform("Color", color);
-    //glDrawArrays(GL_TRIANGLES, 0, 6);
     glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
 }
@@ -300,122 +258,6 @@ unsigned int CreateMeshUsingVBO(int& vertexCount)
     vertexCount = sizeof(vertices) / (3*sizeof(float));
     glBindVertexArray(0);
     return VAO;
-}
-
-unsigned int CreateShaders()
-{
-    const char* vertexShaderSource = 
-        "#version 330 core\n"
-        "layout (location = 0) in vec3 aPos;\n"
-        "layout (location = 1) in vec2 TexCoord;\n"
-        "out float value;\n"
-        "uniform vec4 Color;\n"
-        "out vec4 outColor;\n"
-        "out vec2 outTexCoord;\n"
-        "uniform float Scale;\n"
-        "uniform mat4 TransformMat;\n"
-        "void main()\n"
-        "{\n"
-        "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-        "   value = aPos.x;\n"
-        "   outColor = Color * vec4(1.0f, aPos.y+0.5f, 1.0f, 1.0);\n"
-        "   outTexCoord = TexCoord;\n"
-        "}\0";
-
-    unsigned int vertexShader;
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-    {
-        int  success;
-        char infoLog[512];
-        glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-
-        if (!success)
-        {
-            glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-            LogMessage("ERROR::SHADER::VERTEX::COMPILATION_FAILED");
-            LogMessage(infoLog);
-        }
-    }
-
-    const char* fragmentShaderSource =
-        "#version 330 core\n"
-        "out vec4 FragColor;\n"
-        "in float value;\n"
-        "//uniform vec4 Color;\n"
-        "in vec4 outColor;\n"
-        "in vec2 outTexCoord;\n"
-        "uniform sampler2D MainTex;\n"
-        "uniform sampler2D SecondTex;\n"
-        "uniform float Scale;\n"
-        "uniform float SineTime;\n"
-        "uniform mat4 TransformMat;\n"
-        "void Unity_PolarCoordinates_float(vec2 UV, vec2 Center,\n"
-        "    float RadialScale, float LengthScale, out vec2 Out) {\n"
-        "    vec2 delta = UV - Center;\n"
-        "    float radius = length(delta) * 2 * RadialScale;\n"
-        "    float angle = atan(delta.x, delta.y) * 1.0 / 6.28 * LengthScale;\n"
-        "    Out = vec2(radius, angle);\n"
-        "}\n"
-        "void main()\n"
-        "{\n"
-        "    vec2 uv = outTexCoord;\n"
-        "    //FragColor = texture(MainTex, uv);\n"
-        "    vec4 colorSecond = texture(SecondTex, uv);\n"
-        "    vec4 colorMain = texture(MainTex, uv);\n"
-        "    //FragColor = colorMain * colorMain.a + colorSecond * (1.0 - colorMain.a);\n"
-       
-        "    float Dist = pow(1.0-distance(uv, vec2(0.5)),2);\n"
-        "    FragColor = vec4(Dist);\n"
-        "    Unity_PolarCoordinates_float(outTexCoord, vec2(0.5), 1.0, 1.0, uv);\n"
-        "    //FragColor = vec4(uv, 0.0f, 1.0f);\n"
-        "    if(uv.y < SineTime)\n"
-        "        FragColor = colorSecond;\n"
-        "    else\n"
-        "        FragColor = colorMain;\n"
-        "    vec4 transformedUV = TransformMat * vec4(outTexCoord - vec2(0.5), 0.0f, 1.0f);\n"
-        "    FragColor = texture(MainTex, transformedUV.xy);\n"
-        "    //FragColor = vec4(outTexCoord, 0.0f, 1.0f);\n"
-        "}\0";
-
-    unsigned int fragmentShader;
-    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-    {
-        int  success;
-        char infoLog[512];
-        glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-
-        if (!success)
-        {
-            glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-            LogMessage("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED");
-            LogMessage(infoLog);
-        }
-    }
-
-    unsigned int shaderProgram;
-    shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-    {
-        int  success;
-        char infoLog[512];
-        glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-        if (!success) {
-            glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-            LogMessage("ERROR::PROGRAM::LINKING_FAILED");
-            LogMessage(infoLog);
-        }
-    }
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    return shaderProgram;
 }
 
 unsigned int LoadTexture(std::string strTextureName, std::string extension)
