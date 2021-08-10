@@ -1,0 +1,4 @@
+vertex_shader : vertex_shader.vert
+fragment_shader : fragment_shader.frag
+
+uniform list

@@ -1,18 +1,14 @@
 #include "Log.h"
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+#include "OpenGL.h"
 #include <stdio.h>
 #include <string>
 #include <format>
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include "WinUtils.h"
+#include "Program.h"
+#include "GLM.h"
 
-#include <glm/vec3.hpp> // glm::vec3
-#include <glm/vec4.hpp> // glm::vec4
-#include <glm/mat4x4.hpp> // glm::mat4
-#include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
-#include <glm/gtx/string_cast.hpp> // glm::to_string
 glm::mat4 camera(float Translate, glm::vec2 const& Rotate)
 {
     glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.f);
@@ -29,13 +25,14 @@ unsigned int CreateShaders();
 unsigned int LoadTexture(std::string strTextureName, std::string extension);
 void RenderMesh_Elements(
     unsigned int meshID, int indexCount, 
-    unsigned int programID, unsigned int textureID, 
+    CProgram * pProgram, unsigned int textureID, 
     unsigned int secondTextureID,
     bool bWireframe, float* color);
 void RenderMesh_Arrays(unsigned int meshID, int vertexCount, unsigned int programID, float* color);
 
 int main()
 {
+    /*
     //glm::mat4 cameraMat = camera(1.0f, glm::vec2(2.0f, 1.0f));
     glm::mat4 identityMat = glm::identity<glm::mat4>();
     //glm::mat4 scaleMat = glm::scale(identityMat, glm::vec3(2.0f, 1.0f, 1.0f));
@@ -60,6 +57,7 @@ int main()
     LogMessage("Transformed Point1 : " + glm::to_string(newpoint1));
     LogMessage("Transformed Point2 : " + glm::to_string(newpoint2));
     LogMessage("Transformed Point3 : " + glm::to_string(newpoint3));
+    */
 
     GLFWwindow* window;
 
@@ -101,7 +99,7 @@ int main()
 
     int indexCount;
     unsigned int mesh = CreateMeshUsingVBOnEBO(indexCount);
-    unsigned int program = CreateShaders();
+   // unsigned int program = CreateShaders();
 
     int vertexCount;
     unsigned int arrayMesh = CreateMeshUsingVBO(vertexCount);
@@ -111,7 +109,7 @@ int main()
 
     unsigned int texture2 = LoadTexture("minion.jpg", "jpg");
 
-   
+    CProgram* pProgram = new CProgram("vertex_shader.vert", "fragment_shader.frag");
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -122,10 +120,10 @@ int main()
         float meshColor[] = {0.5f, 0.2f, 0.0f, 0.5f};
         float wireframeColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
         // Render Mesh
-        RenderMesh_Elements(mesh, indexCount, program, texture, texture2, false, meshColor);
-        RenderMesh_Elements(mesh, indexCount, program, texture, texture2, true, wireframeColor);
+        RenderMesh_Elements(mesh, indexCount, pProgram, texture, texture2, false, meshColor);
+        RenderMesh_Elements(mesh, indexCount, pProgram, texture, texture2, true, wireframeColor);
 
-        RenderMesh_Arrays(arrayMesh, vertexCount, program, meshColor);
+        //RenderMesh_Arrays(arrayMesh, vertexCount, program, meshColor);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
@@ -141,7 +139,7 @@ int main()
 
 void RenderMesh_Elements(
     unsigned int meshID, int indexCount, 
-    unsigned int programID, unsigned int textureID, unsigned int secondTextureID,
+    CProgram * pProgram, unsigned int textureID, unsigned int secondTextureID,
     bool bWireframe, float * color)
 {
     if (bWireframe)
@@ -162,7 +160,9 @@ void RenderMesh_Elements(
     glBindTexture(GL_TEXTURE_2D, textureID);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, secondTextureID);
-    glUseProgram(programID);
+    //glUseProgram(programID);
+    pProgram->Use();
+
 
     //int SomeDataLocation = glGetUniformLocation(programID, "SomeData");
     //glUniform1f(SomeDataLocation, 0.1f);
@@ -170,24 +170,55 @@ void RenderMesh_Elements(
     float currentTime = (float)glfwGetTime();
     float fScale = 0.1f + 1.5f *fabsf(sinf(0.05f*currentTime));
 
-    float fSineTime = 0.5f*sinf(currentTime);
+    float fSineTime = 1.0f*sinf(currentTime);
 
+    pProgram->SetUniform("MainTex", 0);
+    pProgram->SetUniform("SecondTex", 1);
+    /*
     int MainTexLocation = glGetUniformLocation(programID, "MainTex");
     glUniform1i(MainTexLocation, 0);
 
     int SecondTexLocation = glGetUniformLocation(programID, "SecondTex");
     glUniform1i(SecondTexLocation, 1);
-
+    */
+    pProgram->SetUniform("Scale", fScale);
+    pProgram->SetUniform("SineTime", fSineTime);
+    /*
     int ScaleLocation = glGetUniformLocation(programID, "Scale");
     glUniform1f(ScaleLocation, fScale);
 
     int SineTimeLocation = glGetUniformLocation(programID, "SineTime");
     glUniform1f(SineTimeLocation, fSineTime);
+    */
+    //glm::mat4 identityMat = glm::identity<glm::mat4>();
+    //glm::mat4 translateMat = glm::translate(identityMat, glm::vec3(-0.5f, 0.0f, 0.0f));
+    //glm::mat4 scaleMat = glm::scale(identityMat, glm::vec3(2.0f, 1.0f, 1.0f));
+    //glm::mat4 rotationMat = glm::rotate(identityMat, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    //glm::mat4 transformMat = translateMat * rotationMat * scaleMat;
+    glm::mat4 transformMat = glm::identity<glm::mat4>();
+    // Order : Scale -> Rotate -> Translate
+    transformMat = glm::translate(transformMat, glm::vec3(0.0f, 0.0f, 0.0f));
+    transformMat = glm::rotate(transformMat, glm::radians(90.0f* fScale), glm::vec3(0.0f, 0.0f, 1.0f));
+    transformMat = glm::scale(transformMat, glm::vec3(2.0f, 2.0f, 1.0f));
+    /*
+    int TranslateMatLocation = glGetUniformLocation(programID, "TranslateMat");
+    glUniformMatrix4fv(TranslateMatLocation, 1, GL_FALSE, glm::value_ptr(translateMat));
 
-    int ColorLocation = glGetUniformLocation(programID, "Color");
+    int ScaleMatLocation = glGetUniformLocation(programID, "ScaleMat");
+    glUniformMatrix4fv(ScaleMatLocation, 1, GL_FALSE, glm::value_ptr(scaleMat));
+
+    int RotationMatLocation = glGetUniformLocation(programID, "RotationMat");
+    glUniformMatrix4fv(RotationMatLocation, 1, GL_FALSE, glm::value_ptr(rotationMat));
+    */
+    pProgram->SetUniform("TransformMat", transformMat);
+    //int TransformMatLocation = glGetUniformLocation(programID, "TransformMat");
+    //glUniformMatrix4fv(TransformMatLocation, 1, GL_FALSE, glm::value_ptr(transformMat));
+
+    //int ColorLocation = glGetUniformLocation(programID, "Color");
     //glUniform4f(ColorLocation, 0.5f, 0.2f, 0.0f, 1.0f);
     //float color[] = { 0.5f, 0.2f, 0.0f, 1.0f };
-    glUniform4fv(ColorLocation, 1, color);
+    //glUniform4fv(ColorLocation, 1, color);
+    pProgram->SetUniform("Color", color);
     //glDrawArrays(GL_TRIANGLES, 0, 6);
     glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
@@ -282,12 +313,9 @@ unsigned int CreateShaders()
         "out vec4 outColor;\n"
         "out vec2 outTexCoord;\n"
         "uniform float Scale;\n"
+        "uniform mat4 TransformMat;\n"
         "void main()\n"
         "{\n"
-        "   mat4 scaleMatrix = mat4(Scale, 0.0f, 0.0f, 0.0f, "
-        "                           0.0f, Scale, 0.0f, 0.0f, "
-        "                           0.0f, 0.0f, Scale, 0.0f, "
-        "                           0.0f, 0.0f, 0.0f, 1.0f);\n"
         "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
         "   value = aPos.x;\n"
         "   outColor = Color * vec4(1.0f, aPos.y+0.5f, 1.0f, 1.0);\n"
@@ -322,6 +350,7 @@ unsigned int CreateShaders()
         "uniform sampler2D SecondTex;\n"
         "uniform float Scale;\n"
         "uniform float SineTime;\n"
+        "uniform mat4 TransformMat;\n"
         "void Unity_PolarCoordinates_float(vec2 UV, vec2 Center,\n"
         "    float RadialScale, float LengthScale, out vec2 Out) {\n"
         "    vec2 delta = UV - Center;\n"
@@ -345,8 +374,8 @@ unsigned int CreateShaders()
         "        FragColor = colorSecond;\n"
         "    else\n"
         "        FragColor = colorMain;\n"
-        "    vec2 invertedY = vec2(outTexCoord.x, outTexCoord.y);\n"
-        "    FragColor = texture(MainTex, invertedY);\n"
+        "    vec4 transformedUV = TransformMat * vec4(outTexCoord - vec2(0.5), 0.0f, 1.0f);\n"
+        "    FragColor = texture(MainTex, transformedUV.xy);\n"
         "    //FragColor = vec4(outTexCoord, 0.0f, 1.0f);\n"
         "}\0";
 

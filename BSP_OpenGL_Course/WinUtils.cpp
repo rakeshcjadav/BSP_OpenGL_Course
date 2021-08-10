@@ -43,3 +43,8 @@ std::string GetTexturesPath()
 {
     return GetMediaPath().append("textures\\");
 }
+
+std::string GetShaderPath()
+{
+    return GetMediaPath().append("shaders\\");
+}

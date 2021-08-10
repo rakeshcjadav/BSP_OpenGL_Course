@@ -145,11 +145,21 @@
   <ItemGroup>
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Program.cpp" />
+    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="WinUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GLM.h" />
     <ClInclude Include="Log.h" />
+    <ClInclude Include="OpenGL.h" />
+    <ClInclude Include="Program.h" />
+    <ClInclude Include="Shader.h" />
     <ClInclude Include="WinUtils.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\media\shaders\fragment_shader.frag" />
+    <None Include="..\media\shaders\vertex_shader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
