@@ -145,16 +145,21 @@
   <ItemGroup>
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="WinUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLM.h" />
     <ClInclude Include="Log.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="OpenGL.h" />
     <ClInclude Include="Program.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="STB.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="WinUtils.h" />
   </ItemGroup>
   <ItemGroup>
