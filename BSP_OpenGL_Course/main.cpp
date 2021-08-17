@@ -15,7 +15,8 @@ CMesh * CreateMeshUsingVBOnEBO();
 void RenderMesh_Elements(
     CMesh * pMesh, 
     CProgram * pProgram, CTexture * pTextureOne, 
-    CTexture * pTextureTwo,
+    CTexture * pTextureTwo, glm::mat4 & cameraMat,
+    glm::mat4 & projectionMat,
     bool bWireframe, float* color);
 void RenderMesh_Arrays(unsigned int meshID, int vertexCount, unsigned int programID, float* color);
 
@@ -69,6 +70,10 @@ int main()
 
     CProgram* pProgram = new CProgram("vertex_shader.vert", "fragment_shader.frag");
 
+    glm::mat4 cameraMat = glm::lookAt(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+    glm::mat4 projectionMat = glm::perspective(glm::radians(45.0f), (float)Width/(float)Height, 0.1f, 100.0f);
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -78,8 +83,8 @@ int main()
         float meshColor[] = {0.5f, 0.2f, 0.0f, 0.5f};
         float wireframeColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
         // Render Mesh
-        RenderMesh_Elements(pMesh, pProgram, pTexture1, pTexture2, false, meshColor);
-        RenderMesh_Elements(pMesh, pProgram, pTexture1, pTexture2, true, wireframeColor);
+        RenderMesh_Elements(pMesh, pProgram, pTexture1, pTexture2, cameraMat, projectionMat, false, meshColor);
+        RenderMesh_Elements(pMesh, pProgram, pTexture1, pTexture2, cameraMat, projectionMat, true, wireframeColor);
 
         //RenderMesh_Arrays(arrayMesh, vertexCount, program, meshColor);
 
@@ -97,7 +102,8 @@ int main()
 
 void RenderMesh_Elements(
     CMesh * pMesh, 
-    CProgram * pProgram, CTexture * pTextureOne, CTexture * pTextureTwo,
+    CProgram * pProgram, CTexture * pTextureOne, CTexture * pTextureTwo, glm::mat4 & cameraMat,
+    glm::mat4 & projectionMat,
     bool bWireframe, float * color)
 {
     if (bWireframe)
@@ -127,12 +133,17 @@ void RenderMesh_Elements(
             pProgram->SetUniform("SecondTex", 1);
             pProgram->SetUniform("Scale", fScale);
             pProgram->SetUniform("SineTime", fSineTime);
+
+            // World Matrix or Model Matrix
             glm::mat4 transformMat = glm::identity<glm::mat4>();
             // Order : Scale -> Rotate -> Translate
-            transformMat = glm::translate(transformMat, glm::vec3(0.0f, 0.0f, 0.0f));
+            transformMat = glm::translate(transformMat, glm::vec3(50.0f, 50.0f, 0.0f) /* World Position of the object */);
             transformMat = glm::rotate(transformMat, glm::radians(90.0f * fScale), glm::vec3(0.0f, 0.0f, 1.0f));
             transformMat = glm::scale(transformMat, glm::vec3(2.0f, 2.0f, 1.0f));
+
             pProgram->SetUniform("TransformMat", transformMat);
+            pProgram->SetUniform("CameraMat", cameraMat);
+            pProgram->SetUniform("ProjectionMat", projectionMat);
             pProgram->SetUniform("Color", color);
         }
     }
@@ -156,6 +167,7 @@ void RenderMesh_Arrays(unsigned int meshID, int vertexCount, unsigned int progra
 
 CMesh * CreateMeshUsingVBOnEBO()
 {
+    // Local Positions of vertices
     SMeshData meshData;
     meshData.aVertices.push_back(SVertex(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec2(0.0f, 0.0f)));
     meshData.aVertices.push_back(SVertex(glm::vec3(0.5f, -0.5f, 0.0f), glm::vec2(1.0f, 0.0f)));

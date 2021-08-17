@@ -1,0 +1,8 @@
+Cubetastic:
+ - Nice presented
+ - Well designed
+ - Well implemented
+
+Rescheduled
+
+Rating : 8.7/10

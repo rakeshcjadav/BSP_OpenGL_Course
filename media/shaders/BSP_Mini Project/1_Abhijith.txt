@@ -1,0 +1,8 @@
+Conway's game of life :
+ - Nice concept
+ - Well implemented
+ - Design patterns
+ - Overall good knowledge
+ - Well presented
+
+ Rating : 10/10
