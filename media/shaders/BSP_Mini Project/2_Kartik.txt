@@ -1,7 +1,0 @@
-Flapsy Bird : 
-    - Very easy game ( small )
-    - Missing level finish mechanics
-    - Missing SFX
-    - Fundamentals are not clear
-
-Rating : 6.3/10
