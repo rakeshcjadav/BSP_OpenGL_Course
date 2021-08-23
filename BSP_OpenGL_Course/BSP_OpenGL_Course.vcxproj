@@ -143,16 +143,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="InputDelegator.cpp" />
+    <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="Viewport.cpp" />
+    <ClCompile Include="Window.cpp" />
     <ClCompile Include="WinUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="GLM.h" />
+    <ClInclude Include="InputDelegator.h" />
+    <ClInclude Include="InputHandler.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="OpenGL.h" />
@@ -160,6 +168,8 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="STB.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="Viewport.h" />
+    <ClInclude Include="Window.h" />
     <ClInclude Include="WinUtils.h" />
   </ItemGroup>
   <ItemGroup>
