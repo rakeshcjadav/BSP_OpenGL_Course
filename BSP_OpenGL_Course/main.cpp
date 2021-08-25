@@ -13,26 +13,6 @@
 #include"Viewport.h"
 #include"Window.h"
 
-unsigned int CreateMeshUsingVBO(int& indexCount);
-CMesh * CreateMeshUsingVBOnEBO();
-void RenderMesh_Elements(
-    CMesh * pMesh, 
-    CProgram * pProgram, CTexture * pTextureOne, 
-    CTexture * pTextureTwo, CCamera * pCamera,
-    bool bWireframe, float* color);
-void RenderMesh_Arrays(unsigned int meshID, int vertexCount, unsigned int programID, float* color);
-
-void KeyCallBack(GLFWwindow * pWindow, int key, int scancode, int action, int mod)
-{
-    LogMessage(std::format("Key Input : {0} {1} {2} {3}", key, scancode, action, mod));
-}
-
-void CharCallBack(GLFWwindow* pWindow, unsigned int character)
-{
-    LogMessage(std::format("Char Input : {0}", character));
-} 
-
-
 int main()
 {
     /* Initialize the library */
@@ -44,7 +24,6 @@ int main()
 
     CWindow* pWindow2 = CWindow::Create(500, 500, "Hello World 2");
     pWindow2->CreateScene();
-
 
     while(1)
     {
@@ -63,8 +42,7 @@ int main()
             pWindow2->RenderOneFrame();
         }
     }
-   
-    //glfwSetCharCallback(window, CharCallBack);
+
     delete pWindow;
     delete pWindow2;
 	return 0;
