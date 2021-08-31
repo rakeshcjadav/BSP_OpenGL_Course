@@ -9,6 +9,7 @@ class CCamera;
 class CMesh;
 class CProgram;
 class CTexture;
+class CCameraController;
 
 class CWindow : public IInputDelegator
 {
@@ -42,6 +43,9 @@ private:
     GLFWwindow* m_pWindow;
     CViewport* m_pViewport;
     CCamera* m_pCamera;
+
+    // TODO : Move to Game object as component
+    CCameraController* m_pCameraController;
 
     // TODO: Move to scene class
     CMesh* m_pMesh;

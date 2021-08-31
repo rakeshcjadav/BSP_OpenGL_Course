@@ -7,6 +7,7 @@
 #include"Program.h"
 #include"Log.h"
 #include<format>
+#include"CameraController.h"
 
 CMesh* CreateMeshUsingVBOnEBO()
 {
@@ -189,7 +190,8 @@ bool CWindow::Init(int height, int width, std::string strName)
     pCameraDef->fov = 45.0f;
     pCameraDef->fNearPlane = 0.1f;
     pCameraDef->fFarPlane = 100.0f;
-    m_pCamera = new CCamera(this, pCameraDef, m_pViewport);
+    m_pCamera = new CCamera(pCameraDef, m_pViewport);
+    m_pCameraController = new CCameraController(this, m_pCamera);
 
     return true;
 }
