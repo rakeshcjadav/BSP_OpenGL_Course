@@ -5,6 +5,8 @@ class CViewport
 public:
     CViewport(int width, int height);
     float GetAspectRatio() const;
+    int GetWidth() const;
+    int GetHeight() const;
 private:
     int m_iWidth;
     int m_iHeight;

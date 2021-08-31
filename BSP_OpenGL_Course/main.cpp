@@ -22,28 +22,12 @@ int main()
     CWindow* pWindow = CWindow::Create(640, 480, "Hello World");
     pWindow->CreateScene();
 
-    CWindow* pWindow2 = CWindow::Create(500, 500, "Hello World 2");
-    pWindow2->CreateScene();
-
-    while(1)
+    while(!pWindow->IsWindowClosed())
     {
-        if (pWindow->IsWindowClosed() || pWindow2->IsWindowClosed())
-            break;
-
-        if (!pWindow->IsWindowClosed())
-        {
-            pWindow->MakeCurrent();
-            pWindow->RenderOneFrame();
-        }
-        
-        if (!pWindow2->IsWindowClosed())
-        {
-            pWindow2->MakeCurrent();
-            pWindow2->RenderOneFrame();
-        }
+        pWindow->MakeCurrent();
+        pWindow->RenderOneFrame();
     }
 
     delete pWindow;
-    delete pWindow2;
 	return 0;
 }

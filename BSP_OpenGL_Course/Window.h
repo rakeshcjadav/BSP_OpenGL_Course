@@ -25,12 +25,19 @@ private:
     CWindow();
     bool Init(int height, int width, std::string strName);
     GLFWwindow* GetGLFWWindow();
-    static void KeyCallBack(GLFWwindow* pWindow, int key, int scancode, int action, int mod);
+    static void KeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mod);
+    static void CursorPosCallback(GLFWwindow* pWindow, double xPos, double yPos);
+    static void ScrollCallback(GLFWwindow* pWindow, double xOffset, double yOffset);
+    static void MouseButtonCallback(GLFWwindow* pWindow, int button, int action, int mod);
 
     // IInputDelegator
-    virtual void NotifyKeyPressed(int key, int mod) override;
-    virtual void NotifyKeyReleased(int key, int mod) override;
-
+    void NotifyKeyPressed(int key, int mod) override;
+    void NotifyKeyReleased(int key, int mod) override;
+    void NotifyCursorPos(double xPos, double yPos) override;
+    void NotifyMouseScroll(double xOffset, double yOffset) override;
+    bool IsMouseButtonDown(int button) override;
+    void NotifyMouseButton(int button, int action, int mod) override;
+    void GetMousePos(double& xPos, double& yPos) override;
 private:
     GLFWwindow* m_pWindow;
     CViewport* m_pViewport;

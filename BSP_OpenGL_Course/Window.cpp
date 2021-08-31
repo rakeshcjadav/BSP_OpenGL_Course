@@ -168,7 +168,10 @@ bool CWindow::Init(int height, int width, std::string strName)
         return false;
     }
 
-    glfwSetKeyCallback(m_pWindow, CWindow::KeyCallBack);
+    glfwSetKeyCallback(m_pWindow, CWindow::KeyCallback);
+    glfwSetCursorPosCallback(m_pWindow, CWindow::CursorPosCallback);
+    glfwSetScrollCallback(m_pWindow, CWindow::ScrollCallback);
+    glfwSetMouseButtonCallback(m_pWindow, CWindow::MouseButtonCallback);
 
     // TODO: Move to material
     //glEnable(GL_DEPTH_TEST);
@@ -196,7 +199,7 @@ GLFWwindow* CWindow::GetGLFWWindow()
     return m_pWindow;
 }
 
-void CWindow::KeyCallBack(GLFWwindow* pGLFWWindow, int key, int scancode, int action, int mod)
+void CWindow::KeyCallback(GLFWwindow* pGLFWWindow, int key, int scancode, int action, int mod)
 {
     LogMessage(std::format("Key Input : {0} {1} {2} {3}", key, scancode, action, mod));
     if (action == GLFW_PRESS)
@@ -219,6 +222,36 @@ void CWindow::KeyCallBack(GLFWwindow* pGLFWWindow, int key, int scancode, int ac
     }
 }
 
+void CWindow::CursorPosCallback(GLFWwindow* pGLFWWindow, double xPos, double yPos)
+{
+    std::map<GLFWwindow*, CWindow*>::iterator itr = s_mapWindows.find(pGLFWWindow);
+    if (itr != s_mapWindows.end())
+    {
+        CWindow* pWindow = itr->second;
+        pWindow->NotifyCursorPos(xPos, yPos);
+    }
+}
+
+void CWindow::ScrollCallback(GLFWwindow* pGLFWWindow, double xOffset, double yOffset)
+{
+    std::map<GLFWwindow*, CWindow*>::iterator itr = s_mapWindows.find(pGLFWWindow);
+    if (itr != s_mapWindows.end())
+    {
+        CWindow* pWindow = itr->second;
+        pWindow->NotifyMouseScroll(xOffset, yOffset);
+    }
+}
+
+void CWindow::MouseButtonCallback(GLFWwindow* pGLFWWindow, int button, int action, int mod)
+{
+    std::map<GLFWwindow*, CWindow*>::iterator itr = s_mapWindows.find(pGLFWWindow);
+    if (itr != s_mapWindows.end())
+    {
+        CWindow* pWindow = itr->second;
+        pWindow->NotifyMouseButton(button, action, mod);
+    }
+}
+
 void CWindow::NotifyKeyPressed(int key, int mod)
 {
     for(IInputHandler * pInputHandler : m_listHandler)
@@ -233,6 +266,74 @@ void CWindow::NotifyKeyReleased(int key, int mod)
     {
         pInputHandler->OnKeyReleased(key, mod);
     }
+}
+
+void CWindow::NotifyCursorPos(double xPos, double yPos)
+{
+    for (IInputHandler* pInputHandler : m_listHandler)
+    {
+        pInputHandler->OnMousePos(xPos, yPos);
+    }
+}
+
+void CWindow::NotifyMouseScroll(double xOffset, double yOffset)
+{
+    for (IInputHandler* pInputHandler : m_listHandler)
+    {
+        pInputHandler->OnMouseScroll(xOffset, yOffset);
+    }
+}
+
+bool CWindow::IsMouseButtonDown(int button)
+{
+    return (glfwGetMouseButton(m_pWindow, button) == GLFW_PRESS);
+}
+
+void CWindow::NotifyMouseButton(int button, int action, int mod)
+{
+    for (IInputHandler* pInputHandler : m_listHandler)
+    {
+        if (action == GLFW_PRESS)
+        {
+            switch (button)
+            {
+            case 0:
+                pInputHandler->OnLeftMouseButtonDown(mod);
+                break;
+            case 1:
+                pInputHandler->OnRightMouseButtonDown(mod);
+                break;
+            case 2:
+                pInputHandler->OnMiddleMouseButtonDown(mod);
+                break;
+            default:
+                break;
+            }
+        }
+        else if (action == GLFW_RELEASE)
+        {
+            switch (button)
+            {
+            case 0:
+                pInputHandler->OnLeftMouseButtonUp(mod);
+                break;
+            case 1:
+                pInputHandler->OnRightMouseButtonUp(mod);
+                break;
+            case 2:
+                pInputHandler->OnMiddleMouseButtonUp(mod);
+                break;
+            default:
+                break;
+            }
+        }
+    }
+}
+
+void CWindow::GetMousePos(double& xPos, double& yPos)
+{
+    //glfwGetCursorPos(m_pWin)
+    glfwGetCursorPos(m_pWindow, &xPos, &yPos);
 }
 
 void CWindow::CreateScene()
