@@ -13,10 +13,10 @@ public:
     
     void SetPosition(glm::vec3 vPos);
     glm::vec3 GetPosition() const;
-    
+ 
     void SetDirection(glm::vec3 vDirection);
     glm::vec3 GetDirection() const;
-    
+
     void SetUp(glm::vec3 vUp);
     glm::vec3 GetUp() const;
 
@@ -25,7 +25,7 @@ public:
 
     int GetWidth() const;
     int GetHeight() const;
-    
+
     glm::mat4 GetViewMatrix();
     glm::mat4 GetProjectionMatrix();
 

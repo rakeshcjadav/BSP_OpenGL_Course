@@ -8,15 +8,16 @@
 #include"Log.h"
 #include<format>
 #include"CameraController.h"
+#include"Light.h"
 
 CMesh* CreateMeshUsingVBOnEBO()
 {
     // Local Positions of vertices
     SMeshData meshData;
-    meshData.aVertices.push_back(SVertex(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec2(0.0f, 0.0f)));
-    meshData.aVertices.push_back(SVertex(glm::vec3(0.5f, -0.5f, 0.0f), glm::vec2(1.0f, 0.0f)));
-    meshData.aVertices.push_back(SVertex(glm::vec3(0.5f, 0.5f, 0.0f), glm::vec2(1.0f, 1.0f)));
-    meshData.aVertices.push_back(SVertex(glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec2(0.0f, 1.0f)));
+    meshData.aVertices.push_back(SVertex(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f)));
+    meshData.aVertices.push_back(SVertex(glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 0.0f)));
+    meshData.aVertices.push_back(SVertex(glm::vec3(0.5f, 0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 1.0f)));
+    meshData.aVertices.push_back(SVertex(glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 1.0f)));
 
     meshData.aIndices = {
         0, 1, 2,
@@ -53,7 +54,7 @@ unsigned int CreateMeshUsingVBO(int& vertexCount)
 
 void RenderMesh_Elements(
     CMesh* pMesh,
-    CProgram* pProgram, CTexture* pTextureOne, CTexture* pTextureTwo, CCamera* pCamera,
+    CProgram* pProgram, CTexture* pTextureOne, CTexture* pTextureTwo, CLight * pLight, CCamera* pCamera,
     bool bWireframe, float* color)
 {
     if (bWireframe)
@@ -87,17 +88,27 @@ void RenderMesh_Elements(
             // World Matrix or Model Matrix
             glm::mat4 transformMat = glm::identity<glm::mat4>();
             // Order : Scale -> Rotate -> Translate
-            transformMat = glm::translate(transformMat, glm::vec3(50.0f, 50.0f, 0.0f) /* World Position of the object */);
-            transformMat = glm::rotate(transformMat, glm::radians(90.0f * fScale), glm::vec3(0.0f, 0.0f, 1.0f));
-            transformMat = glm::scale(transformMat, glm::vec3(2.0f, 2.0f, 1.0f));
+            transformMat = glm::translate(transformMat, glm::vec3(0.0f, 0.0f, 0.0f) /* World Position of the object */);
+            transformMat = glm::rotate(transformMat, glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+            transformMat = glm::scale(transformMat, glm::vec3(1.0f, 1.0f, 1.0f));
 
+            // Camera
             glm::mat4 cameraMat = pCamera->GetViewMatrix();
             glm::mat4 projectionMat = pCamera->GetProjectionMatrix();
-
+            glm::vec3 cameraPos = pCamera->GetPosition();
             pProgram->SetUniform("TransformMat", transformMat);
             pProgram->SetUniform("CameraMat", cameraMat);
             pProgram->SetUniform("ProjectionMat", projectionMat);
-            pProgram->SetUniform("Color", color);
+            pProgram->SetUniform("CameraPos", cameraPos);
+            pProgram->SetUniform("ObjectColor", color);
+
+
+            // Light
+            glm::vec3 lightPos = pLight->GetPosition();
+            lightPos.y = fSineTime * 5.0f;
+            pProgram->SetUniform("LightPos", lightPos);
+            glm::vec3 lightColor = pLight->GetColor();
+            pProgram->SetUniform("LightColor", lightColor);
         }
     }
     pMesh->Render();
@@ -203,7 +214,6 @@ GLFWwindow* CWindow::GetGLFWWindow()
 
 void CWindow::KeyCallback(GLFWwindow* pGLFWWindow, int key, int scancode, int action, int mod)
 {
-    LogMessage(std::format("Key Input : {0} {1} {2} {3}", key, scancode, action, mod));
     if (action == GLFW_PRESS)
     {
         std::map<GLFWwindow*, CWindow*>::iterator itr = s_mapWindows.find(pGLFWWindow);
@@ -299,13 +309,13 @@ void CWindow::NotifyMouseButton(int button, int action, int mod)
         {
             switch (button)
             {
-            case 0:
+            case GLFW_MOUSE_BUTTON_LEFT:
                 pInputHandler->OnLeftMouseButtonDown(mod);
                 break;
-            case 1:
+            case GLFW_MOUSE_BUTTON_RIGHT:
                 pInputHandler->OnRightMouseButtonDown(mod);
                 break;
-            case 2:
+            case GLFW_MOUSE_BUTTON_MIDDLE:
                 pInputHandler->OnMiddleMouseButtonDown(mod);
                 break;
             default:
@@ -316,13 +326,13 @@ void CWindow::NotifyMouseButton(int button, int action, int mod)
         {
             switch (button)
             {
-            case 0:
+            case GLFW_MOUSE_BUTTON_LEFT:
                 pInputHandler->OnLeftMouseButtonUp(mod);
                 break;
-            case 1:
+            case GLFW_MOUSE_BUTTON_RIGHT:
                 pInputHandler->OnRightMouseButtonUp(mod);
                 break;
-            case 2:
+            case GLFW_MOUSE_BUTTON_MIDDLE:
                 pInputHandler->OnMiddleMouseButtonUp(mod);
                 break;
             default:
@@ -342,13 +352,16 @@ void CWindow::CreateScene()
 {
     m_pMesh = CreateMeshUsingVBOnEBO();
 
+    m_pLight = new CLight(glm::vec3(0.0f, -2.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+
     //int vertexCount;
     //unsigned int arrayMesh = CreateMeshUsingVBO(vertexCount);
 
     m_pTexture1 = new CTexture("minion-transparent-background-9.png");
     m_pTexture2 = new CTexture("minion.jpg");
 
-    m_pProgram = new CProgram("vertex_shader.vert", "fragment_shader.frag");
+    m_pProgramUnlit = new CProgram("unlit_vertex_shader.vert", "unlit_fragment_shader.frag");
+    m_pProgramLit = new CProgram("lit_vertex_shader.vert", "lit_fragment_shader.frag");
 }
 
 void CWindow::RenderLoop()
@@ -370,12 +383,12 @@ void CWindow::RenderOneFrame()
     glClearColor(0.0f, 0.0f, 0.2f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-    float meshColor[] = { 0.5f, 0.2f, 0.0f, 0.5f };
-    float wireframeColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    float meshColor[] = { 1.0f, 0.0f, 0.0f, 1.0f };
+    //float wireframeColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
     // Render Mesh
-    RenderMesh_Elements(m_pMesh, m_pProgram, m_pTexture1, m_pTexture2, m_pCamera, false, meshColor);
-    RenderMesh_Elements(m_pMesh, m_pProgram, m_pTexture1, m_pTexture2, m_pCamera, true, wireframeColor);
+    RenderMesh_Elements(m_pMesh, m_pProgramLit, m_pTexture1, m_pTexture2, m_pLight, m_pCamera, false, meshColor);
+    //RenderMesh_Elements(m_pMesh, m_pProgram, m_pTexture1, m_pTexture2, m_pLight, m_pCamera, true, wireframeColor);
 
     //RenderMesh_Arrays(arrayMesh, vertexCount, program, meshColor);
 

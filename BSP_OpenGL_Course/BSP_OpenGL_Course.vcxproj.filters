@@ -16,6 +16,12 @@
     <Filter Include="Resource Files\Shaders">
       <UniqueIdentifier>{1071771c-1c4d-4c1d-8858-d3e5ae4655d0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shaders\Unlit">
+      <UniqueIdentifier>{209b2c98-5bfa-4f4d-aa2c-20be755312f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\Lit">
+      <UniqueIdentifier>{4a02f64e-905a-42ff-b515-f76dd3d95df4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -55,6 +61,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CameraController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -104,13 +113,25 @@
     <ClInclude Include="CameraController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\media\shaders\fragment_shader.frag">
+    <None Include="..\media\shaders\unlit_program.prog">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="..\media\shaders\vertex_shader.vert">
-      <Filter>Resource Files\Shaders</Filter>
+    <None Include="..\media\shaders\lit_fragment_shader.frag">
+      <Filter>Resource Files\Shaders\Lit</Filter>
+    </None>
+    <None Include="..\media\shaders\lit_vertex_shader.vert">
+      <Filter>Resource Files\Shaders\Lit</Filter>
+    </None>
+    <None Include="..\media\shaders\unlit_vertex_shader.vert">
+      <Filter>Resource Files\Shaders\Unlit</Filter>
+    </None>
+    <None Include="..\media\shaders\unlit_fragment_shader.frag">
+      <Filter>Resource Files\Shaders\Unlit</Filter>
     </None>
   </ItemGroup>
 </Project>

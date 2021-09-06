@@ -13,6 +13,7 @@ public:
 	void Use();
 	void SetUniform(std::string name, int value);
 	void SetUniform(std::string name, float value);
+	void SetUniform(std::string name, glm::vec3 & value);
 	void SetUniform(std::string name, glm::vec4 & value);
 	void SetUniform(std::string name, glm::mat4 & value);
 	void SetUniform(std::string name, float * value);

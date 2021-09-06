@@ -24,11 +24,13 @@ private:
 struct SVertex
 {
     glm::vec3 position;
+    glm::vec3 normal;
     glm::vec2 uv;
 
-    SVertex(glm::vec3 _pos, glm::vec2 _uv)
+    SVertex(glm::vec3 _pos, glm::vec3 _normal, glm::vec2 _uv)
     {
         position = _pos;
+        normal = _normal;
         uv = _uv;
     }
 };

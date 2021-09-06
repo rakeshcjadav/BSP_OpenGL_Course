@@ -10,6 +10,7 @@ class CMesh;
 class CProgram;
 class CTexture;
 class CCameraController;
+class CLight;
 
 class CWindow : public IInputDelegator
 {
@@ -49,9 +50,12 @@ private:
 
     // TODO: Move to scene class
     CMesh* m_pMesh;
-    CProgram* m_pProgram;
+    CProgram* m_pProgramUnlit;
+    CProgram* m_pProgramLit;
     CTexture* m_pTexture1;
     CTexture* m_pTexture2;
+
+    CLight* m_pLight;
 
     static std::map<GLFWwindow*, CWindow*> s_mapWindows;
 };
