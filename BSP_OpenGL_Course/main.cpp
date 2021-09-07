@@ -18,7 +18,7 @@ int main()
     if (!glfwInit())
         return false;
 
-    CWindow* pWindow = CWindow::Create(640, 480, "Hello World");
+    CWindow* pWindow = CWindow::Create(1920, 1080, "Hello World");
     pWindow->CreateScene();
 
     while(!pWindow->IsWindowClosed())
