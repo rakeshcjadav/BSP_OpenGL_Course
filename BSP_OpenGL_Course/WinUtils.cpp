@@ -35,10 +35,15 @@ char * GetEnvPrivate(const char* varName)
 
 std::string GetEnv(std::string varName)
 {
-    std::string mediaPath = GetEnvPrivate("MYMEDIA_PATH");
-    if(mediaPath.empty())
+    std::string mediaPath;
+    char * path = GetEnvPrivate(varName.c_str());
+    if(path)
     {
-        LogMessage("MYMEDIA_PATH env variable is not defined.");
+        mediaPath = path;
+    }
+    else 
+    {
+        BOOST_LOG_TRIVIAL(error) << varName << " env variable is not defined.";
     }
     return mediaPath;
 }

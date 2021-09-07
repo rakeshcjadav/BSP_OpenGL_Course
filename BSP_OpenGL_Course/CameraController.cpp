@@ -19,7 +19,7 @@ CCameraController::CCameraController(IInputDelegator* pDelegator, CCamera* pCame
 
 void CCameraController::OnKeyPressed(int key, int mod)
 {
-    //LogMessage(std::format("Camera recevied the Key pressed event : {0}, {1}", key, mod));
+    BOOST_LOG_TRIVIAL(debug) << "Camera recevied the Key pressed event : " << key << ", " << mod;
     glm::vec3 pos = m_pCamera->GetPosition();
     glm::vec3 direction = m_pCamera->GetDirection();
     glm::vec3 up = m_pCamera->GetUp();

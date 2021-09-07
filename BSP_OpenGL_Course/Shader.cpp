@@ -34,8 +34,8 @@ CShader::CShader(SHADER_TYPE type, std::string shaderFile)
 		if (!success)
 		{
 			glGetShaderInfoLog(m_IDShader, 512, NULL, infoLog);
-			//LogMessage(std::format("ERROR::SHADER::{0}::COMPILATION_FAILED", shaderType));
-			LogMessage(infoLog);
+			BOOST_LOG_TRIVIAL(error) << "SHADER::"<< shaderType <<"::COMPILATION_FAILED";
+			BOOST_LOG_TRIVIAL(error) << infoLog;
 		}
 	}
 }
