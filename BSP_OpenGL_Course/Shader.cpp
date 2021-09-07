@@ -4,7 +4,7 @@
 #include"OpenGL.h"
 #include"WinUtils.h"
 #include"Log.h"
-#include<format>
+//#include<fmt/format.h>
 
 using namespace std;
 
@@ -35,7 +35,7 @@ CShader::CShader(SHADER_TYPE type, std::string shaderFile)
 		if (!success)
 		{
 			glGetShaderInfoLog(m_IDShader, 512, NULL, infoLog);
-			LogMessage(std::format("ERROR::SHADER::{0}::COMPILATION_FAILED", shaderType));
+			//LogMessage(fmt::format("ERROR::SHADER::{0}::COMPILATION_FAILED", shaderType));
 			LogMessage(infoLog);
 		}
 	}
@@ -61,7 +61,6 @@ std::string CShader::LoadShader(std::string shaderFile)
 	if (file.is_open())
 	{
 		string line;
-		int lineNumber = 0;
 		while (getline(file, line))
 		{
 			shaderSource += line + "\n";

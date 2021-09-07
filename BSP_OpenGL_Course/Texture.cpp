@@ -3,7 +3,7 @@
 #include"WinUtils.h"
 #include"STB.h"
 #include"Log.h"
-#include<format>
+//#include<fmt/format.h>
 
 CTexture::CTexture(std::string strTextureFile)
 {
@@ -47,13 +47,13 @@ unsigned char* CTexture::LoadTexture(std::string strTextureFile, int & width, in
 
     if (data == nullptr)
     {
-        LogMessage(std::format("[Texture Load]: Failed to load {0} texture", filePath).c_str());
+        //LogMessage(fmt::format("[Texture Load]: Failed to load {0} texture", filePath).c_str());
         return 0;
     }
 
-    LogMessage(std::format(
-        "[Texture Load]: {0} loaded successfully, width {1} & height {2} & channels {3}",
-        strTextureFile, width, height, nrChannels).c_str());
+    //LogMessage(fmt::format(
+    //    "[Texture Load]: {0} loaded successfully, width {1} & height {2} & channels {3}",
+     //   strTextureFile, width, height, nrChannels).c_str());
 
     format = GL_RGB;
     if (nrChannels > 3)

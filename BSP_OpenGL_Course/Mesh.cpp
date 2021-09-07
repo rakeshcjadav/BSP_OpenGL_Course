@@ -1,6 +1,6 @@
 #include"Mesh.h"
 #include"Log.h"
-#include<format>
+//#include<fmt/format.h>
 #include"OpenGL.h"
 
 CMesh::CMesh(const SMeshData * pData)
@@ -25,8 +25,8 @@ void CMesh::Render()
 
 void CMesh::LoadMesh(const SMeshData* pData)
 {
-    //LogMessage(std::format("aVertices : {0}", sizeof(SVertex) * pData->aVertices.size()));
-    //LogMessage(std::format("aIndices : {0}", sizeof(unsigned int) * pData->aIndices.size()));
+    //LogMessage(fmt::format("aVertices : {0}", sizeof(SVertex) * pData->aVertices.size()));
+    //LogMessage(fmt::format("aIndices : {0}", sizeof(unsigned int) * pData->aIndices.size()));
 
     m_iIndexCount = pData->aIndices.size();
 

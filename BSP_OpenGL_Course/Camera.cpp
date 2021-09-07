@@ -1,7 +1,7 @@
 #include"Camera.h"
 #include"Viewport.h"
 #include"Log.h"
-#include<format>
+//#include<fmt/format.h>
 #include"InputDelegator.h"
 #include"GLFW/glfw3.h"
 
@@ -34,7 +34,7 @@ glm::mat4 CCamera::GetProjectionMatrix()
 
 void CCamera::OnKeyPressed(int key, int mod)
 {
-    //LogMessage(std::format("Camera recevied the Key pressed event : {0}, {1}", key, mod));
+    //LogMessage(fmt::format("Camera recevied the Key pressed event : {0}, {1}", key, mod));
     if(key == GLFW_KEY_W)
         m_vPosition = m_vPosition + m_vDirection * 1.0f;
     else if (key == GLFW_KEY_S)
@@ -53,7 +53,7 @@ void CCamera::OnKeyPressed(int key, int mod)
 
 void CCamera::OnKeyReleased(int key, int mod)
 {
-    //LogMessage(std::format("Camera recevied the Key released event : {0}, {1}", key, mod));
+    //LogMessage(fmt::format("Camera recevied the Key released event : {0}, {1}", key, mod));
 }
 
 /*

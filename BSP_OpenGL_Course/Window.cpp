@@ -6,7 +6,9 @@
 #include"Texture.h"
 #include"Program.h"
 #include"Log.h"
-#include<format>
+#include"WinUtils.h"
+
+//#include<fmt/format.h>
 
 CMesh* CreateMeshUsingVBOnEBO()
 {
@@ -147,6 +149,8 @@ CWindow::~CWindow()
 
 bool CWindow::Init(int height, int width, std::string strName)
 {
+    glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, true);
+    //glfwWindowHint(GLFW_SCALE_TO_MONITOR, true);
     // OpenGL 3.3.0
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -198,7 +202,7 @@ GLFWwindow* CWindow::GetGLFWWindow()
 
 void CWindow::KeyCallBack(GLFWwindow* pGLFWWindow, int key, int scancode, int action, int mod)
 {
-    LogMessage(std::format("Key Input : {0} {1} {2} {3}", key, scancode, action, mod));
+    //LogMessage(fmt::format("Key Input : {0} {1} {2} {3}", key, scancode, action, mod));
     if (action == GLFW_PRESS)
     {
         std::map<GLFWwindow*, CWindow*>::iterator itr = s_mapWindows.find(pGLFWWindow);
@@ -264,7 +268,7 @@ bool CWindow::IsWindowClosed() const
 
 void CWindow::RenderOneFrame()
 {
-    glClearColor(0.0f, 0.0f, 0.2f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     float meshColor[] = { 0.5f, 0.2f, 0.0f, 0.5f };

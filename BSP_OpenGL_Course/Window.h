@@ -20,7 +20,7 @@ public:
     void RenderOneFrame();
     void MakeCurrent();
 
-    ~CWindow();
+    virtual ~CWindow();
 private:
     CWindow();
     bool Init(int height, int width, std::string strName);
