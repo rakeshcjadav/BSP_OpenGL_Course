@@ -2,7 +2,6 @@
 #include "OpenGL.h"
 #include <stdio.h>
 #include <string>
-#include <format>
 #include "WinUtils.h"
 #include "Program.h"
 #include "GLM.h"

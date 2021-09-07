@@ -1,6 +1,5 @@
 #include"Mesh.h"
 #include"Log.h"
-#include<format>
 #include"OpenGL.h"
 
 CMesh::CMesh(const SMeshData * pData)

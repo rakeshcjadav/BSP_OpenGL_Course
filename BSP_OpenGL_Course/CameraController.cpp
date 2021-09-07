@@ -1,6 +1,5 @@
 #include"CameraController.h"
 #include"Camera.h"
-#include<format>
 #include"InputDelegator.h"
 #include"GLFW/glfw3.h"
 #include"Log.h"
