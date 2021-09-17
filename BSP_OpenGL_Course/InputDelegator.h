@@ -16,6 +16,7 @@ public:
     virtual bool IsMouseButtonDown(int button) = 0;
     virtual void NotifyMouseButton(int button, int action, int mod) = 0;
     virtual void GetMousePos(double& xPos, double& yPos) = 0;
+    virtual bool IsKeyPressed(int key) = 0;
 protected:
     std::list<IInputHandler*> m_listHandler;
 };

@@ -19,6 +19,9 @@ public:
     virtual void OnMiddleMouseButtonDown(int mod) = 0;
     virtual void OnMiddleMouseButtonUp(int mod) = 0;
     virtual void GetMousePos(double& xPos, double& yPos) = 0;
+    virtual bool IsKeyPressed(int key) = 0;
+
+    virtual void Update() = 0;
 
 protected:
     IInputDelegator* m_pDelegator;

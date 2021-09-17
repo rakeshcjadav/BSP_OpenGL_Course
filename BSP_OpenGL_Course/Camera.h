@@ -5,6 +5,7 @@
 // Forward Declarations
 struct SCameraDef;
 class CViewport;
+class CScene;
 
 class CCamera
 {
@@ -29,6 +30,11 @@ public:
     glm::mat4 GetViewMatrix();
     glm::mat4 GetProjectionMatrix();
 
+    void Assign(CViewport* pViewport);
+    void SetScene(CScene* pScene);
+
+    void Update();
+
 private:
     glm::vec3 m_vPosition;
     glm::vec3 m_vDirection;
@@ -37,6 +43,7 @@ private:
     float m_fNearPlane;
     float m_fFarPlane;
     const CViewport* m_pViewport;
+    CScene* m_pScene;
 };
 
 struct SCameraDef

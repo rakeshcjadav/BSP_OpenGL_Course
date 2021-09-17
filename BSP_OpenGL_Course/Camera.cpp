@@ -2,6 +2,7 @@
 #include"Viewport.h"
 #include"Log.h"
 #include"InputDelegator.h"
+#include"Scene.h"
 #include"GLFW/glfw3.h"
 
 CCamera::CCamera(const SCameraDef * pCameraDef, const CViewport* pViewport)
@@ -73,4 +74,19 @@ glm::mat4 CCamera::GetViewMatrix()
 glm::mat4 CCamera::GetProjectionMatrix()
 {
     return glm::perspective(glm::radians(m_fFOV), m_pViewport->GetAspectRatio(), m_fNearPlane, m_fFarPlane);
+}
+
+void CCamera::Assign(CViewport* pViewport)
+{
+    m_pViewport = pViewport;
+}
+
+void CCamera::SetScene(CScene* pScene)
+{
+    m_pScene = pScene;
+}
+
+void CCamera::Update()
+{
+    m_pScene->Update(this);
 }

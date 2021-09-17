@@ -10,6 +10,16 @@ uniform vec3 LightColor;
 uniform vec3 LightPos;
 uniform vec3 CameraPos;
 
+struct Material {
+    vec3 uAmbientColor;
+    vec3 uDiffuseColor;
+    vec3 uSpecularColor;
+    float uShininess;
+}; 
+  
+uniform Material material;
+
+
 out vec4 FragColor;
 
 vec3 AmbientLight(vec3 lightColor)
@@ -36,16 +46,16 @@ vec3 SpecularLight(vec3 normal, vec3 lightPos, vec3 worldPos, vec3 cameraPos, ve
     vec3 reflectDirection = reflect(-lightDirection, normal);
 
     vec3 cameraDirection = normalize(cameraPos - worldPos);
-    float fSpectular = pow(max(dot(reflectDirection, cameraDirection), 0.0f), 32);
+    float fSpectular = pow(max(dot(reflectDirection, cameraDirection), 0.0f), material.uShininess);
 
     return fSpectular * lightColor;
 }
 
 void main()
 {
-    vec3 ambientColor = AmbientLight(LightColor);
-    vec3 diffuseColor  = DiffuseLight(outNormal, LightPos, outWorldPos, LightColor);
-    vec3 specularColor = SpecularLight(outNormal, LightPos, outWorldPos, CameraPos, LightColor);
+    vec3 ambientColor = AmbientLight(LightColor) * material.uAmbientColor;
+    vec3 diffuseColor  = DiffuseLight(outNormal, LightPos, outWorldPos, LightColor) * material.uDiffuseColor;
+    vec3 specularColor = SpecularLight(outNormal, LightPos, outWorldPos, CameraPos, LightColor) * material.uSpecularColor;
     vec3 final = ambientColor + diffuseColor + specularColor;
 
     vec4 objectColor = texture(MainTex, outTexCoord);

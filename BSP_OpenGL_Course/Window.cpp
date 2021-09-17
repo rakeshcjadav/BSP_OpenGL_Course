@@ -8,6 +8,8 @@
 #include"Log.h"
 #include"CameraController.h"
 #include"Light.h"
+#include"Material.h"
+#include"Scene.h"
 
 CMesh* CreateMeshUsingVBOnEBO()
 {
@@ -53,7 +55,7 @@ unsigned int CreateMeshUsingVBO(int& vertexCount)
 
 void RenderMesh_Elements(
     CMesh* pMesh,
-    CProgram* pProgram, CTexture* pTextureOne, CTexture* pTextureTwo, CLight * pLight, CCamera* pCamera,
+    CMaterial * pMaterial, CLight * pLight, CCamera* pCamera,
     bool bWireframe, float* color)
 {
     if (bWireframe)
@@ -71,18 +73,14 @@ void RenderMesh_Elements(
 
     pMesh->Bind();
     {
-        pTextureOne->Bind(0);
-        pTextureTwo->Bind(1);
-        pProgram->Use();
+        pMaterial->Bind();
         {
             float currentTime = (float)glfwGetTime();
             float fScale = 0.1f + 1.5f * fabsf(sinf(0.05f * currentTime));
             float fSineTime = 1.0f * sinf(currentTime);
 
-            pProgram->SetUniform("MainTex", 0);
-            pProgram->SetUniform("SecondTex", 1);
-            pProgram->SetUniform("Scale", fScale);
-            pProgram->SetUniform("SineTime", fSineTime);
+            pMaterial->SetUniform("Scale", fScale);
+            pMaterial->SetUniform("SineTime", fSineTime);
 
             // World Matrix or Model Matrix
             glm::mat4 transformMat = glm::identity<glm::mat4>();
@@ -95,19 +93,18 @@ void RenderMesh_Elements(
             glm::mat4 cameraMat = pCamera->GetViewMatrix();
             glm::mat4 projectionMat = pCamera->GetProjectionMatrix();
             glm::vec3 cameraPos = pCamera->GetPosition();
-            pProgram->SetUniform("TransformMat", transformMat);
-            pProgram->SetUniform("CameraMat", cameraMat);
-            pProgram->SetUniform("ProjectionMat", projectionMat);
-            pProgram->SetUniform("CameraPos", cameraPos);
-            pProgram->SetUniform("ObjectColor", color);
-
+            pMaterial->SetUniform("TransformMat", transformMat);
+            pMaterial->SetUniform("CameraMat", cameraMat);
+            pMaterial->SetUniform("ProjectionMat", projectionMat);
+            pMaterial->SetUniform("CameraPos", cameraPos);
+            pMaterial->SetUniform("ObjectColor", color);
 
             // Light
             glm::vec3 lightPos = pLight->GetPosition();
             lightPos.y = fSineTime * 5.0f;
-            pProgram->SetUniform("LightPos", lightPos);
+            pMaterial->SetUniform("LightPos", lightPos);
             glm::vec3 lightColor = pLight->GetColor();
-            pProgram->SetUniform("LightColor", lightColor);
+            pMaterial->SetUniform("LightColor", lightColor);
         }
     }
     pMesh->Render();
@@ -156,14 +153,14 @@ CWindow::~CWindow()
     delete m_pViewport;
 }
 
-bool CWindow::Init(int height, int width, std::string strName)
+bool CWindow::Init(int width, int height, std::string strName)
 {
     // OpenGL 3.3.0
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     /* Create a windowed mode window and its OpenGL context */
-    m_pWindow = glfwCreateWindow(height, width, strName.c_str(), NULL, NULL);
+    m_pWindow = glfwCreateWindow(width, height, strName.c_str(), NULL, NULL);
     if (!m_pWindow)
     {
         glfwTerminate();
@@ -186,22 +183,14 @@ bool CWindow::Init(int height, int width, std::string strName)
 
     // TODO: Move to material
     //glEnable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
+    //glEnable(GL_BLEND);
     //glBlendFunc(GL_ONE, GL_ZERO);  // Replace blend or Opaque
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Tranparent blend or Alpha blend or Tranparent
-    //glEnable(GL_SCISSOR_TEST);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Tranparent blend or Alpha blend or Tranparent
+    glEnable(GL_SCISSOR_TEST);
 
-    m_pViewport = new CViewport(height, width);
-
-    SCameraDef* pCameraDef = new SCameraDef();
-    pCameraDef->position = glm::vec3(0.0f, 0.0f, 5.0f);
-    pCameraDef->direction = glm::normalize(glm::vec3(0.0f, 0.0f, 0.0f) - glm::vec3(0.0f, 0.0f, 5.0f));
-    pCameraDef->up = glm::vec3(0.0f, 1.0f, 0.0f);
-    pCameraDef->fov = 45.0f;
-    pCameraDef->fNearPlane = 0.1f;
-    pCameraDef->fFarPlane = 100.0f;
-    m_pCamera = new CCamera(pCameraDef, m_pViewport);
-    m_pCameraController = new CCameraController(this, m_pCamera);
+    m_pViewport = new CViewport(0, 0, width/2, height);
+    m_pViewport2 = new CViewport(width/2, 0, width/2, height);
+    CreateScene();
 
     return true;
 }
@@ -210,6 +199,8 @@ GLFWwindow* CWindow::GetGLFWWindow()
 {
     return m_pWindow;
 }
+
+#pragma region CallBacks
 
 void CWindow::KeyCallback(GLFWwindow* pGLFWWindow, int key, int scancode, int action, int mod)
 {
@@ -347,20 +338,19 @@ void CWindow::GetMousePos(double& xPos, double& yPos)
     glfwGetCursorPos(m_pWindow, &xPos, &yPos);
 }
 
+bool CWindow::IsKeyPressed(int key)
+{
+    return (GLFW_PRESS == glfwGetKey(m_pWindow, key));
+}
+
+#pragma endregion
+
 void CWindow::CreateScene()
 {
-    m_pMesh = CreateMeshUsingVBOnEBO();
-
-    m_pLight = new CLight(glm::vec3(0.0f, -2.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-
-    //int vertexCount;
-    //unsigned int arrayMesh = CreateMeshUsingVBO(vertexCount);
-
-    m_pTexture1 = new CTexture("minion-transparent-background-9.png");
-    m_pTexture2 = new CTexture("minion.jpg");
-
-    m_pProgramUnlit = new CProgram("unlit_vertex_shader.vert", "unlit_fragment_shader.frag");
-    m_pProgramLit = new CProgram("lit_vertex_shader.vert", "lit_fragment_shader.frag");
+    m_pScene = new CScene();
+    m_pScene->LoadScene();
+    CCamera* pCamera = m_pScene->GetCamera("MainCamera");
+    m_pCameraController = new CCameraController(this, pCamera);
 }
 
 void CWindow::RenderLoop()
@@ -379,17 +369,13 @@ bool CWindow::IsWindowClosed() const
 
 void CWindow::RenderOneFrame()
 {
-    glClearColor(0.0f, 0.0f, 0.2f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    m_pCameraController->Update();
+    CCamera* pCamera = m_pScene->GetCamera("MainCamera");
+    m_pViewport->Clear(glm::vec4(0.0f, 0.0f, 0.2f, 1.0f));
+    m_pViewport->Update(pCamera);
 
-    float meshColor[] = { 1.0f, 0.0f, 0.0f, 1.0f };
-    //float wireframeColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-
-    // Render Mesh
-    RenderMesh_Elements(m_pMesh, m_pProgramLit, m_pTexture1, m_pTexture2, m_pLight, m_pCamera, false, meshColor);
-    //RenderMesh_Elements(m_pMesh, m_pProgram, m_pTexture1, m_pTexture2, m_pLight, m_pCamera, true, wireframeColor);
-
-    //RenderMesh_Arrays(arrayMesh, vertexCount, program, meshColor);
+    m_pViewport2->Clear(glm::vec4(0.2f, 0.0f, 0.2f, 1.0f));
+    m_pViewport2->Update(pCamera);
 
     /* Swap front and back buffers */
     glfwSwapBuffers(m_pWindow);

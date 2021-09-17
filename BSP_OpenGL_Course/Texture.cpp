@@ -46,12 +46,12 @@ unsigned char* CTexture::LoadTexture(std::string strTextureFile, int & width, in
 
     if (data == nullptr)
     {
-        BOOST_LOG_TRIVIAL(error) << "Failed to load texture: " << filePath;
+        std::cout << "Failed to load texture: " << filePath;
         return 0;
     }
 
-    BOOST_LOG_TRIVIAL(debug) << "Texture loaded successfully: "<< filePath;
-    BOOST_LOG_TRIVIAL(debug) << "Width: " << width << " Height: " << height << " Channels: "<< nrChannels;
+    std::cout << "Texture loaded successfully: "<< filePath;
+    std::cout << "Width: " << width << " Height: " << height << " Channels: "<< nrChannels;
 
     format = GL_RGB;
     if (nrChannels > 3)

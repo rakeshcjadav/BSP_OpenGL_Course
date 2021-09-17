@@ -2,7 +2,25 @@
 #include"Log.h"
 #include"OpenGL.h"
 
-CMesh::CMesh(const SMeshData * pData)
+// static 
+CMesh* CMesh::CreatePlane()
+{
+    // Local Positions of vertices
+    SMeshData meshData;
+    meshData.aVertices.push_back(SVertex(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f)));
+    meshData.aVertices.push_back(SVertex(glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 0.0f)));
+    meshData.aVertices.push_back(SVertex(glm::vec3(0.5f, 0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 1.0f)));
+    meshData.aVertices.push_back(SVertex(glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 1.0f)));
+
+    meshData.aIndices = {
+        0, 1, 2,
+        2, 3, 0
+    };
+
+    return new CMesh(&meshData);
+}
+
+CMesh::CMesh(const SMeshData* pData)
 {
     LoadMesh(pData);
 }

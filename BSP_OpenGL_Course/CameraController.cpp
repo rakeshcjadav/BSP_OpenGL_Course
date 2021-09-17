@@ -19,7 +19,8 @@ CCameraController::CCameraController(IInputDelegator* pDelegator, CCamera* pCame
 
 void CCameraController::OnKeyPressed(int key, int mod)
 {
-    BOOST_LOG_TRIVIAL(debug) << "Camera recevied the Key pressed event : " << key << ", " << mod;
+    /*
+    //std::cout << "Camera recevied the Key pressed event : " << key << ", " << mod;
     glm::vec3 pos = m_pCamera->GetPosition();
     glm::vec3 direction = m_pCamera->GetDirection();
     glm::vec3 up = m_pCamera->GetUp();
@@ -41,7 +42,7 @@ void CCameraController::OnKeyPressed(int key, int mod)
     {
         glm::vec3 right = glm::normalize(glm::cross(up, direction));
         m_pCamera->SetPosition(pos - right * 1.0f);
-    }
+    }*/
 }
 
 void CCameraController::OnKeyReleased(int key, int mod)
@@ -133,4 +134,43 @@ void CCameraController::OnMiddleMouseButtonUp(int mod)
 void CCameraController::GetMousePos(double& xPos, double& yPos)
 {
     m_pDelegator->GetMousePos(xPos, yPos);
+}
+
+bool CCameraController::IsKeyPressed(int key)
+{
+    return m_pDelegator->IsKeyPressed(key);
+}
+
+void CCameraController::Update()
+{
+    if (IsKeyPressed(GLFW_KEY_W))
+    {
+        glm::vec3 pos = m_pCamera->GetPosition();
+        glm::vec3 direction = m_pCamera->GetDirection();
+        glm::vec3 up = m_pCamera->GetUp();
+        m_pCamera->SetPosition(pos + direction * (float)m_dSensitivity);
+    }
+    else if (IsKeyPressed(GLFW_KEY_S))
+    {
+        glm::vec3 pos = m_pCamera->GetPosition();
+        glm::vec3 direction = m_pCamera->GetDirection();
+        glm::vec3 up = m_pCamera->GetUp();
+        m_pCamera->SetPosition(pos - direction * (float)m_dSensitivity);
+    }
+    else if (IsKeyPressed(GLFW_KEY_A))
+    {
+        glm::vec3 pos = m_pCamera->GetPosition();
+        glm::vec3 direction = m_pCamera->GetDirection();
+        glm::vec3 up = m_pCamera->GetUp();
+        glm::vec3 right = glm::normalize(glm::cross(up, direction));
+        m_pCamera->SetPosition(pos + right * (float)m_dSensitivity);
+    }
+    else if (IsKeyPressed(GLFW_KEY_D))
+    {
+        glm::vec3 pos = m_pCamera->GetPosition();
+        glm::vec3 direction = m_pCamera->GetDirection();
+        glm::vec3 up = m_pCamera->GetUp();
+        glm::vec3 right = glm::normalize(glm::cross(up, direction));
+        m_pCamera->SetPosition(pos - right * (float)m_dSensitivity);
+    }
 }

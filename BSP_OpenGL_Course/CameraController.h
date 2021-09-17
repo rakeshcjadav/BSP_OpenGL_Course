@@ -9,6 +9,7 @@ class CCameraController : public IInputHandler
 public:
     CCameraController(IInputDelegator* pDelegator, CCamera* pCamera);
 
+    void Update() override;
 private:
 
     // IInputHandler
@@ -25,6 +26,7 @@ private:
     void OnMiddleMouseButtonDown(int mod) override;
     void OnMiddleMouseButtonUp(int mod) override;
     void GetMousePos(double& xPos, double& yPos) override;
+    bool IsKeyPressed(int key) override;
 
 private:
     CCamera* m_pCamera;

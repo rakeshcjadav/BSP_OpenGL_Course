@@ -19,7 +19,6 @@ int main()
         return false;
 
     CWindow* pWindow = CWindow::Create(1920, 1080, "Hello World");
-    pWindow->CreateScene();
 
     while(!pWindow->IsWindowClosed())
     {

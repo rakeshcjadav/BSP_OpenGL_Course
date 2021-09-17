@@ -9,6 +9,8 @@ struct SMeshData;
 class CMesh
 {
 public:
+    static CMesh* CreatePlane();
+public:
 	CMesh(const SMeshData * pData);
     void Bind();
     void UnBind();

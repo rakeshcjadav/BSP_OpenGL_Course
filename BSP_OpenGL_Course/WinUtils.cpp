@@ -43,7 +43,7 @@ std::string GetEnv(std::string varName)
     }
     else 
     {
-        BOOST_LOG_TRIVIAL(error) << varName << " env variable is not defined.";
+        std::cout << varName << " env variable is not defined.";
     }
     return mediaPath;
 }
