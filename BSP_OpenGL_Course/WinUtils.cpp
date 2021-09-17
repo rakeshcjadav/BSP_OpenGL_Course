@@ -43,7 +43,7 @@ std::string GetEnv(std::string varName)
     }
     else 
     {
-        std::cout << varName << " env variable is not defined.";
+        LOG_ERROR << varName << " env variable is not defined.";
     }
     return mediaPath;
 }

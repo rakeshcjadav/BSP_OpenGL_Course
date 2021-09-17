@@ -1,7 +1,14 @@
 #pragma once
 #ifndef WIN32
     #include<boost/log/trivial.hpp>
+    #define LOG_DEBUG BOOST_LOG_TRIVIAL(debug)
+    #define LOG_INFO BOOST_LOG_TRIVIAL(info)
+    #define LOG_ERROR BOOST_LOG_TRIVIAL(error)
 #else
 #include<iostream>
-#define BOOST_LOG_TRIVIAL(level) std::cout;
+    #define LOG_DEBUG std::out
+    #define LOG_INFO std::clog
+    #define LOG_ERROR std::cerr
 #endif
+
+

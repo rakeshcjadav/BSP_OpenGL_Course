@@ -66,8 +66,8 @@ void CProgram::LinkProgram()
         glGetProgramiv(m_IDProgram, GL_LINK_STATUS, &success);
         if (!success) {
             glGetProgramInfoLog(m_IDProgram, 512, NULL, infoLog);
-            std::cout << "PROGRAM::LINKING_FAILED";
-            std::cout << infoLog;
+            LOG_ERROR << "PROGRAM::LINKING_FAILED";
+            LOG_ERROR << infoLog;
         }
     }
 }
