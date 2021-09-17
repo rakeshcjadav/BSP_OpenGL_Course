@@ -27,7 +27,7 @@ glm::mat4 CTransform::GetTransform() const
     // Order : Scale -> Rotate -> Translate
     glm::mat4 transformMat = 
           glm::translate(glm::identity<glm::mat4>(), m_vPosition)
-        * glm::toMat4(glm::quat(m_vRotation))
+        * glm::toMat4(glm::quat(glm::radians(m_vRotation)))
         * glm::scale(glm::identity<glm::mat4>(), m_vScale);
     return transformMat;
 }

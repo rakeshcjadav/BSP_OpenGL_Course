@@ -13,7 +13,7 @@ CCameraController::CCameraController(IInputDelegator* pDelegator, CCamera* pCame
     // Center of Viewport
     //m_dLastXPos = m_pViewport->GetWidth() / 2.0;
     //m_dLastYPos = m_pViewport->GetHeight() / 2.0;
-    m_dSensitivity = 0.1;
+    m_dSensitivity = 0.05;
     m_vEulerAngles = glm::vec3(0.0f, -90.0f, 0.0f);
 }
 

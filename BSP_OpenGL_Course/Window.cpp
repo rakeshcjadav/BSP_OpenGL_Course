@@ -188,7 +188,7 @@ bool CWindow::Init(int width, int height, std::string strName)
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Tranparent blend or Alpha blend or Tranparent
     glEnable(GL_SCISSOR_TEST);
 
-    m_pViewport = new CViewport(0, 0, width/2, height);
+    m_pViewport = new CViewport(0, 0, width, height);
     m_pViewport2 = new CViewport(width/2, 0, width/2, height);
     CreateScene();
 
@@ -374,8 +374,8 @@ void CWindow::RenderOneFrame()
     m_pViewport->Clear(glm::vec4(0.0f, 0.0f, 0.2f, 1.0f));
     m_pViewport->Update(pCamera);
 
-    m_pViewport2->Clear(glm::vec4(0.2f, 0.0f, 0.2f, 1.0f));
-    m_pViewport2->Update(pCamera);
+    //m_pViewport2->Clear(glm::vec4(0.2f, 0.0f, 0.2f, 1.0f));
+   // m_pViewport2->Update(pCamera);
 
     /* Swap front and back buffers */
     glfwSwapBuffers(m_pWindow);

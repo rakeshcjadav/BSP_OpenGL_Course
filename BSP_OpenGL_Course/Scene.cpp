@@ -43,13 +43,13 @@ void CScene::CreateGameObjects()
     // Plane
     {
         CTransform* pPlaneTransform = new CTransform();
-        CGameObject* pPlane = new CGameObject(pPlaneTransform, pMesh, pMeshRenderer, m_mapMaterials["unlit_orange"]);
+        CGameObject* pPlane = new CGameObject(pPlaneTransform, pMesh, pMeshRenderer, m_mapMaterials["lit_orange"]);
         m_listGameObjects.push_back(pPlane);
     }
     // Plane 2
     {
-        CTransform* pPlaneTransform = new CTransform(glm::vec3(0.0f, 1.0f, 0.0f));
-        CGameObject* pPlane = new CGameObject(pPlaneTransform, pMesh, pMeshRenderer, m_mapMaterials["lit_green"]);
+        CTransform* pPlaneTransform = new CTransform(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f));
+        CGameObject* pPlane = new CGameObject(pPlaneTransform, pMesh, pMeshRenderer, m_mapMaterials["unlit_green"]);
         m_listGameObjects.push_back(pPlane);
     }
 }
@@ -99,6 +99,6 @@ void CScene::CreateMaterials()
 
     m_mapMaterials["unlit_orange"] = new CMaterial("unlit_orange", CMaterial::BlendType::TRANSPARENT, pOrangeProperties, pProgramUnlit, listTextures);
     m_mapMaterials["unlit_green"] = new CMaterial("unlit_green", CMaterial::BlendType::TRANSPARENT, pGreenProperties, pProgramUnlit, listTextures);
-    m_mapMaterials["lit_orange"] = new CMaterial("lit_orange", CMaterial::BlendType::OPAQUE, pOrangeProperties, pProgramLit, listTextures);
-    m_mapMaterials["lit_green"] = new CMaterial("lit_green", CMaterial::BlendType::OPAQUE, pGreenProperties, pProgramLit, listTextures);
+    m_mapMaterials["lit_orange"] = new CMaterial("lit_orange", CMaterial::BlendType::TRANSPARENT, pOrangeProperties, pProgramLit, listTextures);
+    m_mapMaterials["lit_green"] = new CMaterial("lit_green", CMaterial::BlendType::TRANSPARENT, pGreenProperties, pProgramLit, listTextures);
 }
