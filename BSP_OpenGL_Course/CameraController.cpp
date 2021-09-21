@@ -10,39 +10,35 @@ CCameraController::CCameraController(IInputDelegator* pDelegator, CCamera* pCame
 {
     m_pCamera = pCamera;
 
-    // Center of Viewport
-    //m_dLastXPos = m_pViewport->GetWidth() / 2.0;
-    //m_dLastYPos = m_pViewport->GetHeight() / 2.0;
+    m_vCameraInitialPos = m_pCamera->GetPosition();
+    m_vCameraInitialDirection = m_pCamera->GetDirection();
+    m_vCameraInitialUp = m_pCamera->GetUp();
+
     m_dSensitivity = 0.05;
-    m_vEulerAngles = glm::vec3(0.0f, -90.0f, 0.0f);
+    m_vEulerAngles = glm::degrees(glm::eulerAngles(glm::quatLookAt(m_pCamera->GetDirection(), m_pCamera->GetUp())));
+    m_vEulerAngles.y += -90.0f;
+}
+
+void CCameraController::ResetCamera()
+{
+    m_pCamera->SetPosition(m_vCameraInitialPos);
+    m_pCamera->SetDirection(m_vCameraInitialDirection);
+    m_pCamera->SetUp(m_vCameraInitialUp);
+
+    m_vEulerAngles = glm::degrees(glm::eulerAngles(glm::quatLookAt(m_pCamera->GetDirection(), m_pCamera->GetUp())));
+    m_vEulerAngles.y += -90.0f;
 }
 
 void CCameraController::OnKeyPressed(int key, int mod)
 {
-    /*
-    //std::cout << "Camera recevied the Key pressed event : " << key << ", " << mod;
-    glm::vec3 pos = m_pCamera->GetPosition();
-    glm::vec3 direction = m_pCamera->GetDirection();
-    glm::vec3 up = m_pCamera->GetUp();
-
-    if (key == GLFW_KEY_W)
+    if (key == GLFW_KEY_P)
     {
-        m_pCamera->SetPosition(pos + direction * 1.0f);
+        ResetCamera();
     }
-    else if (key == GLFW_KEY_S)
+    else if (key == GLFW_KEY_H)
     {
-        m_pCamera->SetPosition(pos - direction * 1.0f);
+        m_pCamera->SetFOV(45.0f);
     }
-    else if (key == GLFW_KEY_A)
-    {
-        glm::vec3 right = glm::normalize(glm::cross(up, direction));
-        m_pCamera->SetPosition(pos + right * 1.0f);
-    }
-    else if (key == GLFW_KEY_D)
-    {
-        glm::vec3 right = glm::normalize(glm::cross(up, direction));
-        m_pCamera->SetPosition(pos - right * 1.0f);
-    }*/
 }
 
 void CCameraController::OnKeyReleased(int key, int mod)

@@ -10,5 +10,3 @@
     #define LOG_INFO std::clog
     #define LOG_ERROR std::cerr
 #endif
-
-

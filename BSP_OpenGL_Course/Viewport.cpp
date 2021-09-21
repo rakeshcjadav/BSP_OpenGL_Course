@@ -8,8 +8,6 @@ CViewport::CViewport(int posX, int posY, int width, int height)
     m_posY = posY;
     m_iWidth = width;
     m_iHeight = height;
-
-    
 }
 
 float CViewport::GetAspectRatio() const

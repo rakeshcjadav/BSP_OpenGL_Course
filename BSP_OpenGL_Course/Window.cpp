@@ -2,31 +2,9 @@
 #include"OpenGL.h"
 #include"Viewport.h"
 #include"Camera.h"
-#include"Mesh.h"
-#include"Texture.h"
-#include"Program.h"
 #include"Log.h"
 #include"CameraController.h"
-#include"Light.h"
-#include"Material.h"
 #include"Scene.h"
-
-CMesh* CreateMeshUsingVBOnEBO()
-{
-    // Local Positions of vertices
-    SMeshData meshData;
-    meshData.aVertices.push_back(SVertex(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f)));
-    meshData.aVertices.push_back(SVertex(glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 0.0f)));
-    meshData.aVertices.push_back(SVertex(glm::vec3(0.5f, 0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 1.0f)));
-    meshData.aVertices.push_back(SVertex(glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 1.0f)));
-
-    meshData.aIndices = {
-        0, 1, 2,
-        2, 3, 0
-    };
-
-    return new CMesh(&meshData);
-}
 
 unsigned int CreateMeshUsingVBO(int& vertexCount)
 {
@@ -53,63 +31,6 @@ unsigned int CreateMeshUsingVBO(int& vertexCount)
     return VAO;
 }
 
-void RenderMesh_Elements(
-    CMesh* pMesh,
-    CMaterial * pMaterial, CLight * pLight, CCamera* pCamera,
-    bool bWireframe, float* color)
-{
-    if (bWireframe)
-    {
-        glDisable(GL_CULL_FACE);
-        glLineWidth(2.0f);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    }
-    else
-    {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
-    }
-
-    pMesh->Bind();
-    {
-        pMaterial->Bind();
-        {
-            float currentTime = (float)glfwGetTime();
-            float fScale = 0.1f + 1.5f * fabsf(sinf(0.05f * currentTime));
-            float fSineTime = 1.0f * sinf(currentTime);
-
-            pMaterial->SetUniform("Scale", fScale);
-            pMaterial->SetUniform("SineTime", fSineTime);
-
-            // World Matrix or Model Matrix
-            glm::mat4 transformMat = glm::identity<glm::mat4>();
-            // Order : Scale -> Rotate -> Translate
-            transformMat = glm::translate(transformMat, glm::vec3(0.0f, 0.0f, 0.0f) /* World Position of the object */);
-            transformMat = glm::rotate(transformMat, glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-            transformMat = glm::scale(transformMat, glm::vec3(1.0f, 1.0f, 1.0f));
-
-            // Camera
-            glm::mat4 cameraMat = pCamera->GetViewMatrix();
-            glm::mat4 projectionMat = pCamera->GetProjectionMatrix();
-            glm::vec3 cameraPos = pCamera->GetPosition();
-            pMaterial->SetUniform("TransformMat", transformMat);
-            pMaterial->SetUniform("CameraMat", cameraMat);
-            pMaterial->SetUniform("ProjectionMat", projectionMat);
-            pMaterial->SetUniform("CameraPos", cameraPos);
-            pMaterial->SetUniform("ObjectColor", color);
-
-            // Light
-            glm::vec3 lightPos = pLight->GetPosition();
-            lightPos.y = fSineTime * 5.0f;
-            pMaterial->SetUniform("LightPos", lightPos);
-            glm::vec3 lightColor = pLight->GetColor();
-            pMaterial->SetUniform("LightColor", lightColor);
-        }
-    }
-    pMesh->Render();
-    pMesh->UnBind();
-}
 
 void RenderMesh_Arrays(unsigned int meshID, int vertexCount, unsigned int programID, float* color)
 {
@@ -159,6 +80,7 @@ bool CWindow::Init(int width, int height, std::string strName)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_SAMPLES, 4);
     /* Create a windowed mode window and its OpenGL context */
     m_pWindow = glfwCreateWindow(width, height, strName.c_str(), NULL, NULL);
     if (!m_pWindow)
@@ -187,9 +109,10 @@ bool CWindow::Init(int width, int height, std::string strName)
     //glBlendFunc(GL_ONE, GL_ZERO);  // Replace blend or Opaque
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Tranparent blend or Alpha blend or Tranparent
     glEnable(GL_SCISSOR_TEST);
+    glEnable(GL_MULTISAMPLE);
 
     m_pViewport = new CViewport(0, 0, width, height);
-    m_pViewport2 = new CViewport(width/2, 0, width/2, height);
+    //m_pViewport2 = new CViewport(width/2, 0, width/2, height);
     CreateScene();
 
     return true;
@@ -374,8 +297,9 @@ void CWindow::RenderOneFrame()
     m_pViewport->Clear(glm::vec4(0.0f, 0.0f, 0.2f, 1.0f));
     m_pViewport->Update(pCamera);
 
+    //CCamera* pCamera2 = m_pScene->GetCamera("SecondCamera");
     //m_pViewport2->Clear(glm::vec4(0.2f, 0.0f, 0.2f, 1.0f));
-   // m_pViewport2->Update(pCamera);
+    //m_pViewport2->Update(pCamera);
 
     /* Swap front and back buffers */
     glfwSwapBuffers(m_pWindow);

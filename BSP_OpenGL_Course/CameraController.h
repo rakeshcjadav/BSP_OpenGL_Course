@@ -12,6 +12,8 @@ public:
     void Update() override;
 private:
 
+    void ResetCamera();
+
     // IInputHandler
     void OnKeyPressed(int key, int mod) override;
     void OnKeyReleased(int key, int mod) override;
@@ -30,6 +32,10 @@ private:
 
 private:
     CCamera* m_pCamera;
+
+    glm::vec3 m_vCameraInitialPos;
+    glm::vec3 m_vCameraInitialDirection;
+    glm::vec3 m_vCameraInitialUp;
 
     // TODO : Move to CameraMovement
     double m_dLastXPos;

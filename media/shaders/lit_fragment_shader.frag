@@ -37,7 +37,7 @@ vec3 DiffuseLight(vec3 normal, vec3 lightPos, vec3 worldPos, vec3 lightColor)
     float fDist = distance(lightPos, worldPos);
 
     float fAttenuation = 1.0f/(atten.x + atten.y*fDist + atten.z*fDist*fDist);
-    return fDiffuse * fAttenuation * lightColor;
+    return vec3(fDiffuse) * fAttenuation * lightColor;
 }
 
 vec3 SpecularLight(vec3 normal, vec3 lightPos, vec3 worldPos, vec3 cameraPos, vec3 lightColor)
@@ -46,9 +46,9 @@ vec3 SpecularLight(vec3 normal, vec3 lightPos, vec3 worldPos, vec3 cameraPos, ve
     vec3 reflectDirection = reflect(-lightDirection, normal);
 
     vec3 cameraDirection = normalize(cameraPos - worldPos);
-    float fSpectular = pow(max(dot(reflectDirection, cameraDirection), 0.0f), material.uShininess);
+    float fSpectular = pow(max(dot(reflectDirection, cameraDirection), 0.0f), 5);
 
-    return fSpectular * lightColor;
+    return fSpectular * lightColor * material.uShininess;
 }
 
 void main()
@@ -58,7 +58,7 @@ void main()
     vec3 specularColor = SpecularLight(outNormal, LightPos, outWorldPos, CameraPos, LightColor) * material.uSpecularColor;
     vec3 final = ambientColor + diffuseColor + specularColor;
 
-    vec4 objectColor = texture(MainTex, outTexCoord);
+    //vec4 objectColor = vec4(1.0f);//texture(MainTex, outTexCoord);
 
-    FragColor = objectColor * vec4(final, 1.0f);
+    FragColor = vec4(final, 1.0f);
 }

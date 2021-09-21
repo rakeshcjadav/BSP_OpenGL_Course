@@ -16,7 +16,7 @@ void CGameObject::Update()
 
 }
 
-void CGameObject::Render(CCamera* pCamera, std::list<CLight*> listLights)
+void CGameObject::Render(CCamera* pCamera, std::list<CLight*> * pListLights)
 {
-    m_pMeshRenderer->Render(m_pMesh, m_pTransform, m_pMaterial, pCamera, listLights);
+    m_pMeshRenderer->Render(m_pMesh, m_pTransform, m_pMaterial, pCamera, pListLights);
 }

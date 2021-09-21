@@ -14,7 +14,7 @@ public:
     CGameObject(CTransform * pTranform, CMesh * pMesh, CMeshRenderer * pMeshRenderer, CMaterial * pMaterial);
 
     void Update();
-    void Render(CCamera* pCamera, std::list<CLight*> listLights);
+    void Render(CCamera* pCamera, std::list<CLight*> * pListLights);
 private:
     CTransform* m_pTransform;
     CMesh* m_pMesh;
