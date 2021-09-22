@@ -38,7 +38,7 @@ out vec4 FragColor;
 
 vec3 AmbientLight(vec3 lightColor)
 {
-    float ambientStrength = 0.05;
+    float ambientStrength = 0.1;
     return ambientStrength * lightColor;
 }
 
@@ -85,24 +85,25 @@ void ApplyDirectionalLights(inout vec3 ambientColor, inout vec3 diffuseColor, in
 {
     ambientColor += AmbientLight(directionalLight.color);
     diffuseColor += DiffuseLight(outNormal, -directionalLight.direction, directionalLight.color);
-    //specularColor += SpecularDirectionalLight(outNormal, directionalLight.direction, outWorldPos, CameraPos, directionalLight.color);
+    specularColor += SpecularDirectionalLight(outNormal, -directionalLight.direction, outWorldPos, CameraPos, directionalLight.color);
 }
 
 void main()
 {
-   vec3 ambientColor = vec3(0.0f);
-   vec3 diffuseColor = vec3(0.0f);
-   vec3 specularColor = vec3(0.0f);
-   //ApplyDirectionalLights(ambientColor, diffuseColor, specularColor);
-   ApplyPointLights(ambientColor, diffuseColor, specularColor);
+    vec3 ambientColor = vec3(0.0f);
+    vec3 diffuseColor = vec3(0.0f);
+    vec3 specularColor = vec3(0.0f);
+    ApplyDirectionalLights(ambientColor, diffuseColor, specularColor);
+    ApplyPointLights(ambientColor, diffuseColor, specularColor);
 
     vec4 diffuseTexColor = texture(DiffuseTex, outTexCoord);
+    ambientColor *= diffuseTexColor.rgb;
     diffuseColor *= diffuseTexColor.rgb;
 
     vec4 specularTexColor = texture(SpecularTex, outTexCoord);
     specularColor *= specularTexColor.rgb;
 
-    vec3 final = ambientColor + diffuseColor + specularColor.rgb;
+    vec3 final = ambientColor + diffuseColor + specularColor;
 
     FragColor = vec4(final, 1.0f);
 }

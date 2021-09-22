@@ -94,7 +94,7 @@ void CScene::CreateCameras()
 void CScene::CreateLights()
 {
     m_listLights.push_back(new CDirectionalLight(glm::normalize(glm::vec3(1.f, -1.0f, -1.f)), glm::vec3(0.4f, 0.4f, 0.31f)));
-    m_listLights.push_back(new CPointLight(glm::vec3(1.f, 4.5f, 1.f), glm::vec3(0.5f, 0.5f, 0.56f), glm::vec3(1.0f, 0.05f, 0.001f)));
+    m_listLights.push_back(new CPointLight(glm::vec3(1.f, 4.5f, 1.f), glm::vec3(0.85f, 0.85f, 0.856f), glm::vec3(1.0f, 0.05f, 0.001f)));
 }
 
 void CScene::CreateMaterials()
@@ -120,7 +120,7 @@ void CScene::CreateMaterials()
     SMaterialProperties* pGreenProperties = new SMaterialProperties(
         glm::vec3(0.5f, 1.0f, 0.31f),
         glm::vec3(0.5f, 1.0f, 0.31f),
-        glm::vec3(0.5f, 1.0f, 0.31f), 5, 0.2f
+        glm::vec3(0.5f, 1.0f, 0.31f), 32, 1.0f
     );
 
     SMaterialProperties* pRedProperties = new SMaterialProperties(
