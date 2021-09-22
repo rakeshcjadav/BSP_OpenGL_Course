@@ -63,7 +63,7 @@ void CScene::CreateGameObjects()
     // Green Cube
     {
         CTransform* pTransform = new CTransform(glm::vec3(-2.0f, 1.0f, -2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f));
-        CGameObject* pObject = new CGameObject(pTransform, pCubeMesh, pMeshRenderer, m_mapMaterials["lit_green"]);
+        CGameObject* pObject = new CGameObject(pTransform, pCubeMesh, pMeshRenderer, m_mapMaterials["unlit_green"]);
         m_listGameObjects.push_back(pObject);
     }
     // Red Cube
@@ -94,18 +94,18 @@ void CScene::CreateCameras()
 void CScene::CreateLights()
 {
     m_listLights.push_back(new CDirectionalLight(glm::normalize(glm::vec3(1.f, -1.0f, -1.f)), glm::vec3(0.4f, 0.4f, 0.31f)));
-    m_listLights.push_back(new CPointLight(glm::vec3(1.f, 4.5f, 1.f), glm::vec3(0.85f, 0.85f, 0.856f), glm::vec3(1.0f, 0.05f, 0.001f)));
+    m_listLights.push_back(new CPointLight(glm::vec3(1.f, 4.5f, 1.f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 0.05f, 0.001f)));
 }
 
 void CScene::CreateMaterials()
 {
-    std::list<CTexture*> listTextures;
-    listTextures.push_back(new CTexture("minion-transparent-background-9.png"));
-    listTextures.push_back(new CTexture("minion.jpg"));
+    std::map<std::string, CTexture*> mapTextures;
+    mapTextures["MainTex"] = new CTexture("minion-transparent-background-9.png");
+    mapTextures["SecondTex"] = new CTexture("minion.jpg");
 
-    std::list<CTexture*> listDiffuseSpecularTextures;
-    listDiffuseSpecularTextures.push_back(new CTexture("container\\container.png"));
-    listDiffuseSpecularTextures.push_back(new CTexture("container\\container_specular.png"));
+    std::map<std::string, CTexture*> mapDiffuseSpecularTextures;
+    mapDiffuseSpecularTextures["DiffuseTex"] = new CTexture("container\\container.png");
+    mapDiffuseSpecularTextures["SpecularTex"] = new CTexture("container\\container_specular.png");
 
     CProgram* pProgramUnlit = new CProgram("unlit_vertex_shader.vert", "unlit_fragment_shader.frag");
     CProgram* pProgramLit = new CProgram("lit_vertex_shader.vert", "lit_fragment_shader.frag");
@@ -136,15 +136,15 @@ void CScene::CreateMaterials()
     );
 
     // Unlit
-    m_mapMaterials["unlit_orange"] = new CMaterial("unlit_orange", CMaterial::BlendType::TRANSPARENT, pOrangeProperties, pProgramUnlit, listTextures);
-    m_mapMaterials["unlit_green"] = new CMaterial("unlit_green", CMaterial::BlendType::TRANSPARENT, pGreenProperties, pProgramUnlit, listTextures);
-    m_mapMaterials["unlit_white"] = new CMaterial("unlit_white", CMaterial::BlendType::TRANSPARENT, pWhiteProperties, pProgramUnlit, listTextures);
+    m_mapMaterials["unlit_orange"] = new CMaterial("unlit_orange", CMaterial::BlendType::TRANSPARENT, pOrangeProperties, pProgramUnlit, mapTextures);
+    m_mapMaterials["unlit_green"] = new CMaterial("unlit_green", CMaterial::BlendType::TRANSPARENT, pGreenProperties, pProgramUnlit, mapTextures);
+    m_mapMaterials["unlit_white"] = new CMaterial("unlit_white", CMaterial::BlendType::TRANSPARENT, pWhiteProperties, pProgramUnlit, mapTextures);
     
     // Lit
-    m_mapMaterials["lit_orange"] = new CMaterial("lit_orange", CMaterial::BlendType::TRANSPARENT, pOrangeProperties, pProgramLit, listTextures);
-    m_mapMaterials["lit_green"] = new CMaterial("lit_green", CMaterial::BlendType::TRANSPARENT, pGreenProperties, pProgramLit, listTextures);
+    m_mapMaterials["lit_orange"] = new CMaterial("lit_orange", CMaterial::BlendType::TRANSPARENT, pOrangeProperties, pProgramLit, mapTextures);
+    m_mapMaterials["lit_green"] = new CMaterial("lit_green", CMaterial::BlendType::TRANSPARENT, pGreenProperties, pProgramLit, mapTextures);
     m_mapMaterials["lit_red"] = new CMaterial("lit_red", CMaterial::BlendType::TRANSPARENT, pRedProperties, pProgramLit, listTextures);
 
     // Diffuse Specular
-    m_mapMaterials["lit_diff_spec"] = new CMaterial("lit_diff_spec", CMaterial::BlendType::TRANSPARENT, pWhiteProperties, pProgramDiffuseSpecular, listDiffuseSpecularTextures);
+    m_mapMaterials["lit_diff_spec"] = new CMaterial("lit_diff_spec", CMaterial::BlendType::TRANSPARENT, pWhiteProperties, pProgramDiffuseSpecular, mapDiffuseSpecularTextures);
 }

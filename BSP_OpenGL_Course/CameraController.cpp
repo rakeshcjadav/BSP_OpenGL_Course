@@ -169,4 +169,17 @@ void CCameraController::Update()
         glm::vec3 right = glm::normalize(glm::cross(up, direction));
         m_pCamera->SetPosition(pos - right * (float)m_dSensitivity);
     }
+    else if (IsKeyPressed(GLFW_KEY_Q))
+    {
+        glm::vec3 pos = m_pCamera->GetPosition();
+        glm::vec3 up = m_pCamera->GetUp();
+        m_pCamera->SetPosition(pos - up * (float)m_dSensitivity);
+    }
+    else if (IsKeyPressed(GLFW_KEY_R))
+    {
+        glm::vec3 pos = m_pCamera->GetPosition();
+        glm::vec3 up = m_pCamera->GetUp();
+        m_pCamera->SetPosition(pos + up * (float)m_dSensitivity);
+    }
+
 }

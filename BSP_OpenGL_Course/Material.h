@@ -1,6 +1,6 @@
 #pragma once
 #include<string>
-#include<list>
+#include<map>
 #include"GLM.h"
 
 // Forward Declarations
@@ -18,7 +18,7 @@ public:
         OPAQUE = 1
     };
 public:
-    CMaterial(std::string strName, BlendType blendType, SMaterialProperties * pProperties, CProgram * pProgram, std::list<CTexture*> listTextures);
+    CMaterial(std::string strName, BlendType blendType, SMaterialProperties * pProperties, CProgram * pProgram, std::map<std::string, CTexture*> mapTextures);
     void Bind();
     void SetUniform(std::string name, int value);
     void SetUniform(std::string name, float value);
@@ -31,7 +31,7 @@ private:
     BlendType m_blendType = BlendType::OPAQUE;
     SMaterialProperties* m_pProperties;
     CProgram* m_pProgram;
-    std::list<CTexture*> m_listTextures;
+    std::map<std::string, CTexture*> m_mapTextures;
 };
 
 

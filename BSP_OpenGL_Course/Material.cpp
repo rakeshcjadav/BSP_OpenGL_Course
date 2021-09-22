@@ -3,13 +3,13 @@
 #include"Program.h"
 #include"OpenGL.h"
 
-CMaterial::CMaterial(std::string strName, BlendType blendType, SMaterialProperties * pProperties, CProgram* pProgram, std::list<CTexture*> listTextures)
+CMaterial::CMaterial(std::string strName, BlendType blendType, SMaterialProperties * pProperties, CProgram* pProgram, std::map<std::string, CTexture*> mapTextures)
 {
     m_strName = strName;
     m_blendType = blendType;
     m_pProperties = pProperties;
     m_pProgram = pProgram;
-    m_listTextures = listTextures;
+    m_mapTextures = mapTextures;
 }
 
 void CMaterial::Bind()
@@ -27,15 +27,17 @@ void CMaterial::Bind()
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Tranparent blend or Alpha blend or Tranparent
     }
-    unsigned int i = 0;
-    for (CTexture* pTexture : m_listTextures)
-    {
-        pTexture->Bind(i++);
-    }
     m_pProgram->Use();
 
-    m_pProgram->SetUniform("DiffuseTex", 0);
-    m_pProgram->SetUniform("SpecularTex", 1);
+    int i = 0;
+    for (auto itr = m_mapTextures.begin(); itr != m_mapTextures.end(); itr++)
+    {
+        std::string uniformName = itr->first;
+        CTexture* pTexture = itr->second;
+        pTexture->Bind(i);
+        m_pProgram->SetUniform(uniformName, i);
+        i++;
+    }
 
     if (m_pProperties)
     {

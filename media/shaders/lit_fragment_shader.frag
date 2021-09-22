@@ -28,6 +28,7 @@ in vec3 outNormal;
 in vec2 outTexCoord;
 
 uniform sampler2D MainTex;
+uniform sampler2D SecondTex;
 uniform vec3 CameraPos;
 uniform PointLight pointLight;
 uniform DirectionalLight directionalLight;

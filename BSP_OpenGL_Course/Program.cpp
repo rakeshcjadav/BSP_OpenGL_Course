@@ -13,6 +13,27 @@ CProgram::CProgram(std::string strVertexShaderFile, std::string strFragmentShade
     AttachShader(pShaderFS);
     LinkProgram();
 
+    GLint i;
+    GLint count;
+
+    GLint size; // size of the variable
+    GLenum type; // type of the variable (float, vec3 or mat4, etc)
+
+    const GLsizei bufSize = 128; // maximum name length
+    GLchar name[bufSize]; // variable name in GLSL
+    GLsizei length; // name length
+
+    glGetProgramiv(m_IDProgram, GL_ACTIVE_UNIFORMS, &count);
+
+    std::cout << std::endl << count << std::endl;
+
+    for (i = 0; i < count; i++)
+    {
+        glGetActiveUniform(m_IDProgram, (GLuint)i, bufSize, &length, &size, &type, name);
+
+        printf("Uniform #%d Type: 0x%x Name: %s\n", i, type, name);
+    }
+
     delete pShaderVS;
     delete pShaderFS;
 }
