@@ -27,7 +27,8 @@ in vec3 outWorldPos;
 in vec3 outNormal;
 in vec2 outTexCoord;
 
-uniform sampler2D MainTex;
+uniform sampler2D DiffuseTex;
+uniform sampler2D SpecularTex;
 uniform vec3 CameraPos;
 uniform PointLight pointLight;
 uniform DirectionalLight directionalLight;
@@ -41,7 +42,7 @@ vec3 AmbientLight(vec3 lightColor)
     return ambientStrength * lightColor;
 }
 
-vec3 DiffuseDirectionalLight(vec3 normal, vec3 lightDirection, vec3 lightColor)
+vec3 DiffuseLight(vec3 normal, vec3 lightDirection, vec3 lightColor)
 {
     float fDiffuse = max(dot(normal, lightDirection), 0.0f);
     return vec3(fDiffuse) * lightColor;
@@ -50,7 +51,7 @@ vec3 DiffuseDirectionalLight(vec3 normal, vec3 lightDirection, vec3 lightColor)
 vec3 DiffuseLight(vec3 normal, vec3 lightPos, vec3 worldPos, vec3 lightColor, vec3 atten)
 {
     vec3 lightDirection = normalize(lightPos - worldPos);
-    vec3 diffuseColor = DiffuseDirectionalLight(normal, lightDirection, lightColor);
+    vec3 diffuseColor = DiffuseLight(normal, lightDirection, lightColor);
 
     float fDist = distance(lightPos, worldPos);
     float fAttenuation = 1.0f/(atten.x + atten.y*fDist + atten.z*fDist*fDist);
@@ -83,18 +84,23 @@ void ApplyPointLights(inout vec3 ambientColor, inout vec3 diffuseColor, inout ve
 void ApplyDirectionalLights(inout vec3 ambientColor, inout vec3 diffuseColor, inout vec3 specularColor)
 {
     ambientColor += AmbientLight(directionalLight.color);
-    diffuseColor += DiffuseDirectionalLight(outNormal, -directionalLight.direction, directionalLight.color);
-    //specularColor += SpecularDirectionalLight(outNormal, -directionalLight.direction, outWorldPos, CameraPos, directionalLight.color);
+    diffuseColor += DiffuseLight(outNormal, -directionalLight.direction, directionalLight.color);
+    //specularColor += SpecularDirectionalLight(outNormal, directionalLight.direction, outWorldPos, CameraPos, directionalLight.color);
 }
-
 
 void main()
 {
-    vec3 ambientColor = vec3(0.0f);
-    vec3 diffuseColor = vec3(0.0f);
-    vec3 specularColor = vec3(0.0f);
-    //ApplyDirectionalLights(ambientColor, diffuseColor, specularColor);
-    ApplyPointLights(ambientColor, diffuseColor, specularColor);
+   vec3 ambientColor = vec3(0.0f);
+   vec3 diffuseColor = vec3(0.0f);
+   vec3 specularColor = vec3(0.0f);
+   //ApplyDirectionalLights(ambientColor, diffuseColor, specularColor);
+   ApplyPointLights(ambientColor, diffuseColor, specularColor);
+
+    vec4 diffuseTexColor = texture(DiffuseTex, outTexCoord);
+    diffuseColor *= diffuseTexColor.rgb;
+
+    vec4 specularTexColor = texture(SpecularTex, outTexCoord);
+    specularColor *= specularTexColor.rgb;
 
     vec3 final = ambientColor + diffuseColor + specularColor.rgb;
 

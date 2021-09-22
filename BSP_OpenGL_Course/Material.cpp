@@ -10,9 +10,6 @@ CMaterial::CMaterial(std::string strName, BlendType blendType, SMaterialProperti
     m_pProperties = pProperties;
     m_pProgram = pProgram;
     m_listTextures = listTextures;
-
-    m_pProgram->SetUniform("MainTex", 0);
-    m_pProgram->SetUniform("SecondTex", 1);
 }
 
 void CMaterial::Bind()
@@ -37,10 +34,17 @@ void CMaterial::Bind()
     }
     m_pProgram->Use();
 
-    m_pProgram->SetUniform("material.uAmbientColor", m_pProperties->colorAmbient);
-    m_pProgram->SetUniform("material.uDiffuseColor", m_pProperties->colorDiffuse);
-    m_pProgram->SetUniform("material.uSpecularColor", m_pProperties->colorSpecular);
-    m_pProgram->SetUniform("material.uShininess", m_pProperties->fShininess);
+    m_pProgram->SetUniform("DiffuseTex", 0);
+    m_pProgram->SetUniform("SpecularTex", 1);
+
+    if (m_pProperties)
+    {
+        m_pProgram->SetUniform("material.uAmbientColor", m_pProperties->colorAmbient);
+        m_pProgram->SetUniform("material.uDiffuseColor", m_pProperties->colorDiffuse);
+        m_pProgram->SetUniform("material.uSpecularColor", m_pProperties->colorSpecular);
+        m_pProgram->SetUniform("material.uSpecularStrength", m_pProperties->fSpecularStrength);
+        m_pProgram->SetUniform("material.uShininess", m_pProperties->fShininess);
+    }
 }
 
 void CMaterial::SetUniform(std::string name, int value)

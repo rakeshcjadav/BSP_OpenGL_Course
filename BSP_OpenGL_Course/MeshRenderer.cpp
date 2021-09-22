@@ -19,7 +19,7 @@ void CMeshRenderer::Render(CMesh* pMesh, CTransform* pTransform, CMaterial* pMat
             float currentTime = 0.0f;// (float)glfwGetTime();
             float fScale = 0.1f + 1.5f * fabsf(sinf(0.05f * currentTime));
             float fSineTime = 1.0f * sinf(currentTime);
-
+            
             pMaterial->SetUniform("Scale", fScale);
             pMaterial->SetUniform("SineTime", fSineTime);
 
@@ -38,14 +38,16 @@ void CMeshRenderer::Render(CMesh* pMesh, CTransform* pTransform, CMaterial* pMat
             pMaterial->SetUniform("CameraPos", cameraPos);
 
             // Light
+            for (CLight* pLight : *pListLights)
+            {
+                pLight->Bind(pMaterial);
+            }
+            /*
             if (pListLights)
             {
                 CLight* pLight = *(pListLights->begin());
-                glm::vec3 lightPos = pLight->GetPosition();
-                pMaterial->SetUniform("LightPos", lightPos);
-                glm::vec3 lightColor = pLight->GetColor();
-                pMaterial->SetUniform("LightColor", lightColor);
-            }
+                pLight->Bind(pMaterial);
+            }*/
         }
     }
     pMesh->Render();

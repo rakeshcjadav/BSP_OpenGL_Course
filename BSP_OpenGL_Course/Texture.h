@@ -10,5 +10,6 @@ public:
 private:
 	unsigned char* LoadTexture(std::string strTextureFile, int& width, int& height, int& format);
 private:
+	std::string m_strName;
 	unsigned int m_IDTexture;
 };

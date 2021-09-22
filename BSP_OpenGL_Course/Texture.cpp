@@ -6,6 +6,7 @@
 
 CTexture::CTexture(std::string strTextureFile)
 {
+    m_strName = strTextureFile;
     int width, height, format;
     unsigned char* data = LoadTexture(strTextureFile, width, height, format);
 

@@ -1,7 +1,8 @@
 #include"Scene.h"
 #include"Material.h"
 #include"Camera.h"
-#include"Light.h"
+#include"PointLight.h"
+#include"DirectionalLight.h"
 #include"GameObject.h"
 #include"Texture.h"
 #include"Program.h"
@@ -68,7 +69,7 @@ void CScene::CreateGameObjects()
     // Red Cube
     {
         CTransform* pTransform = new CTransform(glm::vec3(3.0f, 1.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f));
-        CGameObject* pPlane = new CGameObject(pTransform, pCubeMesh, pMeshRenderer, m_mapMaterials["lit_red"]);
+        CGameObject* pPlane = new CGameObject(pTransform, pCubeMesh, pMeshRenderer, m_mapMaterials["lit_diff_spec"]);
         m_listGameObjects.push_back(pPlane);
     }
 }
@@ -92,7 +93,8 @@ void CScene::CreateCameras()
 
 void CScene::CreateLights()
 {
-    m_listLights.push_back(new CLight(glm::vec3(1.f, 4.5f, 1.f), glm::vec3(1.0f, 1.0f, 1.0f)));
+    m_listLights.push_back(new CDirectionalLight(glm::normalize(glm::vec3(1.f, -1.0f, -1.f)), glm::vec3(0.4f, 0.4f, 0.31f)));
+    m_listLights.push_back(new CPointLight(glm::vec3(1.f, 4.5f, 1.f), glm::vec3(0.5f, 0.5f, 0.56f), glm::vec3(1.0f, 0.05f, 0.001f)));
 }
 
 void CScene::CreateMaterials()
@@ -101,31 +103,36 @@ void CScene::CreateMaterials()
     listTextures.push_back(new CTexture("minion-transparent-background-9.png"));
     listTextures.push_back(new CTexture("minion.jpg"));
 
+    std::list<CTexture*> listDiffuseSpecularTextures;
+    listDiffuseSpecularTextures.push_back(new CTexture("container\\container.png"));
+    listDiffuseSpecularTextures.push_back(new CTexture("container\\container_specular.png"));
+
     CProgram* pProgramUnlit = new CProgram("unlit_vertex_shader.vert", "unlit_fragment_shader.frag");
     CProgram* pProgramLit = new CProgram("lit_vertex_shader.vert", "lit_fragment_shader.frag");
+    CProgram* pProgramDiffuseSpecular = new CProgram("lit_vertex_shader.vert", "lit_fragment_diffuse_specular_shader.frag");
 
     SMaterialProperties* pOrangeProperties = new SMaterialProperties(
         glm::vec3(1.0f, 0.5f, 0.31f),
         glm::vec3(1.0f, 0.5f, 0.31f),
-        glm::vec3(1.0f, 0.5f, 0.31f), 0.2f
+        glm::vec3(1.0f, 0.5f, 0.31f), 5, 0.2f
     );
 
     SMaterialProperties* pGreenProperties = new SMaterialProperties(
         glm::vec3(0.5f, 1.0f, 0.31f),
         glm::vec3(0.5f, 1.0f, 0.31f),
-        glm::vec3(0.5f, 1.0f, 0.31f), 0.2f
+        glm::vec3(0.5f, 1.0f, 0.31f), 5, 0.2f
     );
 
     SMaterialProperties* pRedProperties = new SMaterialProperties(
         glm::vec3(1.0f, 0.20f, 0.31f),
         glm::vec3(1.0f, 0.20f, 0.31f),
-        glm::vec3(1.0f, 0.20f, 0.31f), 0.2f
+        glm::vec3(1.0f, 0.20f, 0.31f), 5, 0.2f
     );
 
     SMaterialProperties* pWhiteProperties = new SMaterialProperties(
         glm::vec3(1.0f),
         glm::vec3(1.0f),
-        glm::vec3(1.0f), 16.0f
+        glm::vec3(1.0f), 32.0f, 1.0f
     );
 
     // Unlit
@@ -137,4 +144,7 @@ void CScene::CreateMaterials()
     m_mapMaterials["lit_orange"] = new CMaterial("lit_orange", CMaterial::BlendType::TRANSPARENT, pOrangeProperties, pProgramLit, listTextures);
     m_mapMaterials["lit_green"] = new CMaterial("lit_green", CMaterial::BlendType::TRANSPARENT, pGreenProperties, pProgramLit, listTextures);
     m_mapMaterials["lit_red"] = new CMaterial("lit_red", CMaterial::BlendType::TRANSPARENT, pRedProperties, pProgramLit, listTextures);
+
+    // Diffuse Specular
+    m_mapMaterials["lit_diff_spec"] = new CMaterial("lit_diff_spec", CMaterial::BlendType::TRANSPARENT, pWhiteProperties, pProgramDiffuseSpecular, listDiffuseSpecularTextures);
 }

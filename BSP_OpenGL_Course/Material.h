@@ -40,13 +40,15 @@ struct SMaterialProperties
     glm::vec3 colorAmbient;
     glm::vec3 colorDiffuse;
     glm::vec3 colorSpecular;
+    float fSpecularStrength;
     float fShininess;
 
-    SMaterialProperties(glm::vec3 clrAmbient, glm::vec3 clrDiffuse, glm::vec3 clrSpecular, float fShine)
+    SMaterialProperties(glm::vec3 clrAmbient, glm::vec3 clrDiffuse, glm::vec3 clrSpecular, float fStrength, float fShine)
     {
         colorAmbient = clrAmbient;
         colorDiffuse = clrDiffuse;
         colorSpecular = clrSpecular;
+        fSpecularStrength = fStrength;
         fShininess = fShine;
     }
 };
