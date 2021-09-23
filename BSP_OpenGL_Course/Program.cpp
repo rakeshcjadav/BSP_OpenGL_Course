@@ -13,6 +13,7 @@ CProgram::CProgram(std::string strVertexShaderFile, std::string strFragmentShade
     AttachShader(pShaderFS);
     LinkProgram();
 
+    /*
     GLint i;
     GLint count;
 
@@ -32,7 +33,7 @@ CProgram::CProgram(std::string strVertexShaderFile, std::string strFragmentShade
         glGetActiveUniform(m_IDProgram, (GLuint)i, bufSize, &length, &size, &type, name);
 
         printf("Uniform #%d Type: 0x%x Name: %s\n", i, type, name);
-    }
+    }*/
 
     delete pShaderVS;
     delete pShaderFS;

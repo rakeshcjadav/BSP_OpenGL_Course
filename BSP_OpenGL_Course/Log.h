@@ -9,4 +9,7 @@
     #define LOG_DEBUG std::out
     #define LOG_INFO std::clog
     #define LOG_ERROR std::cerr
+    #define LOG_END std::endl;
 #endif
+
+void STDOUT();

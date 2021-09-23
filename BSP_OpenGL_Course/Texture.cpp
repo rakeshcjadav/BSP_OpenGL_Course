@@ -51,8 +51,8 @@ unsigned char* CTexture::LoadTexture(std::string strTextureFile, int & width, in
         return 0;
     }
 
-    LOG_INFO << "Texture loaded successfully: "<< filePath;
-    LOG_INFO << "Width: " << width << " Height: " << height << " Channels: "<< nrChannels;
+    //LOG_INFO << "Texture loaded successfully: "<< filePath;
+    //LOG_INFO << "Width: " << width << " Height: " << height << " Channels: "<< nrChannels;
 
     format = GL_RGB;
     if (nrChannels > 3)

@@ -4,6 +4,7 @@
 #include"OpenGL.h"
 #include"WinUtils.h"
 #include"Log.h"
+#include<regex>
 
 using namespace std;
 
@@ -56,14 +57,24 @@ std::string CShader::LoadShader(std::string shaderFile)
 	string shaderFilePath = GetShaderPath();
 
 	ifstream file(shaderFilePath.append(shaderFile));
+	//LOG_INFO << "Loading Shader : " << shaderFile << LOG_END;
 	string shaderSource;
 	if (file.is_open())
 	{
 		string line;
-		int lineNumber = 0;
+		std::regex reg("[ ]*#include[ ]*\"(.*)\"");
 		while (getline(file, line))
 		{
-			shaderSource += line + "\n";
+			std::smatch matches;
+			// search and include reference shader file
+			if (std::regex_search(line, matches, reg))
+			{
+				shaderSource += LoadShader(matches.str(1));
+			}
+			else
+			{
+				shaderSource += line + "\n";
+			}
 		}
 	}
 

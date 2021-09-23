@@ -194,6 +194,7 @@
     <ClInclude Include="WinUtils.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\media\shaders\common.frag" />
     <None Include="..\media\shaders\lit_fragment_shader.frag" />
     <None Include="..\media\shaders\lit_vertex_shader.vert" />
     <None Include="..\media\shaders\lit_fragment_diffuse_specular_shader.frag" />

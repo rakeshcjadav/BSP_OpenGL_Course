@@ -1,17 +1,9 @@
 #version 330 core
-
-struct Material {
-    vec3 uAmbientColor;
-    vec3 uDiffuseColor;
-    vec3 uSpecularColor;
-    float uShininess;
-}; 
+#include "common.frag"
 
 in vec2 outTexCoord;
 
 uniform sampler2D MainTex;
-uniform float Scale;
-uniform float SineTime;
 uniform Material material;
 
 out vec4 FragColor;

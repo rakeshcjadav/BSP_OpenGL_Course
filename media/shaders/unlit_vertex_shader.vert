@@ -22,6 +22,7 @@ out struct VS_OUT
 
 void main()
 {
+;
    gl_Position = ProjectionMat * CameraMat * TransformMat * vec4(Pos.x, Pos.y, Pos.z, 1.0);
    outTexCoord = TexCoord;
 }

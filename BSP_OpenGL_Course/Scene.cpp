@@ -45,7 +45,7 @@ void CScene::CreateGameObjects()
     CMesh* pCubeMesh = CMesh::CreateCube();
     // Ground Plane
     {
-        CTransform* pTransform = new CTransform(glm::vec3(0.0f), glm::vec3(-90.0f, 0.0f, 0.0f), glm::vec3(10.0f));
+        CTransform* pTransform = new CTransform(glm::vec3(0.0f), glm::vec3(-90.0f, 0.0f, 0.0f), glm::vec3(100.0f));
         CGameObject* pObject = new CGameObject(pTransform, pPlaneMesh, pMeshRenderer, m_mapMaterials["lit_orange"]);
         m_listGameObjects.push_back(pObject);
     }
@@ -106,7 +106,7 @@ void CScene::CreateCameras()
 
 void CScene::CreateLights()
 {
-    m_listLights.push_back(new CDirectionalLight(glm::normalize(glm::vec3(1.f, -1.0f, -1.f)), glm::vec3(0.4f, 0.4f, 0.31f)));
+    m_listLights.push_back(new CDirectionalLight(glm::normalize(glm::vec3(1.f, -1.0f, -1.f)), glm::vec3(0.3f, 0.3f, 0.21f)));
     m_listLights.push_back(new CPointLight(glm::vec3(1.f, 4.5f, 1.f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 0.05f, 0.001f)));
     m_listLights.push_back(new CSpotLight(
         glm::vec3(2.f, 2.5f, 2.f), 
@@ -132,7 +132,7 @@ void CScene::CreateMaterials()
     SMaterialProperties* pOrangeProperties = new SMaterialProperties(
         glm::vec3(1.0f, 0.5f, 0.31f),
         glm::vec3(1.0f, 0.5f, 0.31f),
-        glm::vec3(1.0f, 0.5f, 0.31f), 5, 0.2f
+        glm::vec3(1.0f, 0.5f, 0.31f), 1, 0.0f
     );
 
     SMaterialProperties* pGreenProperties = new SMaterialProperties(
