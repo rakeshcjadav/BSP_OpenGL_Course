@@ -38,16 +38,13 @@ void CMeshRenderer::Render(CMesh* pMesh, CTransform* pTransform, CMaterial* pMat
             pMaterial->SetUniform("CameraPos", cameraPos);
 
             // Light
-            for (CLight* pLight : *pListLights)
-            {
-                pLight->Bind(pMaterial);
-            }
-            /*
             if (pListLights)
             {
-                CLight* pLight = *(pListLights->begin());
-                pLight->Bind(pMaterial);
-            }*/
+                for (CLight* pLight : *pListLights)
+                {
+                    pLight->Bind(pMaterial);
+                }
+            }
         }
     }
     pMesh->Render();

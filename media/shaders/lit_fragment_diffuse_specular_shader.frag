@@ -14,6 +14,16 @@ struct DirectionalLight
     vec3 color;
 };
 
+struct SpotLight
+{
+    vec3 position;
+    vec3 direction;
+    vec3 color;
+    vec3 attenuation;
+    float innerAngle;
+    float outerAngle;
+};
+
 struct Material {
     vec3 uAmbientColor;
     vec3 uDiffuseColor;
@@ -32,6 +42,7 @@ uniform sampler2D SpecularTex;
 uniform vec3 CameraPos;
 uniform PointLight pointLight;
 uniform DirectionalLight directionalLight;
+uniform SpotLight spotLight;
 uniform Material material;
 
 out vec4 FragColor;
@@ -42,50 +53,98 @@ vec3 AmbientLight(vec3 lightColor)
     return ambientStrength * lightColor;
 }
 
-vec3 DiffuseLight(vec3 normal, vec3 lightDirection, vec3 lightColor)
+float CalcAttenuation(vec3 worldPos, vec3 lightPos, vec3 atten)
 {
-    float fDiffuse = max(dot(normal, lightDirection), 0.0f);
-    return vec3(fDiffuse) * lightColor;
-}
-
-vec3 DiffuseLight(vec3 normal, vec3 lightPos, vec3 worldPos, vec3 lightColor, vec3 atten)
-{
-    vec3 lightDirection = normalize(lightPos - worldPos);
-    vec3 diffuseColor = DiffuseLight(normal, lightDirection, lightColor);
-
     float fDist = distance(lightPos, worldPos);
-    float fAttenuation = 1.0f/(atten.x + atten.y*fDist + atten.z*fDist*fDist);
-    return diffuseColor * fAttenuation;
+    return 1.0f/(atten.x + atten.y*fDist + atten.z*fDist*fDist);
 }
 
-vec3 SpecularDirectionalLight(vec3 normal, vec3 lightDirection, vec3 worldPos, vec3 cameraPos, vec3 lightColor)
+float SpotLightIntensity(vec3 fragmentlightDirection, SpotLight light)
+{
+    float angle = dot(fragmentlightDirection, -light.direction);
+    if(angle < light.outerAngle)
+    {
+        return 0.0f;
+    }
+    float diff = light.innerAngle - light.outerAngle;
+    float intensity = clamp((angle - light.outerAngle)/diff, 0.0f, 1.0f);
+    return intensity;
+}
+
+float DiffuseComponent(vec3 normal, vec3 lightDirection)
+{
+    return max(dot(normal, lightDirection), 0.0f);
+}
+
+vec3 DiffuseDirectionalLight(vec3 normal, DirectionalLight light)
+{
+    return DiffuseComponent(normal, -light.direction) * light.color;
+}
+
+vec3 DiffusePointLight(vec3 normal, vec3 worldPos, PointLight light)
+{
+    vec3 lightDirection = normalize(light.position- worldPos);
+    return DiffuseComponent(normal, lightDirection) * CalcAttenuation(worldPos, light.position, light.attenuation) * light.color;
+}
+
+vec3 DiffuseSpotLight(vec3 normal, vec3 worldPos, SpotLight light)
+{
+    // Fragment light direction
+    vec3 lightDirection = normalize(light.position - worldPos);
+    return CalcAttenuation(worldPos, light.position, light.attenuation) * SpotLightIntensity(lightDirection, light) * light.color;
+}
+
+float SpecularComponent(vec3 normal, vec3 lightDirection, vec3 worldPos, vec3 cameraPos)
 {
     vec3 reflectDirection = reflect(-lightDirection, normal);
 
     vec3 cameraDirection = normalize(cameraPos - worldPos);
     float fSpectular = pow(max(dot(reflectDirection, cameraDirection), 0.0f), material.uSpecularStrength);
 
-    return fSpectular * lightColor * material.uShininess;
+    return fSpectular * material.uShininess;
 }
 
-vec3 SpecularLight(vec3 normal, vec3 lightPos, vec3 worldPos, vec3 cameraPos, vec3 lightColor)
+vec3 SpecularDirectionalLight(vec3 normal, vec3 worldPos, vec3 cameraPos, DirectionalLight light)
 {
-    vec3 lightDirection = normalize(lightPos - worldPos);
-    return SpecularDirectionalLight(normal, lightDirection, worldPos, cameraPos, lightColor);
+    return SpecularComponent(normal, -light.direction, worldPos, cameraPos) * light.color;
+}
+
+vec3 SpecularPointLight(vec3 normal, vec3 worldPos, vec3 cameraPos, PointLight light)
+{
+    vec3 lightDirection = normalize(light.position - worldPos);
+    return SpecularComponent(normal, lightDirection, worldPos, cameraPos)
+        * CalcAttenuation(worldPos, light.position, light.attenuation)
+        * light.color;
+}
+
+vec3 SpecularSpotLight(vec3 normal, vec3 worldPos, vec3 cameraPos, SpotLight light)
+{
+    vec3 lightDirection = normalize(light.position - worldPos);
+    return SpecularComponent(normal, lightDirection, worldPos, cameraPos)
+        * CalcAttenuation(worldPos, light.position, light.attenuation)
+        * SpotLightIntensity(lightDirection, light)
+        * light.color;
 }
 
 void ApplyPointLights(inout vec3 ambientColor, inout vec3 diffuseColor, inout vec3 specularColor)
 {
      ambientColor += AmbientLight(pointLight.color);
-     diffuseColor += DiffuseLight(outNormal, pointLight.position, outWorldPos, pointLight.color, pointLight.attenuation);
-     specularColor += SpecularLight(outNormal, pointLight.position, outWorldPos, CameraPos, pointLight.color);
+     diffuseColor += DiffusePointLight(outNormal, outWorldPos, pointLight);
+     specularColor += SpecularPointLight(outNormal, outWorldPos, CameraPos, pointLight);
 }
 
 void ApplyDirectionalLights(inout vec3 ambientColor, inout vec3 diffuseColor, inout vec3 specularColor)
 {
     ambientColor += AmbientLight(directionalLight.color);
-    diffuseColor += DiffuseLight(outNormal, -directionalLight.direction, directionalLight.color);
-    specularColor += SpecularDirectionalLight(outNormal, -directionalLight.direction, outWorldPos, CameraPos, directionalLight.color);
+    diffuseColor += DiffuseDirectionalLight(outNormal, directionalLight);
+    specularColor += SpecularDirectionalLight(outNormal, outWorldPos, CameraPos, directionalLight);
+}
+
+void ApplySpotLights(inout vec3 ambientColor, inout vec3 diffuseColor, inout vec3 specularColor)
+{
+    ambientColor += AmbientLight(spotLight.color);
+    diffuseColor += DiffuseSpotLight(outNormal, outWorldPos, spotLight);
+    specularColor += SpecularSpotLight(outNormal, outWorldPos, CameraPos, spotLight);
 }
 
 void main()
@@ -95,6 +154,7 @@ void main()
     vec3 specularColor = vec3(0.0f);
     ApplyDirectionalLights(ambientColor, diffuseColor, specularColor);
     ApplyPointLights(ambientColor, diffuseColor, specularColor);
+    ApplySpotLights(ambientColor, diffuseColor, specularColor);
 
     vec4 diffuseTexColor = texture(DiffuseTex, outTexCoord);
     ambientColor *= diffuseTexColor.rgb;

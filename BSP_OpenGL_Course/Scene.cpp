@@ -3,6 +3,7 @@
 #include"Camera.h"
 #include"PointLight.h"
 #include"DirectionalLight.h"
+#include"SpotLight.h"
 #include"GameObject.h"
 #include"Texture.h"
 #include"Program.h"
@@ -54,16 +55,28 @@ void CScene::CreateGameObjects()
         CGameObject* pObject = new CGameObject(pTransform, pPlaneMesh, pMeshRenderer, m_mapMaterials["lit_orange"]);
         m_listGameObjects.push_back(pObject);
     }
+    // Front Wall
+    {
+        CTransform* pTransform = new CTransform(glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(0.0f, 180.0f, 0.0f), glm::vec3(10.0f));
+        CGameObject* pObject = new CGameObject(pTransform, pPlaneMesh, pMeshRenderer, m_mapMaterials["lit_orange"]);
+        m_listGameObjects.push_back(pObject);
+    }
     // Left Wall
     {
         CTransform* pTransform = new CTransform(glm::vec3(-5.0f, 5.0f, 0.0f), glm::vec3(0.0f, 90.0f, 0.0f), glm::vec3(10.0f));
         CGameObject* pObject = new CGameObject(pTransform, pPlaneMesh, pMeshRenderer, m_mapMaterials["lit_orange"]);
         m_listGameObjects.push_back(pObject);
     }
+    // Right Wall
+    {
+        CTransform* pTransform = new CTransform(glm::vec3(5.0f, 5.0f, 0.0f), glm::vec3(0.0f, -90.0f, 0.0f), glm::vec3(10.0f));
+        CGameObject* pObject = new CGameObject(pTransform, pPlaneMesh, pMeshRenderer, m_mapMaterials["lit_orange"]);
+        m_listGameObjects.push_back(pObject);
+    }
     // Green Cube
     {
         CTransform* pTransform = new CTransform(glm::vec3(-2.0f, 1.0f, -2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f));
-        CGameObject* pObject = new CGameObject(pTransform, pCubeMesh, pMeshRenderer, m_mapMaterials["unlit_green"]);
+        CGameObject* pObject = new CGameObject(pTransform, pCubeMesh, pMeshRenderer, m_mapMaterials["lit_green"]);
         m_listGameObjects.push_back(pObject);
     }
     // Red Cube
@@ -95,6 +108,11 @@ void CScene::CreateLights()
 {
     m_listLights.push_back(new CDirectionalLight(glm::normalize(glm::vec3(1.f, -1.0f, -1.f)), glm::vec3(0.4f, 0.4f, 0.31f)));
     m_listLights.push_back(new CPointLight(glm::vec3(1.f, 4.5f, 1.f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 0.05f, 0.001f)));
+    m_listLights.push_back(new CSpotLight(
+        glm::vec3(2.f, 2.5f, 2.f), 
+        glm::normalize(glm::vec3(0.0f, -1.0f, -1.0f)), 
+        glm::vec3(0.0f, 0.0f, 1.0f), 
+        glm::vec3(1.0f, 0.05f, 0.001f), 5.0f, 35.0f));
 }
 
 void CScene::CreateMaterials()
@@ -143,7 +161,7 @@ void CScene::CreateMaterials()
     // Lit
     m_mapMaterials["lit_orange"] = new CMaterial("lit_orange", CMaterial::BlendType::TRANSPARENT, pOrangeProperties, pProgramLit, mapTextures);
     m_mapMaterials["lit_green"] = new CMaterial("lit_green", CMaterial::BlendType::TRANSPARENT, pGreenProperties, pProgramLit, mapTextures);
-    m_mapMaterials["lit_red"] = new CMaterial("lit_red", CMaterial::BlendType::TRANSPARENT, pRedProperties, pProgramLit, listTextures);
+    m_mapMaterials["lit_red"] = new CMaterial("lit_red", CMaterial::BlendType::TRANSPARENT, pRedProperties, pProgramLit, mapTextures);
 
     // Diffuse Specular
     m_mapMaterials["lit_diff_spec"] = new CMaterial("lit_diff_spec", CMaterial::BlendType::TRANSPARENT, pWhiteProperties, pProgramDiffuseSpecular, mapDiffuseSpecularTextures);
