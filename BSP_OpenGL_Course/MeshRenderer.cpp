@@ -4,13 +4,17 @@
 #include"Light.h"
 #include"Material.h"
 #include"Transform.h"
+#include<typeinfo>
 
 CMeshRenderer::CMeshRenderer()
 {
 
 }
 
-void CMeshRenderer::Render(CMesh* pMesh, CTransform* pTransform, CMaterial* pMaterial, CCamera* pCamera, std::list<CLight*> * pListLights)
+void CMeshRenderer::Render(CMesh* pMesh, CTransform* pTransform, CMaterial* pMaterial, CCamera* pCamera, 
+    std::list<CLight*>* pDirectionalLights,
+    std::list<CLight*>* pPointLights,
+    std::list<CLight*>* pSpotLights)
 {
     pMesh->Bind();
     {
@@ -26,7 +30,6 @@ void CMeshRenderer::Render(CMesh* pMesh, CTransform* pTransform, CMaterial* pMat
             glm::mat4 transformMat = pTransform->GetTransform();
             glm::mat4 normalMat = glm::transpose(glm::inverse(transformMat));
 
-
             // Camera
             glm::mat4 cameraMat = pCamera->GetViewMatrix();
             glm::mat4 projectionMat = pCamera->GetProjectionMatrix();
@@ -38,11 +41,31 @@ void CMeshRenderer::Render(CMesh* pMesh, CTransform* pTransform, CMaterial* pMat
             pMaterial->SetUniform("CameraPos", cameraPos);
 
             // Light
-            if (pListLights)
+            if (pDirectionalLights)
             {
-                for (CLight* pLight : *pListLights)
+                for (CLight* pLight : *(pDirectionalLights))
                 {
-                    pLight->Bind(pMaterial);
+                    pLight->Bind(pMaterial, 0);
+                }
+            }
+
+            if (pPointLights)
+            {
+                int i = 0;
+                pMaterial->SetUniform("PointLightCount", (int)pPointLights->size());
+                for (CLight* pLight : *(pPointLights))
+                {
+                    pLight->Bind(pMaterial, i++);
+                }
+            }
+
+            if (pSpotLights)
+            {
+                int i = 0;
+                pMaterial->SetUniform("SpotLightCount", (int)pSpotLights->size());
+                for (CLight* pLight : *(pSpotLights))
+                {
+                    pLight->Bind(pMaterial, i++);
                 }
             }
         }

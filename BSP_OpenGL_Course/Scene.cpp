@@ -21,7 +21,7 @@ void CScene::Update(CCamera* pCamera)
     for (CGameObject* pGameObject : m_listGameObjects)
     {
         pGameObject->Update();
-        pGameObject->Render(pCamera, &m_listLights);
+        pGameObject->Render(pCamera, &m_listDirectionalLights, &m_listPointLights, &m_listSpotLights);
     }
 }
 
@@ -106,13 +106,39 @@ void CScene::CreateCameras()
 
 void CScene::CreateLights()
 {
-    m_listLights.push_back(new CDirectionalLight(glm::normalize(glm::vec3(1.f, -1.0f, -1.f)), glm::vec3(0.3f, 0.3f, 0.21f)));
-    m_listLights.push_back(new CPointLight(glm::vec3(1.f, 4.5f, 1.f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 0.05f, 0.001f)));
-    m_listLights.push_back(new CSpotLight(
-        glm::vec3(2.f, 2.5f, 2.f), 
-        glm::normalize(glm::vec3(0.0f, -1.0f, -1.0f)), 
-        glm::vec3(0.0f, 0.0f, 1.0f), 
-        glm::vec3(1.0f, 0.05f, 0.001f), 5.0f, 35.0f));
+    // Directional
+    m_listDirectionalLights.push_back(
+        new CDirectionalLight(
+            glm::normalize(glm::vec3(1.f, -1.0f, -1.f)),
+            glm::vec3(0.3f, 0.3f, 0.3f)));
+
+    // Spot
+    m_listSpotLights.push_back(
+        new CSpotLight(
+            glm::vec3(2.f, 2.5f, 2.f),
+            glm::normalize(glm::vec3(0.0f, -1.0f, -1.0f)),
+            glm::vec3(0.0f, 0.0f, 1.0f),
+            glm::vec3(1.0f, 0.05f, 0.001f), 5.0f, 35.0f));
+
+    m_listSpotLights.push_back(
+        new CSpotLight(
+            glm::vec3(16.f, 5.5f, 2.f),
+            glm::normalize(glm::vec3(0.0f, -1.0f, 0.0f)),
+            glm::vec3(0.0f, 1.0f, 0.0f),
+            glm::vec3(1.0f, 0.05f, 0.001f), 0.0f, 60.0f));
+    
+    // Point
+    m_listPointLights.push_back(
+        new CPointLight(
+            glm::vec3(1.f, 4.5f, 1.f),
+            glm::vec3(1.0f, 1.0f, 1.0f),
+            glm::vec3(1.0f, 0.05f, 0.001f)));
+
+    m_listPointLights.push_back(
+        new CPointLight(
+            glm::vec3(10.f, 4.5f, 1.f),
+            glm::vec3(0.0f, 0.0f, 1.0f),
+            glm::vec3(1.0f, 0.05f, 0.001f)));
 }
 
 void CScene::CreateMaterials()
@@ -150,19 +176,25 @@ void CScene::CreateMaterials()
     SMaterialProperties* pWhiteProperties = new SMaterialProperties(
         glm::vec3(1.0f),
         glm::vec3(1.0f),
-        glm::vec3(1.0f), 32.0f, 1.0f
+        glm::vec3(1.0f), 1.0f, 0.0f
+    );
+
+    SMaterialRenderStates* pDefaultStates = new SMaterialRenderStates(
+        SMaterialRenderStates::BLEND_TYPE::TRANSPARENT,
+        true, true,
+        SMaterialRenderStates::FACE::BACK
     );
 
     // Unlit
-    m_mapMaterials["unlit_orange"] = new CMaterial("unlit_orange", CMaterial::BlendType::TRANSPARENT, pOrangeProperties, pProgramUnlit, mapTextures);
-    m_mapMaterials["unlit_green"] = new CMaterial("unlit_green", CMaterial::BlendType::TRANSPARENT, pGreenProperties, pProgramUnlit, mapTextures);
-    m_mapMaterials["unlit_white"] = new CMaterial("unlit_white", CMaterial::BlendType::TRANSPARENT, pWhiteProperties, pProgramUnlit, mapTextures);
+    m_mapMaterials["unlit_orange"] = new CMaterial("unlit_orange", pDefaultStates, pOrangeProperties, pProgramUnlit, mapTextures);
+    m_mapMaterials["unlit_green"] = new CMaterial("unlit_green", pDefaultStates, pGreenProperties, pProgramUnlit, mapTextures);
+    m_mapMaterials["unlit_white"] = new CMaterial("unlit_white", pDefaultStates, pWhiteProperties, pProgramUnlit, mapTextures);
     
     // Lit
-    m_mapMaterials["lit_orange"] = new CMaterial("lit_orange", CMaterial::BlendType::TRANSPARENT, pOrangeProperties, pProgramLit, mapTextures);
-    m_mapMaterials["lit_green"] = new CMaterial("lit_green", CMaterial::BlendType::TRANSPARENT, pGreenProperties, pProgramLit, mapTextures);
-    m_mapMaterials["lit_red"] = new CMaterial("lit_red", CMaterial::BlendType::TRANSPARENT, pRedProperties, pProgramLit, mapTextures);
+    m_mapMaterials["lit_orange"] = new CMaterial("lit_orange", pDefaultStates, pOrangeProperties, pProgramLit, mapTextures);
+    m_mapMaterials["lit_green"] = new CMaterial("lit_green", pDefaultStates, pGreenProperties, pProgramLit, mapTextures);
+    m_mapMaterials["lit_red"] = new CMaterial("lit_red", pDefaultStates, pRedProperties, pProgramLit, mapTextures);
 
     // Diffuse Specular
-    m_mapMaterials["lit_diff_spec"] = new CMaterial("lit_diff_spec", CMaterial::BlendType::TRANSPARENT, pWhiteProperties, pProgramDiffuseSpecular, mapDiffuseSpecularTextures);
+    m_mapMaterials["lit_diff_spec"] = new CMaterial("lit_diff_spec", pDefaultStates, pWhiteProperties, pProgramDiffuseSpecular, mapDiffuseSpecularTextures);
 }

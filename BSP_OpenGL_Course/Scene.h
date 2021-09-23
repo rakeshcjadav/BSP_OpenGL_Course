@@ -2,6 +2,8 @@
 #include<list>
 #include<map>
 #include<string>
+#include<typeinfo>
+
 class CGameObject;
 class CLight;
 class CCamera;
@@ -25,7 +27,9 @@ private:
 
 private:
     std::list<CGameObject*> m_listGameObjects;
-    std::list<CLight*> m_listLights;
+    std::list<CLight*> m_listDirectionalLights;
+    std::list<CLight*> m_listPointLights;
+    std::list<CLight*> m_listSpotLights;
     std::map<std::string, CCamera*> m_mapCameras;
     std::map<std::string, CMaterial*> m_mapMaterials;
 };

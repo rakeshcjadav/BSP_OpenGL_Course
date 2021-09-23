@@ -8,19 +8,14 @@ in vec2 outTexCoord;
 uniform sampler2D MainTex;
 uniform sampler2D SecondTex;
 uniform vec3 CameraPos;
-uniform PointLight pointLight;
 uniform DirectionalLight directionalLight;
-uniform SpotLight spotLight;
+uniform int PointLightCount;
+uniform PointLight pointLight[MAX_LIGHTS];
+uniform int SpotLightCount;
+uniform SpotLight spotLight[MAX_LIGHTS];
 uniform Material material;
 
 out vec4 FragColor;
-
-void ApplyPointLights(inout vec3 ambientColor, inout vec3 diffuseColor, inout vec3 specularColor)
-{
-     ambientColor += AmbientLight(pointLight.color);
-     diffuseColor += DiffusePointLight(outNormal, outWorldPos, pointLight);
-     specularColor += SpecularPointLight(outNormal, outWorldPos, CameraPos, pointLight, material);
-}
 
 void ApplyDirectionalLights(inout vec3 ambientColor, inout vec3 diffuseColor, inout vec3 specularColor)
 {
@@ -29,11 +24,24 @@ void ApplyDirectionalLights(inout vec3 ambientColor, inout vec3 diffuseColor, in
     specularColor += SpecularDirectionalLight(outNormal, outWorldPos, CameraPos, directionalLight, material);
 }
 
+void ApplyPointLights(inout vec3 ambientColor, inout vec3 diffuseColor, inout vec3 specularColor)
+{
+    for(int i = 0; i < PointLightCount; i++)
+    {
+        ambientColor += AmbientLight(pointLight[i].color);
+        diffuseColor += DiffusePointLight(outNormal, outWorldPos, pointLight[i]);
+        specularColor += SpecularPointLight(outNormal, outWorldPos, CameraPos, pointLight[i], material);
+    }
+}
+
 void ApplySpotLights(inout vec3 ambientColor, inout vec3 diffuseColor, inout vec3 specularColor)
 {
-    ambientColor += AmbientLight(spotLight.color);
-    diffuseColor += DiffuseSpotLight(outNormal, outWorldPos, spotLight);
-    specularColor += SpecularSpotLight(outNormal, outWorldPos, CameraPos, spotLight, material);
+    for(int i = 0; i < SpotLightCount; i++)
+    {
+        ambientColor += AmbientLight(spotLight[i].color);
+        diffuseColor += DiffuseSpotLight(outNormal, outWorldPos, spotLight[i]);
+        specularColor += SpecularSpotLight(outNormal, outWorldPos, CameraPos, spotLight[i], material);
+    }
 }
 
 void main()

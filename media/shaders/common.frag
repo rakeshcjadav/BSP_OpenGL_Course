@@ -1,6 +1,8 @@
 //? #version 330 core
 
-//
+#define MAX_LIGHTS 8
+
+// Input Struct
 struct PointLight
 {
     vec3 position;
@@ -30,9 +32,10 @@ struct Material {
     vec3 uSpecularColor;
     float uSpecularStrength;
     float uShininess;
-}; 
+};
 //
 
+// Lighting
 vec3 AmbientLight(vec3 lightColor)
 {
     float ambientStrength = 0.1;

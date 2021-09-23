@@ -3,10 +3,10 @@
 #include"Program.h"
 #include"OpenGL.h"
 
-CMaterial::CMaterial(std::string strName, BlendType blendType, SMaterialProperties * pProperties, CProgram* pProgram, std::map<std::string, CTexture*> mapTextures)
+CMaterial::CMaterial(std::string strName, SMaterialRenderStates* pStates, SMaterialProperties * pProperties, CProgram* pProgram, std::map<std::string, CTexture*> mapTextures)
 {
     m_strName = strName;
-    m_blendType = blendType;
+    m_pStates = pStates;
     m_pProperties = pProperties;
     m_pProgram = pProgram;
     m_mapTextures = mapTextures;
@@ -14,19 +14,8 @@ CMaterial::CMaterial(std::string strName, BlendType blendType, SMaterialProperti
 
 void CMaterial::Bind()
 {
-    //glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-    if (m_blendType == BlendType::OPAQUE)
-    {
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_ONE, GL_ZERO);
-    }
-    else if (m_blendType == BlendType::TRANSPARENT)
-    {
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Tranparent blend or Alpha blend or Tranparent
-    }
+    SetMaterialStates();
+
     m_pProgram->Use();
 
     int i = 0;
@@ -39,6 +28,36 @@ void CMaterial::Bind()
         i++;
     }
 
+    SetMaterialProperties();
+}
+
+void CMaterial::SetMaterialStates()
+{
+    if (m_pStates->DepthTest)
+        glEnable(GL_DEPTH_TEST);
+    if (m_pStates->CullFace)
+    {
+        glEnable(GL_CULL_FACE);
+        glCullFace(static_cast<int>(m_pStates->Face));
+    }
+    else
+    {
+        glDisable(GL_CULL_FACE);
+    }
+    if (m_pStates->BlendType == SMaterialRenderStates::BLEND_TYPE::OPAQUE)
+    {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ZERO);
+    }
+    else if (m_pStates->BlendType == SMaterialRenderStates::BLEND_TYPE::TRANSPARENT)
+    {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Tranparent blend or Alpha blend or Tranparent
+    }
+}
+
+void CMaterial::SetMaterialProperties()
+{
     if (m_pProperties)
     {
         m_pProgram->SetUniform("material.uAmbientColor", m_pProperties->colorAmbient);

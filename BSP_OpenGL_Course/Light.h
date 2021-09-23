@@ -8,7 +8,7 @@ class CLight
 public:
     CLight(glm::vec3 color);
 
-    virtual void Bind(CMaterial* pMaterial) = 0;
+    virtual void Bind(CMaterial* pMaterial, int index) = 0;
 
 protected:
     glm::vec3 GetColor() const;
