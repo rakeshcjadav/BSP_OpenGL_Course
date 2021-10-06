@@ -50,6 +50,8 @@ private:
 	CAssetManager();
 	bool InitPrivate();
 
+	void LoadShaders();
+	void LoadTextures();
 	void LoadMaterials();
 
 	CShader* LoadShader(std::string strShaderFileName);

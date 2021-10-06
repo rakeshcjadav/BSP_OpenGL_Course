@@ -69,6 +69,14 @@ CAssetManager::CAssetManager()
 
 bool CAssetManager::InitPrivate()
 {
+	LoadShaders();
+	LoadTextures();
+	LoadMaterials();
+	return true;
+}
+
+void CAssetManager::LoadShaders()
+{
 	std::vector shaders{
 		"unlit_vertex_shader.vert",
 		"lit_vertex_shader.vert",
@@ -77,7 +85,7 @@ bool CAssetManager::InitPrivate()
 		"lit_fragment_shader.frag",
 		"lit_fragment_diffuse_specular_shader.frag"
 	};
-	for(std::string shader : shaders)
+	for (std::string shader : shaders)
 	{
 		m_shaders.Add(shader, LoadShader(shader));
 	}
@@ -86,6 +94,10 @@ bool CAssetManager::InitPrivate()
 	m_programs.Add("lit_program", new CProgram("lit_vertex_shader.vert", "lit_fragment_shader.frag"));
 	m_programs.Add("lit_program_dif_spec", new CProgram("lit_vertex_shader.vert", "lit_fragment_diffuse_specular_shader.frag"));
 
+}
+
+void CAssetManager::LoadTextures()
+{
 	std::vector textures{
 		"minion-transparent-background-9.png",
 		"minion.jpg",
@@ -98,7 +110,10 @@ bool CAssetManager::InitPrivate()
 	{
 		m_textures.Add(texture, LoadTexture(texture));
 	}
+}
 
+void CAssetManager::LoadMaterials()
+{
 	m_materialProperties.Add("orange", new SMaterialProperties(
 		glm::vec3(1.0f, 0.5f, 0.31f),
 		glm::vec3(1.0f, 0.5f, 0.31f),
@@ -129,13 +144,6 @@ bool CAssetManager::InitPrivate()
 		true, true,
 		SMaterialRenderStates::FACE::BACK));
 
-	LoadMaterials();
-
-	return true;
-}
-
-void CAssetManager::LoadMaterials()
-{
 	std::map<std::string, const CTexture*> mapTextures;
 	mapTextures["MainTex"] = GetTexture("minion-transparent-background-9.png");
 	mapTextures["SecondTex"] = GetTexture("minion.jpg");
