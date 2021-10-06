@@ -38,7 +38,7 @@ void ApplySpotLights(inout vec3 ambientColor, inout vec3 diffuseColor, inout vec
 {
     for(int i = 0; i < SpotLightCount; i++)
     {
-        ambientColor += AmbientLight(spotLight[i].color);
+        //ambientColor += AmbientLight(spotLight[i].color);
         diffuseColor += DiffuseSpotLight(outNormal, outWorldPos, spotLight[i]);
         specularColor += SpecularSpotLight(outNormal, outWorldPos, CameraPos, spotLight[i], material);
     }

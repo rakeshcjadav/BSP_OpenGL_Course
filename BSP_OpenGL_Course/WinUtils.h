@@ -8,3 +8,5 @@ std::string GetMediaPath();
 std::string GetTexturesPath();
 
 std::string GetShaderPath();
+
+std::string GetModelPath();

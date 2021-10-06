@@ -3,7 +3,9 @@
 #include"Program.h"
 #include"OpenGL.h"
 
-CMaterial::CMaterial(std::string strName, SMaterialRenderStates* pStates, SMaterialProperties * pProperties, CProgram* pProgram, std::map<std::string, CTexture*> mapTextures)
+CMaterial::CMaterial(std::string strName, const SMaterialRenderStates* pStates, 
+    const SMaterialProperties * pProperties, 
+    const CProgram* pProgram, std::map<std::string, const CTexture*> mapTextures)
 {
     m_strName = strName;
     m_pStates = pStates;
@@ -12,7 +14,7 @@ CMaterial::CMaterial(std::string strName, SMaterialRenderStates* pStates, SMater
     m_mapTextures = mapTextures;
 }
 
-void CMaterial::Bind()
+void CMaterial::Bind() const
 {
     SetMaterialStates();
 
@@ -22,7 +24,7 @@ void CMaterial::Bind()
     for (auto itr = m_mapTextures.begin(); itr != m_mapTextures.end(); itr++)
     {
         std::string uniformName = itr->first;
-        CTexture* pTexture = itr->second;
+        const CTexture* pTexture = itr->second;
         pTexture->Bind(i);
         m_pProgram->SetUniform(uniformName, i);
         i++;
@@ -31,7 +33,7 @@ void CMaterial::Bind()
     SetMaterialProperties();
 }
 
-void CMaterial::SetMaterialStates()
+void CMaterial::SetMaterialStates() const
 {
     if (m_pStates->DepthTest)
         glEnable(GL_DEPTH_TEST);
@@ -56,7 +58,7 @@ void CMaterial::SetMaterialStates()
     }
 }
 
-void CMaterial::SetMaterialProperties()
+void CMaterial::SetMaterialProperties() const
 {
     if (m_pProperties)
     {
@@ -68,32 +70,32 @@ void CMaterial::SetMaterialProperties()
     }
 }
 
-void CMaterial::SetUniform(std::string name, int value)
+void CMaterial::SetUniform(std::string name, int value) const
 {
     m_pProgram->SetUniform(name, value);
 }
 
-void CMaterial::SetUniform(std::string name, float value)
+void CMaterial::SetUniform(std::string name, float value) const
 {
     m_pProgram->SetUniform(name, value);
 }
 
-void CMaterial::SetUniform(std::string name, glm::vec3& value)
+void CMaterial::SetUniform(std::string name, glm::vec3& value) const
 {
     m_pProgram->SetUniform(name, value);
 }
 
-void CMaterial::SetUniform(std::string name, glm::vec4& value)
+void CMaterial::SetUniform(std::string name, glm::vec4& value) const
 {
     m_pProgram->SetUniform(name, value);
 }
 
-void CMaterial::SetUniform(std::string name, glm::mat4& value)
+void CMaterial::SetUniform(std::string name, glm::mat4& value) const
 {
     m_pProgram->SetUniform(name, value);
 }
 
-void CMaterial::SetUniform(std::string name, float* value)
+void CMaterial::SetUniform(std::string name, float* value) const
 {
     m_pProgram->SetUniform(name, value);
 }

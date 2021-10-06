@@ -6,18 +6,15 @@
 class CShader
 {
 public:
-	enum SHADER_TYPE
+	enum class SHADER_TYPE
 	{
 		VERTEX,
 		FRAGMENT
 	};
 public:
-	CShader(SHADER_TYPE type, std::string shaderFile /* vertex_shader.glsl */);
+	CShader(SHADER_TYPE type, std::string shaderSource);
 	~CShader();
-	unsigned int GetID();
-
-private:
-	std::string LoadShader(std::string shaderFile);
+	unsigned int GetID() const;
 
 private:
 	unsigned int m_IDShader;

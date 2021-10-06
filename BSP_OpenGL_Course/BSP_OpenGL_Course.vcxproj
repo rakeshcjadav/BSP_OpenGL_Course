@@ -88,14 +88,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GLEW_STATIC;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\glfw-3.3.4.bin.WIN32\include;$(SolutionDir)Dependencies\glew-2.1.0\include;$(SolutionDir)Dependencies\stb\include;$(SolutionDir)Dependencies\glm-0.9.9.8\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\glfw-3.3.4.bin.WIN32\include;$(SolutionDir)Dependencies\glew-2.1.0\include;$(SolutionDir)Dependencies\stb\include;$(SolutionDir)Dependencies\glm-0.9.9.8\include;$(SolutionDir)Dependencies\assimp-5.0.1.WIN32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\glfw-3.3.4.bin.WIN32\lib-vc2019;$(SolutionDir)Dependencies\glew-2.1.0\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3dll.lib;glew32s.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\glfw-3.3.4.bin.WIN32\lib-vc2019;$(SolutionDir)Dependencies\glew-2.1.0\lib\Release\Win32;$(SolutionDir)Dependencies\assimp-5.0.1.WIN32\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3dll.lib;glew32s.lib;opengl32.lib;assimp-vc142-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="Component.cpp" />
@@ -155,6 +156,7 @@
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MeshRenderer.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="Scene.cpp" />
@@ -167,6 +169,7 @@
     <ClCompile Include="WinUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AssetManager.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraController.h" />
     <ClInclude Include="Component.h" />
@@ -180,6 +183,7 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshRenderer.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="OpenGL.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Program.h" />

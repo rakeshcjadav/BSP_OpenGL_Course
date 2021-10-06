@@ -24,6 +24,9 @@ public:
     void SetFOV(float fov);
     float GetFOV() const;
 
+    void SetSize(float size);
+    float GetSize() const;
+
     int GetWidth() const;
     int GetHeight() const;
 
@@ -40,6 +43,7 @@ private:
     glm::vec3 m_vDirection;
     glm::vec3 m_vUp;
     float m_fFOV;
+    float m_fSize;
     float m_fNearPlane;
     float m_fFarPlane;
     const CViewport* m_pViewport;
@@ -54,4 +58,8 @@ struct SCameraDef
     float fov;
     float fNearPlane;
     float fFarPlane;
+
+    SCameraDef()
+    {
+    }
 };

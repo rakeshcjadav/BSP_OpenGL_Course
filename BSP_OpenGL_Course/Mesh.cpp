@@ -3,6 +3,7 @@
 #include"OpenGL.h"
 
 // static 
+// Plane
 CMesh* CMesh::CreatePlane()
 {
     // Local Positions of vertices
@@ -13,11 +14,40 @@ CMesh* CMesh::CreatePlane()
     meshData.aVertices.push_back(SVertex(glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 1.0f)));
 
     meshData.aIndices = {
-        0, 1, 2,
-        2, 3, 0
+        0, 1, 3,
+        2
     };
 
-    meshData.type = SMeshData::MESHTYPE::TRIANGLES;
+    meshData.type = SMeshData::MESHTYPE::TRIANGLE_STRIP;
+
+    return new CMesh(&meshData);
+}
+
+// Circle
+CMesh* CMesh::CreateCircle()
+{
+    // Local Positions of vertices
+    SMeshData meshData;
+    SVertex vertex(glm::vec3(0.5f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.5f, 0.0f));
+    meshData.aVertices.push_back(SVertex(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.5f, 0.5f)));
+    meshData.aIndices.push_back(0);
+    int circle = 360;
+    int sides = 72;
+    int division = circle / sides;
+    for (int angle = 0, index = 1; angle <= circle; index++, angle+=division)
+    {
+        glm::vec3 angles(0.0f, 0.0f, angle);
+        glm::mat3 mat = glm::toMat3(glm::quat(glm::radians(angles)));
+
+        glm::vec3 pos = mat * vertex.position;
+        glm::vec3 normal = mat * vertex.normal;
+        glm::vec3 tex = mat * glm::vec3(vertex.uv, 1.0f);
+
+        meshData.aVertices.push_back(SVertex(pos, normal, glm::vec2(tex)+glm::vec2(0.5f, 0.5f)));
+        meshData.aIndices.push_back(index);
+    }
+
+    meshData.type = SMeshData::MESHTYPE::TRIANGLE_FAN;
 
     return new CMesh(&meshData);
 }
@@ -82,10 +112,10 @@ CMesh* CMesh::CreateRectangle()
     meshData.aVertices.push_back(SVertex(glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 1.0f)));
 
     meshData.aIndices = {
-        0, 1, 1, 2, 2, 3, 3, 0
+        0, 1, 2, 3
     };
 
-    meshData.type = SMeshData::MESHTYPE::LINES;
+    meshData.type = SMeshData::MESHTYPE::LINE_STRIP;
 
     return new CMesh(&meshData);
 }
@@ -107,18 +137,7 @@ void CMesh::UnBind()
 
 void CMesh::Render()
 {
-    if (m_meshType == SMeshData::MESHTYPE::TRIANGLES)
-    {
-        glDrawElements(GL_TRIANGLES, m_iIndexCount, GL_UNSIGNED_INT, nullptr);
-    }
-    else if (m_meshType == SMeshData::MESHTYPE::TRIANGLE_FAN)
-    {
-        glDrawElements(GL_TRIANGLE_FAN, m_iIndexCount, GL_UNSIGNED_INT, nullptr);
-    }
-    else if (m_meshType == SMeshData::MESHTYPE::LINES)
-    {
-        glDrawElements(GL_LINES, m_iIndexCount, GL_UNSIGNED_INT, nullptr);
-    }
+    glDrawElements(static_cast<int>(m_meshType), m_iIndexCount, GL_UNSIGNED_INT, nullptr);
 }
 
 void CMesh::LoadMesh(const SMeshData* pData)

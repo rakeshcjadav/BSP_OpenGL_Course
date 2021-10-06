@@ -6,7 +6,7 @@ class CSpotLight : public CLight
 public:
     CSpotLight(glm::vec3 position, glm::vec3 direction, glm::vec3 color, glm::vec3 atten, float innterAngle, float outerAngle);
 
-    void Bind(CMaterial* pMaterial, int index) override;
+    void Bind(const CMaterial* pMaterial, int index) override;
 private:
     glm::vec3 m_vPosition;
     glm::vec3 m_vDirection;

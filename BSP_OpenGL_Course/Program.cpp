@@ -2,11 +2,12 @@
 #include"Shader.h"
 #include"OpenGL.h"
 #include"Log.h"
+#include"AssetManager.h"
 
 CProgram::CProgram(std::string strVertexShaderFile, std::string strFragmentShaderFile)
 {
-	CShader* pShaderVS = new CShader(CShader::SHADER_TYPE::VERTEX, strVertexShaderFile);
-	CShader* pShaderFS = new CShader(CShader::SHADER_TYPE::FRAGMENT, strFragmentShaderFile);
+    const CShader* pShaderVS = CAssetManager::Get().GetShader(strVertexShaderFile);
+    const CShader* pShaderFS = CAssetManager::Get().GetShader(strFragmentShaderFile);
 
     m_IDProgram = glCreateProgram();
     AttachShader(pShaderVS);
@@ -34,47 +35,44 @@ CProgram::CProgram(std::string strVertexShaderFile, std::string strFragmentShade
 
         printf("Uniform #%d Type: 0x%x Name: %s\n", i, type, name);
     }*/
-
-    delete pShaderVS;
-    delete pShaderFS;
 }
 
-void CProgram::Use()
+void CProgram::Use() const
 {
     glUseProgram(m_IDProgram);
 }
 
-void CProgram::SetUniform(std::string name, int value)
+void CProgram::SetUniform(std::string name, int value) const
 {
     glUniform1i(glGetUniformLocation(m_IDProgram, name.c_str()), value);
 }
 
-void CProgram::SetUniform(std::string name, float value)
+void CProgram::SetUniform(std::string name, float value) const
 {
     glUniform1f(glGetUniformLocation(m_IDProgram, name.c_str()), value);
 }
 
-void CProgram::SetUniform(std::string name, glm::vec3& value)
+void CProgram::SetUniform(std::string name, const glm::vec3& value) const
 {
     glUniform3fv(glGetUniformLocation(m_IDProgram, name.c_str()), 1, glm::value_ptr(value));
 }
 
-void CProgram::SetUniform(std::string name, glm::vec4 & value)
+void CProgram::SetUniform(std::string name, const glm::vec4 & value) const
 {
     glUniform4fv(glGetUniformLocation(m_IDProgram, name.c_str()), 1, glm::value_ptr(value));
 }
 
-void CProgram::SetUniform(std::string name, glm::mat4 & value)
+void CProgram::SetUniform(std::string name, const glm::mat4 & value) const
 {
     glUniformMatrix4fv(glGetUniformLocation(m_IDProgram, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
 }
 
-void CProgram::SetUniform(std::string name, float* value)
+void CProgram::SetUniform(std::string name, float* value) const
 {
     glUniform4fv(glGetUniformLocation(m_IDProgram, name.c_str()), 1, value);
 }
 
-void CProgram::AttachShader(CShader* pShader)
+void CProgram::AttachShader(const CShader* pShader)
 {
     glAttachShader(m_IDProgram, pShader->GetID());
 }

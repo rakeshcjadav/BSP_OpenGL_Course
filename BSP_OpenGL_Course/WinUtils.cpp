@@ -74,3 +74,12 @@ std::string GetShaderPath()
     return GetMediaPath().append("shaders/");
 #endif
 }
+
+std::string GetModelPath()
+{
+#ifdef _WIN32
+    return GetMediaPath().append("models\\");
+#else
+    return GetMediaPath().append("models/");
+#endif
+}

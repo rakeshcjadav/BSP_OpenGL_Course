@@ -4,11 +4,10 @@
 class CTexture
 {
 public:
-	CTexture(std::string strTextureFile);
-	void Bind();
-	void Bind(unsigned int textureIndex);
+	CTexture(unsigned int textureID);
+	void Bind(unsigned int textureIndex) const;
 private:
-	unsigned char* LoadTexture(std::string strTextureFile, int& width, int& height, int& format);
+	void Bind() const;
 private:
 	std::string m_strName;
 	unsigned int m_IDTexture;

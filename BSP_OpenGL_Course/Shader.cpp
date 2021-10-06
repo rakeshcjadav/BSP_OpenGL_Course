@@ -1,17 +1,17 @@
 #include"Shader.h"
 #include<string>
-#include<fstream>
 #include"OpenGL.h"
 #include"WinUtils.h"
 #include"Log.h"
-#include<regex>
+#include"AssetManager.h"
+
 
 using namespace std;
 
-CShader::CShader(SHADER_TYPE type, std::string shaderFile)
+CShader::CShader(SHADER_TYPE type, std::string shaderSource)
 {
 	std::string shaderType;
-	if(type == VERTEX)
+	if(type == SHADER_TYPE::VERTEX)
 	{
 		m_IDShader = glCreateShader(GL_VERTEX_SHADER);
 		shaderType = "VERTEX";
@@ -22,10 +22,9 @@ CShader::CShader(SHADER_TYPE type, std::string shaderFile)
 		shaderType = "FRAGMENT";
 	}
 
-	std::string shader = LoadShader(shaderFile);
-	const char * shaderSource = shader.c_str();
+	const char * source = shaderSource.c_str();
 
-	glShaderSource(m_IDShader, 1, &shaderSource, NULL);
+	glShaderSource(m_IDShader, 1, &source, NULL);
 	glCompileShader(m_IDShader);
 	{
 		int  success;
@@ -46,38 +45,7 @@ CShader::~CShader()
 	glDeleteShader(m_IDShader);
 }
 
-unsigned int CShader::GetID()
+unsigned int CShader::GetID() const
 {
 	return m_IDShader;
-}
-
-std::string CShader::LoadShader(std::string shaderFile)
-{
-	// All shaders are put in specific folder
-	string shaderFilePath = GetShaderPath();
-
-	ifstream file(shaderFilePath.append(shaderFile));
-	//LOG_INFO << "Loading Shader : " << shaderFile << LOG_END;
-	string shaderSource;
-	if (file.is_open())
-	{
-		string line;
-		std::regex reg("[ ]*#include[ ]*\"(.*)\"");
-		while (getline(file, line))
-		{
-			std::smatch matches;
-			// search and include reference shader file
-			if (std::regex_search(line, matches, reg))
-			{
-				shaderSource += LoadShader(matches.str(1));
-			}
-			else
-			{
-				shaderSource += line + "\n";
-			}
-		}
-	}
-
-	file.close();
-	return shaderSource;
 }

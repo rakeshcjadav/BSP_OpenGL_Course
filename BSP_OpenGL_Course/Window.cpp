@@ -5,7 +5,9 @@
 #include"Log.h"
 #include"CameraController.h"
 #include"Scene.h"
+#include"AssetManager.h"
 #include<any>
+
 
 unsigned int CreateMeshUsingVBO(int& vertexCount)
 {
@@ -71,6 +73,7 @@ CWindow::CWindow()
 
 CWindow::~CWindow()
 {
+    CAssetManager::Destroy();
     glfwTerminate();
     delete m_pViewport;
 }
@@ -111,6 +114,8 @@ bool CWindow::Init(int width, int height, std::string strName)
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Tranparent blend or Alpha blend or Tranparent
     glEnable(GL_SCISSOR_TEST);
     glEnable(GL_MULTISAMPLE);
+
+    CAssetManager::Init();
 
     m_pViewport = new CViewport(0, 0, width, height);
     //m_pViewport2 = new CViewport(width/2, 0, width/2, height);

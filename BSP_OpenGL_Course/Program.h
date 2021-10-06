@@ -10,15 +10,15 @@ class CProgram
 public:
 	CProgram(std::string strVertexShaderFile, std::string strFragmentShaderFile);
 
-	void Use();
-	void SetUniform(std::string name, int value);
-	void SetUniform(std::string name, float value);
-	void SetUniform(std::string name, glm::vec3 & value);
-	void SetUniform(std::string name, glm::vec4 & value);
-	void SetUniform(std::string name, glm::mat4 & value);
-	void SetUniform(std::string name, float * value);
+	void Use() const;
+	void SetUniform(std::string name, int value) const;
+	void SetUniform(std::string name, float value) const;
+	void SetUniform(std::string name, const glm::vec3 & value) const;
+	void SetUniform(std::string name, const glm::vec4 & value) const;
+	void SetUniform(std::string name, const glm::mat4 & value) const;
+	void SetUniform(std::string name, float * value) const;
 private:
-	void AttachShader(CShader* pShader);
+	void AttachShader(const CShader* pShader);
 	void LinkProgram();
 private:
 	unsigned int m_IDProgram;

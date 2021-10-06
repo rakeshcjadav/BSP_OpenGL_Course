@@ -38,7 +38,7 @@ struct Material {
 // Lighting
 vec3 AmbientLight(vec3 lightColor)
 {
-    float ambientStrength = 0.1;
+    float ambientStrength = 0.05;
     return ambientStrength * lightColor;
 }
 
@@ -80,7 +80,7 @@ vec3 DiffuseSpotLight(vec3 normal, vec3 worldPos, SpotLight light)
 {
     // Fragment light direction
     vec3 lightDirection = normalize(light.position - worldPos);
-    return CalcAttenuation(worldPos, light.position, light.attenuation) * SpotLightIntensity(lightDirection, light) * light.color;
+    return DiffuseComponent(normal, lightDirection) * CalcAttenuation(worldPos, light.position, light.attenuation) * SpotLightIntensity(lightDirection, light) * light.color;
 }
 
 float SpecularComponent(vec3 normal, vec3 lightDirection, vec3 worldPos, vec3 cameraPos, Material material)
@@ -93,24 +93,34 @@ float SpecularComponent(vec3 normal, vec3 lightDirection, vec3 worldPos, vec3 ca
     return fSpectular * material.uShininess;
 }
 
+float SpecularComponentBlinnPong(vec3 normal, vec3 lightDirection, vec3 worldPos, vec3 cameraPos, Material material)
+{
+    vec3 cameraDirection = normalize(cameraPos - worldPos);
+    vec3 halfVector = normalize(lightDirection + cameraDirection);
+    float fSpectular = pow(max(dot(normal, halfVector), 0), material.uSpecularStrength);
+    return fSpectular * material.uShininess;
+}
+
 vec3 SpecularDirectionalLight(vec3 normal, vec3 worldPos, vec3 cameraPos, DirectionalLight light, Material material)
 {
-    return SpecularComponent(normal, -light.direction, worldPos, cameraPos, material) * light.color;
+    return SpecularComponentBlinnPong(normal, -light.direction, worldPos, cameraPos, material) * light.color;
 }
 
 vec3 SpecularPointLight(vec3 normal, vec3 worldPos, vec3 cameraPos, PointLight light, Material material)
 {
     vec3 lightDirection = normalize(light.position - worldPos);
-    return SpecularComponent(normal, lightDirection, worldPos, cameraPos, material)
+    return SpecularComponentBlinnPong(normal, lightDirection, worldPos, cameraPos, material)
         * CalcAttenuation(worldPos, light.position, light.attenuation)
+        * material.uSpecularColor
         * light.color;
 }
 
 vec3 SpecularSpotLight(vec3 normal, vec3 worldPos, vec3 cameraPos, SpotLight light, Material material)
 {
     vec3 lightDirection = normalize(light.position - worldPos);
-    return SpecularComponent(normal, lightDirection, worldPos, cameraPos, material)
+    return SpecularComponentBlinnPong(normal, lightDirection, worldPos, cameraPos, material)
         * CalcAttenuation(worldPos, light.position, light.attenuation)
         * SpotLightIntensity(lightDirection, light)
+        * material.uSpecularColor
         * light.color;
 }

@@ -8,7 +8,7 @@ CDirectionalLight::CDirectionalLight(glm::vec3 direction, glm::vec3 color) :
     m_vDirection = direction;
 }
 
-void CDirectionalLight::Bind(CMaterial* pMaterial, int index)
+void CDirectionalLight::Bind(const CMaterial* pMaterial, int index)
 {
     pMaterial->SetUniform("directionalLight.direction", m_vDirection);
     pMaterial->SetUniform("directionalLight.color", m_vColor);

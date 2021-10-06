@@ -23,7 +23,6 @@ private:
     void CreateGameObjects();
     void CreateCameras();
     void CreateLights();
-    void CreateMaterials();
 
 private:
     std::list<CGameObject*> m_listGameObjects;
@@ -31,5 +30,4 @@ private:
     std::list<CLight*> m_listPointLights;
     std::list<CLight*> m_listSpotLights;
     std::map<std::string, CCamera*> m_mapCameras;
-    std::map<std::string, CMaterial*> m_mapMaterials;
 };

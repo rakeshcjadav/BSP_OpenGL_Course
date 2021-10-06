@@ -1,5 +1,6 @@
 #pragma once
 #include "GLM.h"
+#include "OpenGL.h"
 #include<vector>
 
 // Forward declarations
@@ -8,6 +9,13 @@ struct SVertex
     glm::vec3 position;
     glm::vec3 normal;
     glm::vec2 uv;
+
+    SVertex()
+    {
+        position = glm::zero<glm::vec3>();
+        normal = glm::zero<glm::vec3>();
+        uv = glm::zero<glm::vec2>();
+    }
 
     SVertex(glm::vec3 _pos, glm::vec3 _normal, glm::vec2 _uv)
     {
@@ -20,10 +28,14 @@ struct SMeshData
 {
     enum class MESHTYPE
     {
-        TRIANGLES = 0,
-        TRIANGLE_FAN,
-        LINES
+        TRIANGLES = GL_TRIANGLES,
+        TRIANGLE_FAN = GL_TRIANGLE_FAN,
+        TRIANGLE_STRIP = GL_TRIANGLE_STRIP,
+        LINES = GL_LINES,
+        LINE_STRIP = GL_LINE_STRIP,
+        LINE_LOOP = GL_LINE_LOOP
     };
+    std::string strName;
     std::vector<SVertex> aVertices;
     std::vector<unsigned int> aIndices;
     MESHTYPE type = MESHTYPE::TRIANGLES;
@@ -33,6 +45,7 @@ class CMesh
 {
 public:
     static CMesh* CreatePlane();
+    static CMesh* CreateCircle();
     static CMesh * CreateCube();
     static CMesh* CreateRectangle();
 public:
