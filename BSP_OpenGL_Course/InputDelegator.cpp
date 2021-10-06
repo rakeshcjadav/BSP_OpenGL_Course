@@ -3,10 +3,10 @@
 
 void IInputDelegator::Attach(IInputHandler* pHandler)
 {
-    m_listHandler.push_back(pHandler);
+	m_listHandler.push_back(pHandler);
 }
 
 void IInputDelegator::Detach(IInputHandler* pHandler)
 {
-    m_listHandler.remove(pHandler);
+	m_listHandler.remove(pHandler);
 }

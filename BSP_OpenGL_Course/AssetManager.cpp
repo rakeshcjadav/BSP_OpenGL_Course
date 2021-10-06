@@ -11,45 +11,45 @@ CAssetManager * CAssetManager::s_pAssetManager = nullptr;
 
 bool CAssetManager::Init()
 {
-    CAssetManager* pAssetManager = new CAssetManager();
-    s_pAssetManager = pAssetManager;
-    if (!pAssetManager->InitPrivate())
-    {
-        delete pAssetManager;
-        pAssetManager = nullptr;
-    }
-    return !!s_pAssetManager;
+	CAssetManager* pAssetManager = new CAssetManager();
+	s_pAssetManager = pAssetManager;
+	if (!pAssetManager->InitPrivate())
+	{
+		delete pAssetManager;
+		pAssetManager = nullptr;
+	}
+	return !!s_pAssetManager;
 }
 
 CAssetManager& CAssetManager::Get()
 {
-    return *s_pAssetManager;
+	return *s_pAssetManager;
 }
 
 void CAssetManager::Destroy()
 {
-    delete s_pAssetManager;
-    s_pAssetManager = nullptr;
+	delete s_pAssetManager;
+	s_pAssetManager = nullptr;
 }
 
 const CShader* CAssetManager::GetShader(std::string strShaderName) const
 {
-    return m_shaders.Get(strShaderName);
+	return m_shaders.Get(strShaderName);
 }
 
 const CProgram* CAssetManager::GetProgram(std::string strProgramName) const
 {
-    return m_programs.Get(strProgramName);
+	return m_programs.Get(strProgramName);
 }
 
 const CTexture* CAssetManager::GetTexture(std::string strTextureName) const
 {
-    return m_textures.Get(strTextureName);
+	return m_textures.Get(strTextureName);
 }
 
 const CMaterial* CAssetManager::GetMaterial(std::string strMaterialName) const
 {
-    return m_materials.Get(strMaterialName);
+	return m_materials.Get(strMaterialName);
 }
 
 const SMaterialProperties* CAssetManager::GetMaterialProperties(std::string strName)
@@ -82,9 +82,9 @@ bool CAssetManager::InitPrivate()
 		m_shaders.Add(shader, LoadShader(shader));
 	}
 
-    m_programs.Add("unlit_program", new CProgram("unlit_vertex_shader.vert", "unlit_fragment_shader.frag"));
-    m_programs.Add("lit_program", new CProgram("lit_vertex_shader.vert", "lit_fragment_shader.frag"));
-    m_programs.Add("lit_program_dif_spec", new CProgram("lit_vertex_shader.vert", "lit_fragment_diffuse_specular_shader.frag"));
+	m_programs.Add("unlit_program", new CProgram("unlit_vertex_shader.vert", "unlit_fragment_shader.frag"));
+	m_programs.Add("lit_program", new CProgram("lit_vertex_shader.vert", "lit_fragment_shader.frag"));
+	m_programs.Add("lit_program_dif_spec", new CProgram("lit_vertex_shader.vert", "lit_fragment_diffuse_specular_shader.frag"));
 
 	std::vector textures{
 		"minion-transparent-background-9.png",

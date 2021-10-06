@@ -3,18 +3,18 @@
 
 int main()
 {
-    /* Initialize the library */
-    if (!glfwInit())
-        return false;
+	/* Initialize the library */
+	if (!glfwInit())
+		return false;
 
-    CWindow* pWindow = CWindow::Create(1920, 1080, "Hello World");
+	CWindow* pWindow = CWindow::Create(1920, 1080, "Hello World");
 
-    while(!pWindow->IsWindowClosed())
-    {
-        pWindow->MakeCurrent();
-        pWindow->RenderOneFrame();
-    }
+	while(!pWindow->IsWindowClosed())
+	{
+		pWindow->MakeCurrent();
+		pWindow->RenderOneFrame();
+	}
 
-    delete pWindow;
+	delete pWindow;
 	return 0;
 }

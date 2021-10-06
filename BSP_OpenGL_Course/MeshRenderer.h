@@ -10,18 +10,18 @@ class CModel;
 class CMeshRenderer
 {
 public:
-    CMeshRenderer();
+	CMeshRenderer();
 
-    void Render(CMesh * pMesh, CTransform * pTransform, const CMaterial * pMaterial, CCamera * pCamera, 
-        std::list<CLight*>* pDirectionalLights,
-        std::list<CLight*>* pPointLights,
-        std::list<CLight*>* pSpotLights);
+	void Render(CMesh * pMesh, CTransform * pTransform, const CMaterial * pMaterial, CCamera * pCamera, 
+		std::list<CLight*>* pDirectionalLights,
+		std::list<CLight*>* pPointLights,
+		std::list<CLight*>* pSpotLights);
 
 
-    void Render(CModel* pModel, CTransform* pTransform, CCamera* pCamera,
-        std::list<CLight*>* pDirectionalLights,
-        std::list<CLight*>* pPointLights,
-        std::list<CLight*>* pSpotLights);
+	void Render(CModel* pModel, CTransform* pTransform, CCamera* pCamera,
+		std::list<CLight*>* pDirectionalLights,
+		std::list<CLight*>* pPointLights,
+		std::list<CLight*>* pSpotLights);
 
 private:
 

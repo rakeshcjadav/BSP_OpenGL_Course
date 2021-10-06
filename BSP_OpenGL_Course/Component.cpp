@@ -4,11 +4,11 @@
 template<class T>
 T* CComponent<T>::GetComponent()
 {
-    return T;
+	return T;
 }
 
 template<class T>
 CGameObject* CComponent<T>::GetGameObject()
 {
-    return m_pGameObject;
+	return m_pGameObject;
 }
