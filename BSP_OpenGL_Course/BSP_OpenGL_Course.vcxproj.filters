@@ -28,6 +28,9 @@
     <Filter Include="Resource Files\Shaders\common">
       <UniqueIdentifier>{299fe0f1-efd0-402b-bbee-a4ee9fcde9f7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\ThirdParty">
+      <UniqueIdentifier>{9e02ac01-f29d-4a72-99e3-49fdecd24f5f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -102,15 +105,15 @@
     <ClCompile Include="AssetManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="CameraController.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GLM.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="InputDelegator.h">
@@ -128,16 +131,10 @@
     <ClInclude Include="Mesh.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="OpenGL.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="Program.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="STB.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
@@ -184,6 +181,21 @@
     </ClInclude>
     <ClInclude Include="AssetManager.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GLM.h">
+      <Filter>Source Files\ThirdParty</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL.h">
+      <Filter>Source Files\ThirdParty</Filter>
+    </ClInclude>
+    <ClInclude Include="STB.h">
+      <Filter>Source Files\ThirdParty</Filter>
+    </ClInclude>
+    <ClInclude Include="Assimp.h">
+      <Filter>Source Files\ThirdParty</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

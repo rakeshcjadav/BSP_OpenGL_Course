@@ -1,5 +1,5 @@
+#include"pch.h"
 #include"Viewport.h"
-#include"OpenGL.h"
 #include"Camera.h"
 
 CViewport::CViewport(int posX, int posY, int width, int height)

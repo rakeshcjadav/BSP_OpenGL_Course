@@ -1,6 +1,4 @@
 #pragma once
-#include"InputHandler.h"
-#include"GLM.h"
 
 class CCamera;
 

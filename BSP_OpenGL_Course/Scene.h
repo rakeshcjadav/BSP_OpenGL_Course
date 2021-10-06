@@ -1,8 +1,4 @@
 #pragma once
-#include<list>
-#include<map>
-#include<string>
-#include<typeinfo>
 
 class CGameObject;
 class CLight;

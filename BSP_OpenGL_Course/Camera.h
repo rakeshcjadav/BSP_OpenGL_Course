@@ -1,6 +1,4 @@
 #pragma once
-#include "GLM.h"
-#include "InputHandler.h"
 
 // Forward Declarations
 struct SCameraDef;

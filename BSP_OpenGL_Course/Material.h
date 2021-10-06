@@ -1,9 +1,4 @@
 #pragma once
-#include<string>
-#include<map>
-#include"GLM.h"
-#include"OpenGL.h"
-#include"Program.h"
 
 // Forward Declarations
 class CTexture;

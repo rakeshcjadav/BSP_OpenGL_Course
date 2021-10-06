@@ -1,14 +1,10 @@
+#include"pch.h"
 #include"AssetManager.h"
 #include"Shader.h"
 #include"Program.h"
 #include"Texture.h"
 #include"Material.h"
-#include"WinUtils.h"
 #include"STB.h"
-#include"Log.h"
-#include<fstream>
-#include<regex>
-#include<algorithm>
 
 
 CAssetManager * CAssetManager::s_pAssetManager = nullptr;

@@ -1,7 +1,4 @@
 #pragma once
-#include<list>
-#include<map>
-#include<typeinfo>
 
 class CMesh;
 class CMaterial;

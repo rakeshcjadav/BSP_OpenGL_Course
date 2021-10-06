@@ -1,6 +1,6 @@
+#include"pch.h"
 #include"SpotLight.h"
 #include"Material.h"
-#include<string>
 
 CSpotLight::CSpotLight(glm::vec3 position, glm::vec3 direction, glm::vec3 color, glm::vec3 atten, float innterAngle, float outerAngle):
     m_vPosition(0.0f),

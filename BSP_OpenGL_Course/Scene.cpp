@@ -1,3 +1,4 @@
+#include"pch.h"
 #include"Scene.h"
 #include"Material.h"
 #include"Camera.h"
@@ -11,7 +12,6 @@
 #include"Mesh.h"
 #include"MeshRenderer.h"
 #include"Model.h"
-#include"AssetManager.h"
 
 CScene::CScene()
 {
@@ -120,7 +120,7 @@ void CScene::CreateCameras()
 
 void CScene::CreateLights()
 {
-    /* Directional
+    // Directional
     m_listDirectionalLights.push_back(
         new CDirectionalLight(
             glm::normalize(glm::vec3(0.f, -1.0f, -1.f)),
@@ -139,7 +139,7 @@ void CScene::CreateLights()
             glm::vec3(16.f, 5.5f, 2.f),
             glm::normalize(glm::vec3(0.0f, -1.0f, 0.0f)),
             glm::vec3(0.0f, 1.0f, 0.0f),
-            glm::vec3(1.0f, 0.05f, 0.001f), 0.0f, 60.0f));*/
+            glm::vec3(1.0f, 0.05f, 0.001f), 0.0f, 60.0f));
     
     // Point
     m_listPointLights.push_back(

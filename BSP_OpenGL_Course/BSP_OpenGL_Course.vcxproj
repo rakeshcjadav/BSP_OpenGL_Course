@@ -90,6 +90,8 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\glfw-3.3.4.bin.WIN32\include;$(SolutionDir)Dependencies\glew-2.1.0\include;$(SolutionDir)Dependencies\stb\include;$(SolutionDir)Dependencies\glm-0.9.9.8\include;$(SolutionDir)Dependencies\assimp-5.0.1.WIN32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -157,6 +159,9 @@
     <ClCompile Include="MeshRenderer.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="Scene.cpp" />
@@ -170,6 +175,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AssetManager.h" />
+    <ClInclude Include="Assimp.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraController.h" />
     <ClInclude Include="Component.h" />
@@ -185,6 +191,7 @@
     <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="OpenGL.h" />
+    <ClInclude Include="pch.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Program.h" />
     <ClInclude Include="Scene.h" />

@@ -1,12 +1,8 @@
+#include"pch.h"
 #include"Shader.h"
-#include<string>
-#include"OpenGL.h"
-#include"WinUtils.h"
-#include"Log.h"
-#include"AssetManager.h"
-
 
 using namespace std;
+
 
 CShader::CShader(SHADER_TYPE type, std::string shaderSource)
 {

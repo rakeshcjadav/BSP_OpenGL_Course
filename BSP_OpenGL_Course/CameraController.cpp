@@ -1,8 +1,6 @@
+#include"pch.h"
 #include"CameraController.h"
 #include"Camera.h"
-#include"InputDelegator.h"
-#include"GLFW/glfw3.h"
-#include"Log.h"
 
 
 CCameraController::CCameraController(IInputDelegator* pDelegator, CCamera* pCamera):

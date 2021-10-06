@@ -1,8 +1,6 @@
-#include "WinUtils.h"
-#include <stdlib.h>
-#include "Log.h"
-#include <string>
-#include<iostream>
+#include"pch.h"
+#include"WinUtils.h"
+
 
 char * GetEnvPrivate(const char* varName)
 {

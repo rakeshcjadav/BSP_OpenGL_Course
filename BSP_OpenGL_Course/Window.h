@@ -1,7 +1,4 @@
 #pragma once
-#include<string>
-#include<map>
-#include"InputDelegator.h"
 
 struct GLFWwindow;
 class CViewport;

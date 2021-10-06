@@ -1,3 +1,4 @@
+#include"pch.h"
 #include"InputDelegator.h"
 
 void IInputDelegator::Attach(IInputHandler* pHandler)

@@ -1,6 +1,4 @@
 #pragma once
-#include<string>
-#include"GLM.h"
 
 // Forward declarations
 class CShader;

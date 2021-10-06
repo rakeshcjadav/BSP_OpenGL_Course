@@ -1,8 +1,5 @@
+#include"pch.h"
 #include"Texture.h"
-#include"OpenGL.h"
-#include"WinUtils.h"
-#include"AssetManager.h"
-#include"Log.h"
 
 CTexture::CTexture(unsigned int textureID)
 {

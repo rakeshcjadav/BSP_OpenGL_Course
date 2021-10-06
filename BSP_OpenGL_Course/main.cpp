@@ -1,6 +1,4 @@
-#include "OpenGL.h"
-#include <stdio.h>
-#include "WinUtils.h"
+#include"pch.h"
 #include"Window.h"
 
 int main()

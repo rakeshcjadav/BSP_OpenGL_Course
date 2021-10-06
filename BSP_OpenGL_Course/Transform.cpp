@@ -1,3 +1,4 @@
+#include"pch.h"
 #include"Transform.h"
 
 CTransform::CTransform(glm::vec3 pos, glm::vec3 rotation, glm::vec3 scale)

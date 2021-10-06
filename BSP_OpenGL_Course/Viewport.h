@@ -1,5 +1,4 @@
 #pragma once
-#include"GLM.h"
 
 class CCamera;
 

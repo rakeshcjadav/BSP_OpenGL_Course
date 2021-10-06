@@ -1,13 +1,9 @@
+#include"pch.h"
 #include"Model.h"
-#include"WinUtils.h"
-#include"Log.h"
 #include"Mesh.h"
-#include"GLM.h"
 #include"Texture.h"
 #include"Program.h"
-#include<map>
 #include"Material.h"
-#include"AssetManager.h"
 
 
 CModel* CModel::LoadModel(std::string strFileName)

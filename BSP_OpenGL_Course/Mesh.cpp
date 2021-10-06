@@ -1,6 +1,5 @@
+#include"pch.h"
 #include"Mesh.h"
-#include"Log.h"
-#include"OpenGL.h"
 
 // static 
 // Plane

@@ -1,12 +1,9 @@
+#include"pch.h"
 #include"Window.h"
-#include"OpenGL.h"
 #include"Viewport.h"
 #include"Camera.h"
-#include"Log.h"
 #include"CameraController.h"
 #include"Scene.h"
-#include"AssetManager.h"
-#include<any>
 
 
 unsigned int CreateMeshUsingVBO(int& vertexCount)

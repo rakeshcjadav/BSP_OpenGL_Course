@@ -1,8 +1,6 @@
+#include"pch.h"
 #include"Program.h"
 #include"Shader.h"
-#include"OpenGL.h"
-#include"Log.h"
-#include"AssetManager.h"
 
 CProgram::CProgram(std::string strVertexShaderFile, std::string strFragmentShaderFile)
 {

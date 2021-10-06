@@ -1,7 +1,4 @@
 #pragma once
-#include "GLM.h"
-#include "OpenGL.h"
-#include<vector>
 
 // Forward declarations
 struct SVertex

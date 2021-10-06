@@ -1,7 +1,7 @@
+#include"pch.h"
 #include"Material.h"
 #include"Texture.h"
 #include"Program.h"
-#include"OpenGL.h"
 
 CMaterial::CMaterial(std::string strName, const SMaterialRenderStates* pStates, 
     const SMaterialProperties * pProperties, 

@@ -1,9 +1,7 @@
+#include"pch.h"
 #include"Camera.h"
 #include"Viewport.h"
-#include"Log.h"
-#include"InputDelegator.h"
 #include"Scene.h"
-#include"GLFW/glfw3.h"
 
 CCamera::CCamera(const SCameraDef * pCameraDef, const CViewport* pViewport)
 {

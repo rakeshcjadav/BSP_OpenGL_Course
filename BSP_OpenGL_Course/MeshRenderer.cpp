@@ -1,3 +1,4 @@
+#include"pch.h"
 #include"MeshRenderer.h"
 #include"Camera.h"
 #include"Mesh.h"
@@ -5,7 +6,7 @@
 #include"Material.h"
 #include"Transform.h"
 #include"Model.h"
-#include<typeinfo>
+
 
 CMeshRenderer::CMeshRenderer()
 {
