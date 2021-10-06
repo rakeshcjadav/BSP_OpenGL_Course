@@ -7,7 +7,7 @@ int main()
 	if (!glfwInit())
 		return false;
 
-	CWindow* pWindow = CWindow::Create(1920, 1080, "Hello World");
+	CWindow* pWindow = CWindow::Create(1920, 1080, "BSP OpenGL Course");
 
 	while(!pWindow->IsWindowClosed())
 	{
