@@ -101,10 +101,12 @@ void CAssetManager::LoadTextures()
 	std::vector textures{
 		"minion-transparent-background-9.png",
 		"minion.jpg",
+		"seamless_tileable_texture.jpg",
 		"container\\container.png",
 		"container\\container_specular.png",
 		"backpack\\diffuse.jpg",
-		"backpack\\specular.jpg"
+		"backpack\\specular.jpg",
+		"bricks2.jpg"
 	};
 	for (std::string texture : textures)
 	{
@@ -117,7 +119,7 @@ void CAssetManager::LoadMaterials()
 	m_materialProperties.Add("orange", new SMaterialProperties(
 		glm::vec3(1.0f, 0.5f, 0.31f),
 		glm::vec3(1.0f, 0.5f, 0.31f),
-		glm::vec3(1.0f, 0.5f, 0.31f), 1, 0.0f));
+		glm::vec3(1.0f, 0.5f, 0.31f), 1.0f, 0.0f));
 
 	m_materialProperties.Add("green", new SMaterialProperties(
 		glm::vec3(0.5f, 1.0f, 0.31f),
@@ -127,17 +129,17 @@ void CAssetManager::LoadMaterials()
 	m_materialProperties.Add("red", new SMaterialProperties(
 		glm::vec3(1.0f, 0.20f, 0.31f),
 		glm::vec3(1.0f, 0.20f, 0.31f),
-		glm::vec3(1.0f, 0.20f, 0.31f), 5, 0.2f));
+		glm::vec3(1.0f, 0.20f, 0.31f), 5, 1.0f));
 
 	m_materialProperties.Add("white", new SMaterialProperties(
 		glm::vec3(1.0f),
 		glm::vec3(1.0f),
-		glm::vec3(1.0f), 1.0f, 0.0f));
+		glm::vec3(1.0f), 0.0f, 0.1f));
 
 	m_materialProperties.Add("white_shiny", new SMaterialProperties(
 		glm::vec3(1.0f),
 		glm::vec3(1.0f),
-		glm::vec3(1.0f), 64.0f, 1.0f));
+		glm::vec3(1.0f), 225.0f, 1.0f));
 
 	m_materialStates.Add("default", new SMaterialRenderStates(
 		SMaterialRenderStates::BLEND_TYPE::TRANSPARENT,
@@ -152,6 +154,14 @@ void CAssetManager::LoadMaterials()
 	mapDiffuseSpecularTextures["DiffuseTex"] = GetTexture("container\\container.png");
 	mapDiffuseSpecularTextures["SpecularTex"] = GetTexture("container\\container_specular.png");
 
+	std::map<std::string, const CTexture*> mapGroundTexture;
+	mapGroundTexture["DiffuseTex"] = GetTexture("seamless_tileable_texture.jpg");
+	mapGroundTexture["SpecularTex"] = GetTexture("seamless_tileable_texture.jpg");
+
+	std::map<std::string, const CTexture*> mapWallTexture;
+	mapWallTexture["DiffuseTex"] = GetTexture("bricks2.jpg");
+	mapWallTexture["SpecularTex"] = GetTexture("bricks2.jpg");
+
 	const CProgram* pProgramUnlit = GetProgram("unlit_program");
 	const CProgram* pProgramLit = GetProgram("lit_program");
 	const CProgram* pProgramDiffuseSpecular = GetProgram("lit_program_dif_spec");
@@ -159,7 +169,8 @@ void CAssetManager::LoadMaterials()
 	const SMaterialProperties* pOrangeProperties = GetMaterialProperties("orange");
 	const SMaterialProperties* pGreenProperties = GetMaterialProperties("green");
 	const SMaterialProperties* pRedProperties = GetMaterialProperties("red");
-	const SMaterialProperties* pWhiteProperties = GetMaterialProperties("white_shiny");
+	const SMaterialProperties* pWhiteProperties = GetMaterialProperties("white");
+	const SMaterialProperties* pWhiteShinyProperties = GetMaterialProperties("white_shiny");
 
 	const SMaterialRenderStates* pDefaultStates = CAssetManager::Get().GetMaterialStates("default");
 
@@ -169,12 +180,13 @@ void CAssetManager::LoadMaterials()
 	m_materials.Add("unlit_white", new CMaterial("unlit_white", pDefaultStates, pWhiteProperties, pProgramUnlit, mapTextures));
 
 	// Lit
-	m_materials.Add("lit_orange",  new CMaterial("lit_orange", pDefaultStates, pOrangeProperties, pProgramLit, mapTextures));
+	m_materials.Add("lit_orange",  new CMaterial("lit_orange", pDefaultStates, pWhiteProperties, pProgramDiffuseSpecular, mapWallTexture));
 	m_materials.Add("lit_green",  new CMaterial("lit_green", pDefaultStates, pGreenProperties, pProgramLit, mapTextures));
 	m_materials.Add("lit_red", new CMaterial("lit_red", pDefaultStates, pRedProperties, pProgramLit, mapTextures));
+	m_materials.Add("lit_white", new CMaterial("lit_white", pDefaultStates, pWhiteShinyProperties, pProgramDiffuseSpecular, mapGroundTexture));
 
 	// Diffuse Specular
-	m_materials.Add("lit_diff_spec", new CMaterial("lit_diff_spec", pDefaultStates, pWhiteProperties, pProgramDiffuseSpecular, mapDiffuseSpecularTextures));
+	m_materials.Add("lit_diff_spec", new CMaterial("lit_diff_spec", pDefaultStates, pWhiteShinyProperties, pProgramDiffuseSpecular, mapDiffuseSpecularTextures));
 }
 
 CShader* CAssetManager::LoadShader(std::string strShaderFileName)

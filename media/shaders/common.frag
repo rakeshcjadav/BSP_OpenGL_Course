@@ -88,7 +88,7 @@ float SpecularComponent(vec3 normal, vec3 lightDirection, vec3 worldPos, vec3 ca
     vec3 reflectDirection = reflect(-lightDirection, normal);
 
     vec3 cameraDirection = normalize(cameraPos - worldPos);
-    float fSpectular = pow(max(dot(reflectDirection, cameraDirection), 0.0f), material.uSpecularStrength);
+    float fSpectular = pow(max(dot(reflectDirection, cameraDirection), 0.0), material.uSpecularStrength);
 
     return fSpectular * material.uShininess;
 }
@@ -97,7 +97,9 @@ float SpecularComponentBlinnPong(vec3 normal, vec3 lightDirection, vec3 worldPos
 {
     vec3 cameraDirection = normalize(cameraPos - worldPos);
     vec3 halfVector = normalize(lightDirection + cameraDirection);
-    float fSpectular = pow(max(dot(normal, halfVector), 0), material.uSpecularStrength);
+    float fSpectular = 0.0f;
+    if(material.uSpecularStrength > 0.0)
+        fSpectular= pow(max(dot(normal, halfVector), 0.0), material.uSpecularStrength);
     return fSpectular * material.uShininess;
 }
 

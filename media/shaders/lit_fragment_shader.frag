@@ -5,8 +5,6 @@ in vec3 outWorldPos;
 in vec3 outNormal;
 in vec2 outTexCoord;
 
-uniform sampler2D MainTex;
-uniform sampler2D SecondTex;
 uniform vec3 CameraPos;
 uniform DirectionalLight directionalLight;
 uniform int PointLightCount;
@@ -55,7 +53,7 @@ void main()
 
     ambientColor *= material.uAmbientColor;
     diffuseColor *= material.uDiffuseColor;
-    specularColor *= material.uSpecularColor;
+    //specularColor *= material.uSpecularColor;
 
     vec3 final = ambientColor + diffuseColor + specularColor;
 

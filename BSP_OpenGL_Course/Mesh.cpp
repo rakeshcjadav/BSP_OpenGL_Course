@@ -22,6 +22,33 @@ CMesh* CMesh::CreatePlane()
 	return new CMesh(&meshData);
 }
 
+// Terrain
+CMesh* CMesh::CreateTilablePlane(int width, int height)
+{
+	SMeshData meshData;
+	for (int y = 0; y <= height; y++)
+	{
+		for (int x = 0; x <= width; x++)
+		{
+			meshData.aVertices.push_back(SVertex(glm::vec3(x-width/2.0f, y-height/2.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(x, y)));
+			if (x == width || y == height)
+				continue;
+
+			meshData.aIndices.push_back(x + y * width + y);
+			meshData.aIndices.push_back((x + 1) + y * width + y);
+			meshData.aIndices.push_back(x + (y + 1) * width + (y + 1));
+
+			meshData.aIndices.push_back((x + 1) + y * width + y);
+			meshData.aIndices.push_back((x + 1) + (y + 1) * width + (y + 1));
+			meshData.aIndices.push_back(x + (y + 1) * width + (y + 1));
+		}
+	}
+
+	meshData.type = SMeshData::MESHTYPE::TRIANGLES;
+
+	return new CMesh(&meshData);
+}
+
 // Circle
 CMesh* CMesh::CreateCircle()
 {

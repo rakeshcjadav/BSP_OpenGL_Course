@@ -36,12 +36,29 @@ struct SMeshData
 	std::vector<SVertex> aVertices;
 	std::vector<unsigned int> aIndices;
 	MESHTYPE type = MESHTYPE::TRIANGLES;
+
+
+	void Print()
+	{
+		int i = 0;
+		for (auto a : aIndices)
+		{
+			std::cout << a << " ";
+			i++;
+			if (i == 6)
+			{
+				i = 0;
+				std::cout << std::endl;
+			}
+		}
+	}
 };
 
 class CMesh
 {
 public:
 	static CMesh* CreatePlane();
+	static CMesh* CreateTilablePlane(int width, int height);
 	static CMesh* CreateCircle();
 	static CMesh * CreateCube();
 	static CMesh* CreateRectangle();

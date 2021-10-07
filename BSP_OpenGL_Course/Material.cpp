@@ -56,6 +56,8 @@ void CMaterial::SetMaterialStates() const
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Tranparent blend or Alpha blend or Tranparent
 	}
+
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 void CMaterial::SetMaterialProperties() const
