@@ -13,9 +13,38 @@ CMesh* CMesh::CreatePlane()
 	meshData.aVertices.push_back(SVertex(glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 1.0f)));
 
 	meshData.aIndices = {
-		0, 1, 3,
-		2
+		0, 1, 3, 2
 	};
+
+	for (int i = 0; i < meshData.aIndices.size() - 2; i++)
+	{
+		SVertex& v1 = meshData.aVertices[meshData.aIndices[i]];
+		SVertex& v2 = meshData.aVertices[meshData.aIndices[i+1]];
+		SVertex& v3 = meshData.aVertices[meshData.aIndices[i+2]];
+		glm::vec3 edge1 = v2.position - v1.position;
+		glm::vec3 edge2 = v3.position - v1.position;
+
+		glm::vec2 deltaUV1 = v2.uv - v1.uv;
+		glm::vec2 deltaUV2 = v3.uv - v1.uv;
+
+		float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+		v1.tangent.x += f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+		v1.tangent.y += f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+		v1.tangent.z += f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+
+		v1.bitangent.x += f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
+		v1.bitangent.y += f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
+		v1.bitangent.z += f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
+
+		v1.tangent = glm::normalize(v1.tangent);
+		v2.tangent = v1.tangent;
+		v3.tangent = v1.tangent;
+
+		v1.bitangent = glm::normalize(v1.bitangent);
+		v2.bitangent = v1.bitangent;
+		v3.bitangent = v1.bitangent;
+	}
 
 	meshData.type = SMeshData::MESHTYPE::TRIANGLE_STRIP;
 
@@ -42,6 +71,36 @@ CMesh* CMesh::CreateTilablePlane(int width, int height)
 			meshData.aIndices.push_back((x + 1) + (y + 1) * width + (y + 1));
 			meshData.aIndices.push_back(x + (y + 1) * width + (y + 1));
 		}
+	}
+
+	for (int i = 0; i < meshData.aIndices.size(); i = i + 3)
+	{
+		SVertex& v1 = meshData.aVertices[meshData.aIndices[i]];
+		SVertex& v2 = meshData.aVertices[meshData.aIndices[i + 1]];
+		SVertex& v3 = meshData.aVertices[meshData.aIndices[i + 2]];
+		glm::vec3 edge1 = v2.position - v1.position;
+		glm::vec3 edge2 = v3.position - v1.position;
+
+		glm::vec2 deltaUV1 = v2.uv - v1.uv;
+		glm::vec2 deltaUV2 = v3.uv - v1.uv;
+
+		float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+		v1.tangent.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+		v1.tangent.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+		v1.tangent.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+
+		v1.bitangent.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
+		v1.bitangent.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
+		v1.bitangent.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
+
+		v1.tangent = glm::normalize(v1.tangent);
+		v2.tangent = v1.tangent;
+		v3.tangent = v1.tangent;
+
+		v1.bitangent = glm::normalize(v1.bitangent);
+		v2.bitangent = v1.bitangent;
+		v3.bitangent = v1.bitangent;
 	}
 
 	meshData.type = SMeshData::MESHTYPE::TRIANGLES;
@@ -123,6 +182,36 @@ CMesh* CMesh::CreateCube()
 		face++;
 	}
 
+	for (int i = 0; i < meshData.aIndices.size(); i=i+3)
+	{
+		SVertex& v1 = meshData.aVertices[meshData.aIndices[i]];
+		SVertex& v2 = meshData.aVertices[meshData.aIndices[i + 1]];
+		SVertex& v3 = meshData.aVertices[meshData.aIndices[i + 2]];
+		glm::vec3 edge1 = v2.position - v1.position;
+		glm::vec3 edge2 = v3.position - v1.position;
+
+		glm::vec2 deltaUV1 = v2.uv - v1.uv;
+		glm::vec2 deltaUV2 = v3.uv - v1.uv;
+
+		float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+		v1.tangent.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+		v1.tangent.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+		v1.tangent.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+
+		v1.bitangent.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
+		v1.bitangent.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
+		v1.bitangent.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
+
+		v1.tangent = glm::normalize(v1.tangent);
+		v2.tangent = v1.tangent;
+		v3.tangent = v1.tangent;
+
+		v1.bitangent = glm::normalize(v1.bitangent);
+		v2.bitangent = v1.bitangent;
+		v3.bitangent = v1.bitangent;
+	}
+
 	meshData.type = SMeshData::MESHTYPE::TRIANGLES;
 
 	return new CMesh(&meshData);
@@ -188,8 +277,14 @@ void CMesh::LoadMesh(const SMeshData* pData)
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(SVertex), (void*)(sizeof(glm::vec3)));
 		glEnableVertexAttribArray(1);
 
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), (void*)(2*sizeof(glm::vec3)));
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(SVertex), (void*)(2*sizeof(glm::vec3)));
 		glEnableVertexAttribArray(2);
+
+		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(SVertex), (void*)(3*sizeof(glm::vec3)));
+		glEnableVertexAttribArray(3);
+
+		glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), (void*)(4*sizeof(glm::vec3)));
+		glEnableVertexAttribArray(4);
 
 		unsigned int EBO;
 		glGenBuffers(1, &EBO);

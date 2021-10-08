@@ -5,12 +5,16 @@ struct SVertex
 {
 	glm::vec3 position;
 	glm::vec3 normal;
+	glm::vec3 tangent;
+	glm::vec3 bitangent;
 	glm::vec2 uv;
 
 	SVertex()
 	{
 		position = glm::zero<glm::vec3>();
 		normal = glm::zero<glm::vec3>();
+		tangent = glm::zero<glm::vec3>();
+		bitangent = glm::zero<glm::vec3>();
 		uv = glm::zero<glm::vec2>();
 	}
 
@@ -18,6 +22,17 @@ struct SVertex
 	{
 		position = _pos;
 		normal = _normal;
+		tangent = glm::zero<glm::vec3>();
+		bitangent = glm::zero<glm::vec3>();
+		uv = _uv;
+	}
+
+	SVertex(glm::vec3 _pos, glm::vec3 _normal, glm::vec3 _tangent, glm::vec3 _bitangent, glm::vec2 _uv)
+	{
+		position = _pos;
+		normal = _normal;
+		tangent = _tangent;
+		bitangent = _bitangent;
 		uv = _uv;
 	}
 };

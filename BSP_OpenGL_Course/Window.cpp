@@ -105,10 +105,6 @@ bool CWindow::Init(int width, int height, std::string strName)
 	glfwSetMouseButtonCallback(m_pWindow, CWindow::MouseButtonCallback);
 
 	// TODO: Move to material
-	//glEnable(GL_DEPTH_TEST);
-	//glEnable(GL_BLEND);
-	//glBlendFunc(GL_ONE, GL_ZERO);  // Replace blend or Opaque
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Tranparent blend or Alpha blend or Tranparent
 	glEnable(GL_SCISSOR_TEST);
 	glEnable(GL_MULTISAMPLE);
 

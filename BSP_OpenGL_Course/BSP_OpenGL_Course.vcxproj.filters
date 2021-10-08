@@ -220,5 +220,9 @@
     <None Include="..\media\shaders\common.frag">
       <Filter>Resource Files\Shaders\common</Filter>
     </None>
+    <None Include="..\README.md" />
+    <None Include="..\media\shaders\lit_fragment_diffuse_specular_normal_shader.frag">
+      <Filter>Resource Files\Shaders\Lit</Filter>
+    </None>
   </ItemGroup>
 </Project>

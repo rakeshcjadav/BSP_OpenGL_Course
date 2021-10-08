@@ -91,7 +91,8 @@ void CAssetManager::LoadShaders()
 
 		"unlit_fragment_shader.frag",
 		"lit_fragment_shader.frag",
-		"lit_fragment_diffuse_specular_shader.frag"
+		"lit_fragment_diffuse_specular_shader.frag",
+		"lit_fragment_diffuse_specular_normal_shader.frag"
 	};
 	for (std::string shader : shaders)
 	{
@@ -101,6 +102,7 @@ void CAssetManager::LoadShaders()
 	m_programs.Add("unlit_program", new CProgram("unlit_vertex_shader.vert", "unlit_fragment_shader.frag"));
 	m_programs.Add("lit_program", new CProgram("lit_vertex_shader.vert", "lit_fragment_shader.frag"));
 	m_programs.Add("lit_program_dif_spec", new CProgram("lit_vertex_shader.vert", "lit_fragment_diffuse_specular_shader.frag"));
+	m_programs.Add("lit_program_dif_spec_normal", new CProgram("lit_vertex_shader.vert", "lit_fragment_diffuse_specular_normal_shader.frag"));
 
 }
 
@@ -112,7 +114,12 @@ void CAssetManager::LoadTextures()
 		"seamless_tileable_texture.jpg",
 		"container\\container.png",
 		"container\\container_specular.png",
-		"bricks2.jpg"
+		"bricks2.jpg",
+		"brickwall.jpg",
+		"brickwall_normal.jpg",
+		"Stylized_Dry_Mud_001_basecolor.jpg",
+		"Stylized_Dry_Mud_001_normal.jpg",
+		"Stylized_Dry_Mud_001_roughness.jpg"
 	};
 	for (std::string texture : textures)
 	{
@@ -140,7 +147,7 @@ void CAssetManager::LoadMaterials()
 	m_materialProperties.Add("white", new SMaterialProperties(
 		glm::vec3(1.0f),
 		glm::vec3(1.0f),
-		glm::vec3(1.0f), 0.0f, 0.1f));
+		glm::vec3(1.0f), 8.0f, 0.1f));
 
 	m_materialProperties.Add("white_shiny", new SMaterialProperties(
 		glm::vec3(1.0f),
@@ -160,9 +167,19 @@ void CAssetManager::LoadMaterials()
 	mapDiffuseSpecularTextures["DiffuseTex"] = GetTexture("container\\container.png");
 	mapDiffuseSpecularTextures["SpecularTex"] = GetTexture("container\\container_specular.png");
 
+	std::map<std::string, const CTexture*> mapDiffuseNormalTextures;
+	mapDiffuseNormalTextures["DiffuseTex"] = GetTexture("brickwall.jpg");
+	mapDiffuseNormalTextures["SpecularTex"] = GetTexture("brickwall.jpg");
+	mapDiffuseNormalTextures["NormalTex"] = GetTexture("brickwall_normal.jpg");
+
 	std::map<std::string, const CTexture*> mapGroundTexture;
 	mapGroundTexture["DiffuseTex"] = GetTexture("seamless_tileable_texture.jpg");
 	mapGroundTexture["SpecularTex"] = GetTexture("seamless_tileable_texture.jpg");
+
+	std::map<std::string, const CTexture*> mapDryMudGroundTexture;
+	mapDryMudGroundTexture["DiffuseTex"] = GetTexture("Stylized_Dry_Mud_001_basecolor.jpg");
+	mapDryMudGroundTexture["SpecularTex"] = GetTexture("Stylized_Dry_Mud_001_roughness.jpg");
+	mapDryMudGroundTexture["NormalTex"] = GetTexture("Stylized_Dry_Mud_001_normal.jpg");
 
 	std::map<std::string, const CTexture*> mapWallTexture;
 	mapWallTexture["DiffuseTex"] = GetTexture("bricks2.jpg");
@@ -171,6 +188,7 @@ void CAssetManager::LoadMaterials()
 	const CProgram* pProgramUnlit = GetProgram("unlit_program");
 	const CProgram* pProgramLit = GetProgram("lit_program");
 	const CProgram* pProgramDiffuseSpecular = GetProgram("lit_program_dif_spec");
+	const CProgram* pProgramDiffuseSpecularNormal = GetProgram("lit_program_dif_spec_normal");
 
 	const SMaterialProperties* pOrangeProperties = GetMaterialProperties("orange");
 	const SMaterialProperties* pGreenProperties = GetMaterialProperties("green");
@@ -193,6 +211,11 @@ void CAssetManager::LoadMaterials()
 
 	// Diffuse Specular
 	m_materials.Add("lit_diff_spec", new CMaterial("lit_diff_spec", pDefaultStates, pWhiteShinyProperties, pProgramDiffuseSpecular, mapDiffuseSpecularTextures));
+
+	// Diffuse Specular Normal
+	m_materials.Add("lit_diff_spec_normal", new CMaterial("lit_diff_spec_normal", pDefaultStates, pWhiteShinyProperties, pProgramDiffuseSpecularNormal, mapDiffuseNormalTextures));
+
+	m_materials.Add("lit_diff_spec_normal_mud", new CMaterial("lit_diff_spec_normal_mud", pDefaultStates, pWhiteProperties, pProgramDiffuseSpecularNormal, mapDryMudGroundTexture));
 }
 
 void CAssetManager::LoadModels()
@@ -319,7 +342,7 @@ CModel * CAssetManager::LoadModel(std::string strModelFileName)
 	std::filesystem::path path = std::filesystem::path(GetModelPath() + strModelFileName);
 	path.remove_filename();
 	std::string strModelPath(path.string());
-	const aiScene* pScene = importer.ReadFile(GetModelPath() + strModelFileName, aiProcess_Triangulate | aiProcess_FlipUVs);
+	const aiScene* pScene = importer.ReadFile(GetModelPath() + strModelFileName, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
 	if (!pScene || pScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !pScene->mRootNode)
 	{
@@ -362,6 +385,8 @@ SMeshData* CAssetManager::ProcessMesh(aiMesh* pMesh, const aiScene* pScene)
 	{
 		vertex.position = glm::make_vec3(&pMesh->mVertices[i].x);
 		vertex.normal = glm::make_vec3(&pMesh->mNormals[i].x);
+		vertex.tangent = glm::make_vec3(&pMesh->mTangents[i].x);
+		vertex.bitangent = glm::make_vec3(&pMesh->mBitangents[i].x);
 
 		if (pMesh->mTextureCoords[0])
 		{
@@ -378,55 +403,6 @@ SMeshData* CAssetManager::ProcessMesh(aiMesh* pMesh, const aiScene* pScene)
 			pMeshData->aIndices.push_back(face.mIndices[j]);
 		}
 	}
-
-	if (pMesh->mMaterialIndex >= 0)
-	{
-		aiMaterial* pMaterial = pScene->mMaterials[pMesh->mMaterialIndex];
-
-		aiString name;
-		pMaterial->Get(AI_MATKEY_NAME, name);
-		aiColor3D ambientColor;
-		pMaterial->Get(AI_MATKEY_COLOR_AMBIENT, ambientColor);
-
-		aiColor3D diffuseColor;
-		pMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, diffuseColor);
-
-		aiColor3D specularColor;
-		pMaterial->Get(AI_MATKEY_COLOR_SPECULAR, specularColor);
-
-		aiString diffuseTexture;
-		pMaterial->Get(AI_MATKEY_TEXTURE_DIFFUSE(0), diffuseTexture);
-
-		aiString specularTexture;
-		pMaterial->Get(AI_MATKEY_TEXTURE_SPECULAR(0), specularTexture);
-
-		ai_real shininess;
-		pMaterial->Get(AI_MATKEY_SHININESS, shininess);
-
-		aiBlendMode blendMode;
-		pMaterial->Get(AI_MATKEY_BLEND_FUNC, blendMode);
-
-		for (unsigned int i = 0; i < pMaterial->mNumProperties; i++)
-		{
-
-
-			//pMaterial->
-		   // LOG_INFO << pMaterial->mProperties[i]->mKey.C_Str() << " " <<  pMaterial->mProperties[i]->mSemantic << pMaterial->mProperties[i]->mType << LOG_END;
-		}
-	}
-	/*
-	if (m_pMaterial == nullptr)
-	{
-		std::map<std::string, const CTexture*> mapDiffuseSpecularTextures;
-		mapDiffuseSpecularTextures["DiffuseTex"] = CAssetManager::Get().GetTexture("backpack\\diffuse.jpg");
-		mapDiffuseSpecularTextures["SpecularTex"] = CAssetManager::Get().GetTexture("backpack\\specular.jpg");
-
-		const CProgram* pProgramDiffuseSpecular = CAssetManager::Get().GetProgram("lit_program_dif_spec");
-		const SMaterialProperties* pWhiteProperties = CAssetManager::Get().GetMaterialProperties("white_shiny");
-		const SMaterialRenderStates* pDefaultStates = CAssetManager::Get().GetMaterialStates("default");
-
-		m_pMaterial = new CMaterial("lit_diff_spec", pDefaultStates, pWhiteProperties, pProgramDiffuseSpecular, mapDiffuseSpecularTextures);
-	}*/
 	return pMeshData;
 }
 
@@ -460,16 +436,24 @@ void CAssetManager::ProcessMaterial(aiMaterial* pMaterial, std::string strModelP
 	aiString specularTexture;
 	pMaterial->Get(AI_MATKEY_TEXTURE_SPECULAR(0), specularTexture);
 
-	m_textures.Add(diffuseTexture.C_Str(), LoadTexture(strModelPath + diffuseTexture.C_Str()));
-	m_textures.Add(specularTexture.C_Str(), LoadTexture(strModelPath + specularTexture.C_Str()));
+	aiString normalTexture;
+	pMaterial->Get(AI_MATKEY_TEXTURE_HEIGHT(0), normalTexture);
+
+	if(diffuseTexture.length > 0)
+		m_textures.Add(diffuseTexture.C_Str(), LoadTexture(strModelPath + diffuseTexture.C_Str()));
+	if (specularTexture.length > 0)
+		m_textures.Add(specularTexture.C_Str(), LoadTexture(strModelPath + specularTexture.C_Str()));
+	if (normalTexture.length > 0)
+		m_textures.Add(normalTexture.C_Str(), LoadTexture(strModelPath + normalTexture.C_Str()));
 
 	std::map<std::string, const CTexture*> mapTextures;
 	mapTextures["DiffuseTex"] = CAssetManager::Get().GetTexture(diffuseTexture.C_Str());
 	mapTextures["SpecularTex"] = CAssetManager::Get().GetTexture(specularTexture.C_Str());
+	mapTextures["NormalTex"] = CAssetManager::Get().GetTexture(normalTexture.C_Str());
 
 	std::string strMaterialName = name.C_Str();
 	CMaterial* pMat = new CMaterial(strMaterialName,
 		GetMaterialStates("default"), GetMaterialProperties(name.C_Str()), 
-		GetProgram("lit_program_dif_spec"), mapTextures);
+		GetProgram("lit_program_dif_spec_normal"), mapTextures);
 	m_materials.Add(name.C_Str(), pMat);
 }
