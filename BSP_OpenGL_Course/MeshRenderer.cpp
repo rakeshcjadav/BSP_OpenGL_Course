@@ -76,12 +76,12 @@ void CMeshRenderer::Render(CMesh* pMesh, CTransform* pTransform, const CMaterial
 	pMesh->UnBind();
 }
 
-void CMeshRenderer::Render(CModel* pModel, CTransform* pTransform, CCamera* pCamera,
+void CMeshRenderer::Render(const CModel* pModel, CTransform* pTransform, CCamera* pCamera,
 	std::list<CLight*>* pDirectionalLights,
 	std::list<CLight*>* pPointLights,
 	std::list<CLight*>* pSpotLights)
 {
-	CMaterial* pMaterial = pModel->GetMaterial();
+	const CMaterial* pMaterial = pModel->GetMaterial();
 	pMaterial->Bind();
 	{
 		glm::mat4 transformMat = pTransform->GetTransform();

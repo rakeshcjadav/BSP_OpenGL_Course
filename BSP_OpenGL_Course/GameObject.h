@@ -11,7 +11,7 @@ class CModel;
 class CGameObject
 {
 public:
-	CGameObject(CTransform * pTranform, CModel* pModel, CMesh * pMesh, CMeshRenderer * pMeshRenderer, const CMaterial * pMaterial);
+	CGameObject(CTransform * pTranform, const CModel* pModel, CMesh * pMesh, CMeshRenderer * pMeshRenderer, const CMaterial * pMaterial);
 
 	void Update();
 	void Render(CCamera* pCamera, 
@@ -23,5 +23,5 @@ private:
 	CMesh* m_pMesh;
 	CMeshRenderer* m_pMeshRenderer;
 	const CMaterial* m_pMaterial;
-	CModel* m_pModel;
+	const CModel* m_pModel;
 };

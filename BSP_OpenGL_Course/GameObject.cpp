@@ -6,7 +6,7 @@
 #include"Model.h"
 
 
-CGameObject::CGameObject(CTransform* pTranform, CModel* pModel, CMesh* pMesh, CMeshRenderer* pMeshRenderer, const CMaterial* pMaterial)
+CGameObject::CGameObject(CTransform* pTranform, const CModel* pModel, CMesh* pMesh, CMeshRenderer* pMeshRenderer, const CMaterial* pMaterial)
 {
 	m_pTransform = pTranform;
 	m_pMesh = pMesh;

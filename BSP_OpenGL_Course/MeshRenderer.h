@@ -18,7 +18,7 @@ public:
 		std::list<CLight*>* pSpotLights);
 
 
-	void Render(CModel* pModel, CTransform* pTransform, CCamera* pCamera,
+	void Render(const CModel* pModel, CTransform* pTransform, CCamera* pCamera,
 		std::list<CLight*>* pDirectionalLights,
 		std::list<CLight*>* pPointLights,
 		std::list<CLight*>* pSpotLights);

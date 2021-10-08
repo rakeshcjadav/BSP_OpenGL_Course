@@ -7,3 +7,5 @@ OpenGL Course
 ![alt text](OpenGLScreenShots/3.PNG)
 ![alt text](OpenGLScreenShots/4.PNG)
 ![alt text](OpenGLScreenShots/5.PNG)
+![alt text](OpenGLScreenShots/6.PNG)
+![alt text](OpenGLScreenShots/7.PNG)

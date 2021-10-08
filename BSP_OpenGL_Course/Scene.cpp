@@ -45,7 +45,7 @@ void CScene::CreateGameObjects()
 	CMesh* pPlaneMesh = CMesh::CreatePlane();
 	CMesh* pCubeMesh = CMesh::CreateCube();
 	CMesh* pWall = CMesh::CreateTilablePlane(10, 6);
-	CModel* pModel = CModel::LoadModel("backpack/backpack.obj");
+	const CModel* pModel = CAssetManager::Get().GetModel("backpack/backpack.obj");
 	// Ground Plane
 	{
 		CTransform* pTransform = new CTransform(glm::vec3(0.0f), glm::vec3(-90.0f, 0.0f, 0.0f), glm::vec3(1.0f));
@@ -90,7 +90,7 @@ void CScene::CreateGameObjects()
 	}
 	// Circle
 	{
-		CTransform* pTransform = new CTransform(glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
+		CTransform* pTransform = new CTransform(glm::vec3(-3.0f, 2.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
 		CGameObject* pObject = new CGameObject(pTransform, pModel, CMesh::CreateCircle(), pMeshRenderer, CAssetManager::Get().GetMaterial("unlit_orange"));
 		m_listGameObjects.push_back(pObject);
 	}

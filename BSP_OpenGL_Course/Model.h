@@ -2,19 +2,16 @@
 
 class CMesh;
 class CMaterial;
+struct SMeshData;
 
 class CModel
 {
 public:
-	static CModel* LoadModel(std::string strFileName);
-	CModel();
-	CMaterial* GetMaterial();
-	void Render();
-private:
-	bool LoadPrivate(std::string strFileName);
-	void ProcessNode(aiNode* pNode, const aiScene* pScene);
-	CMesh* ProcessMesh(aiMesh* pMesh, const aiScene* pScene);
+	CModel(std::list<SMeshData*> & listMeshdata, const CMaterial* pMaterial);
+	const CMaterial* GetMaterial() const;
+	void SetMaterial(const CMaterial* pMaterial);
+	void Render() const;
 private:
 	std::list<CMesh*> m_listMeshes;
-	CMaterial* m_pMaterial;
+	const CMaterial* m_pMaterial;
 };
