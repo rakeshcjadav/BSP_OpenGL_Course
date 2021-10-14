@@ -2,6 +2,8 @@
 
 OpenGL Course
 
+WIP: Parallax Mapping
+![alt text](OpenGLScreenShots/10.PNG)
 ![alt text](OpenGLScreenShots/9.PNG)
 ![alt text](OpenGLScreenShots/8.PNG)
 ![alt text](OpenGLScreenShots/7.PNG)
