@@ -30,7 +30,7 @@ void CMeshRenderer::Render(CMesh* pMesh, CTransform* pTransform, const CMaterial
 			pMaterial->SetUniform("SineTime", fSineTime);
 
 			glm::mat4 transformMat = pTransform->GetTransform();
-			glm::mat4 normalMat = glm::transpose(glm::inverse(transformMat));
+			glm::mat4 normalMat = glm::transpose(glm::inverse(glm::mat3(transformMat)));
 
 			// Camera
 			glm::mat4 cameraMat = pCamera->GetViewMatrix();

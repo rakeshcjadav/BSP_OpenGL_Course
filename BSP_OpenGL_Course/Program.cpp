@@ -10,7 +10,11 @@ CProgram::CProgram(std::string strVertexShaderFile, std::string strFragmentShade
 	m_IDProgram = glCreateProgram();
 	AttachShader(pShaderVS);
 	AttachShader(pShaderFS);
-	LinkProgram();
+	if (!LinkProgram())
+	{
+		//pShaderVS->Print();
+		//pShaderFS->Print();
+	}
 
 	/*
 	GLint i;
@@ -75,7 +79,7 @@ void CProgram::AttachShader(const CShader* pShader)
 	glAttachShader(m_IDProgram, pShader->GetID());
 }
 
-void CProgram::LinkProgram()
+bool CProgram::LinkProgram()
 {
 	glLinkProgram(m_IDProgram);
 	{
@@ -84,8 +88,10 @@ void CProgram::LinkProgram()
 		glGetProgramiv(m_IDProgram, GL_LINK_STATUS, &success);
 		if (!success) {
 			glGetProgramInfoLog(m_IDProgram, 512, NULL, infoLog);
-			LOG_ERROR << "PROGRAM::LINKING_FAILED";
-			LOG_ERROR << infoLog;
+			LOG_ERROR << "PROGRAM::LINKING_FAILED" << LOG_END;
+			LOG_ERROR << infoLog << LOG_END;
+			return false;
 		}
 	}
+	return true;
 }

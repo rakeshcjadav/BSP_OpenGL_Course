@@ -1,6 +1,7 @@
 #version 330 core
 #include "common.frag"
 
+in vec4 gl_FragCoord;
 in vec3 outWorldPos;
 in vec3 outNormal;
 in vec2 outTexCoord;
@@ -9,6 +10,7 @@ in mat3 outTBNMat;
 uniform sampler2D DiffuseTex;
 uniform sampler2D SpecularTex;
 uniform sampler2D NormalTex;
+uniform sampler2D AmbientOcclusionTex;
 uniform vec3 CameraPos;
 uniform DirectionalLight directionalLight;
 uniform int PointLightCount;
@@ -63,7 +65,8 @@ void main()
     ApplySpotLights(ambientColor, diffuseColor, specularColor);
 
     vec4 diffuseTexColor = texture(DiffuseTex, outTexCoord);
-    ambientColor *= diffuseTexColor.rgb;
+    float ambientTexColor = texture(AmbientOcclusionTex, outTexCoord).r;
+    ambientColor = 0.2 * diffuseTexColor.rgb * vec3(ambientTexColor);
     diffuseColor *= diffuseTexColor.rgb;
 
     vec4 specularTexColor = texture(SpecularTex, outTexCoord);

@@ -17,7 +17,7 @@ public:
 	void SetUniform(std::string name, float * value) const;
 private:
 	void AttachShader(const CShader* pShader);
-	void LinkProgram();
+	bool LinkProgram();
 private:
 	unsigned int m_IDProgram;
 };

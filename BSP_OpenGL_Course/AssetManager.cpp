@@ -88,11 +88,13 @@ void CAssetManager::LoadShaders()
 	std::vector shaders{
 		"unlit_vertex_shader.vert",
 		"lit_vertex_shader.vert",
+		"lit_vertex_normal_shader.vert",
 
 		"unlit_fragment_shader.frag",
 		"lit_fragment_shader.frag",
 		"lit_fragment_diffuse_specular_shader.frag",
-		"lit_fragment_diffuse_specular_normal_shader.frag"
+		"lit_fragment_diffuse_specular_normal_shader.frag",
+		"lit_fragment_diffuse_normal_depth_shader.frag"
 	};
 	for (std::string shader : shaders)
 	{
@@ -103,7 +105,7 @@ void CAssetManager::LoadShaders()
 	m_programs.Add("lit_program", new CProgram("lit_vertex_shader.vert", "lit_fragment_shader.frag"));
 	m_programs.Add("lit_program_dif_spec", new CProgram("lit_vertex_shader.vert", "lit_fragment_diffuse_specular_shader.frag"));
 	m_programs.Add("lit_program_dif_spec_normal", new CProgram("lit_vertex_shader.vert", "lit_fragment_diffuse_specular_normal_shader.frag"));
-
+	m_programs.Add("lit_program_dif_normal_depth", new CProgram("lit_vertex_normal_shader.vert", "lit_fragment_diffuse_normal_depth_shader.frag"));
 }
 
 void CAssetManager::LoadTextures()
@@ -114,7 +116,9 @@ void CAssetManager::LoadTextures()
 		"seamless_tileable_texture.jpg",
 		"container\\container.png",
 		"container\\container_specular.png",
-		"bricks2.jpg",
+		"bricks2\\bricks2.jpg",
+		"bricks2\\bricks2_normal.jpg",
+		"bricks2\\bricks2_disp.jpg",
 		"brickwall.jpg",
 		"brickwall_normal.jpg",
 		"Stylized_Dry_Mud_001_basecolor.jpg",
@@ -152,7 +156,7 @@ void CAssetManager::LoadMaterials()
 	m_materialProperties.Add("white_shiny", new SMaterialProperties(
 		glm::vec3(1.0f),
 		glm::vec3(1.0f),
-		glm::vec3(1.0f), 225.0f, 1.0f));
+		glm::vec3(1.0f), 225.0f, 0.20f));
 
 	m_materialStates.Add("default", new SMaterialRenderStates(
 		SMaterialRenderStates::BLEND_TYPE::TRANSPARENT,
@@ -182,13 +186,15 @@ void CAssetManager::LoadMaterials()
 	mapDryMudGroundTexture["NormalTex"] = GetTexture("Stylized_Dry_Mud_001_normal.jpg");
 
 	std::map<std::string, const CTexture*> mapWallTexture;
-	mapWallTexture["DiffuseTex"] = GetTexture("bricks2.jpg");
-	mapWallTexture["SpecularTex"] = GetTexture("bricks2.jpg");
+	mapWallTexture["DiffuseTex"] = GetTexture("bricks2\\bricks2.jpg");
+	mapWallTexture["NormalTex"] = GetTexture("bricks2\\bricks2_normal.jpg");
+	mapWallTexture["DepthTex"] = GetTexture("bricks2\\bricks2_disp.jpg");
 
 	const CProgram* pProgramUnlit = GetProgram("unlit_program");
 	const CProgram* pProgramLit = GetProgram("lit_program");
 	const CProgram* pProgramDiffuseSpecular = GetProgram("lit_program_dif_spec");
 	const CProgram* pProgramDiffuseSpecularNormal = GetProgram("lit_program_dif_spec_normal");
+	const CProgram* pProgramDiffuseNormalDepth = GetProgram("lit_program_dif_normal_depth");
 
 	const SMaterialProperties* pOrangeProperties = GetMaterialProperties("orange");
 	const SMaterialProperties* pGreenProperties = GetMaterialProperties("green");
@@ -215,7 +221,11 @@ void CAssetManager::LoadMaterials()
 	// Diffuse Specular Normal
 	m_materials.Add("lit_diff_spec_normal", new CMaterial("lit_diff_spec_normal", pDefaultStates, pWhiteShinyProperties, pProgramDiffuseSpecularNormal, mapDiffuseNormalTextures));
 
+	// 
 	m_materials.Add("lit_diff_spec_normal_mud", new CMaterial("lit_diff_spec_normal_mud", pDefaultStates, pWhiteProperties, pProgramDiffuseSpecularNormal, mapDryMudGroundTexture));
+
+	// Diffuse Normal Depth
+	m_materials.Add("lit_diff_normal_depth", new CMaterial("lit_diff_normal_depth", pDefaultStates, pWhiteShinyProperties, pProgramDiffuseNormalDepth, mapWallTexture));
 }
 
 void CAssetManager::LoadModels()
@@ -326,7 +336,13 @@ unsigned char* CAssetManager::GetTextureData(std::string strTextureFile, int& wi
 
 	format = GL_RGB;
 	if (nrChannels > 3)
+	{
 		format = GL_RGBA;
+	}
+	else if (nrChannels == 1)
+	{
+		format = GL_RED;
+	}
 
 	return data;
 }
@@ -439,17 +455,23 @@ void CAssetManager::ProcessMaterial(aiMaterial* pMaterial, std::string strModelP
 	aiString normalTexture;
 	pMaterial->Get(AI_MATKEY_TEXTURE_HEIGHT(0), normalTexture);
 
+	aiString aoTexture;
+	pMaterial->Get(AI_MATKEY_TEXTURE_AMBIENT(0), aoTexture);
+
 	if(diffuseTexture.length > 0)
 		m_textures.Add(diffuseTexture.C_Str(), LoadTexture(strModelPath + diffuseTexture.C_Str()));
 	if (specularTexture.length > 0)
 		m_textures.Add(specularTexture.C_Str(), LoadTexture(strModelPath + specularTexture.C_Str()));
 	if (normalTexture.length > 0)
 		m_textures.Add(normalTexture.C_Str(), LoadTexture(strModelPath + normalTexture.C_Str()));
+	if (aoTexture.length > 0)
+		m_textures.Add(aoTexture.C_Str(), LoadTexture(strModelPath + aoTexture.C_Str()));
 
 	std::map<std::string, const CTexture*> mapTextures;
 	mapTextures["DiffuseTex"] = CAssetManager::Get().GetTexture(diffuseTexture.C_Str());
 	mapTextures["SpecularTex"] = CAssetManager::Get().GetTexture(specularTexture.C_Str());
 	mapTextures["NormalTex"] = CAssetManager::Get().GetTexture(normalTexture.C_Str());
+	mapTextures["AmbientOcclusionTex"] = CAssetManager::Get().GetTexture(aoTexture.C_Str());
 
 	std::string strMaterialName = name.C_Str();
 	CMaterial* pMat = new CMaterial(strMaterialName,

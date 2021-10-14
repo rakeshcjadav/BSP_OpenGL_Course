@@ -224,5 +224,11 @@
     <None Include="..\media\shaders\lit_fragment_diffuse_specular_normal_shader.frag">
       <Filter>Resource Files\Shaders\Lit</Filter>
     </None>
+    <None Include="..\media\shaders\lit_fragment_diffuse_normal_depth_shader.frag">
+      <Filter>Resource Files\Shaders\Lit</Filter>
+    </None>
+    <None Include="..\media\shaders\lit_vertex_normal_shader.vert">
+      <Filter>Resource Files\Shaders\Lit</Filter>
+    </None>
   </ItemGroup>
 </Project>

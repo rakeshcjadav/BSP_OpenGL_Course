@@ -1,5 +1,4 @@
 //? #version 330 core
-
 #define MAX_LIGHTS 8
 
 // Input Struct
@@ -35,10 +34,25 @@ struct Material {
 };
 //
 
+const float PARALLAX_HEIGHT_SCALE = 0.02f;
+float near = 0.1; 
+float far  = 100.0; 
+  
+float LinearizeDepth(float depth) 
+{
+    float z = depth * 2.0 - 1.0; // back to NDC 
+    return (2.0 * near * far) / (far + near - z * (far - near));	
+}
+
+float Depth(float depth)
+{
+    return LinearizeDepth(depth)/far;
+}
+
 // Lighting
 vec3 AmbientLight(vec3 lightColor)
 {
-    float ambientStrength = 0.05;
+    float ambientStrength = 0.02f;
     return ambientStrength * lightColor;
 }
 
@@ -73,7 +87,7 @@ vec3 DiffuseDirectionalLight(vec3 normal, DirectionalLight light)
 vec3 DiffusePointLight(vec3 normal, vec3 worldPos, PointLight light)
 {
     vec3 lightDirection = normalize(light.position- worldPos);
-    return DiffuseComponent(normal, lightDirection) * CalcAttenuation(worldPos, light.position, light.attenuation) * light.color;
+    return vec3(DiffuseComponent(normal, lightDirection)) * CalcAttenuation(worldPos, light.position, light.attenuation) * light.color;
 }
 
 vec3 DiffuseSpotLight(vec3 normal, vec3 worldPos, SpotLight light)

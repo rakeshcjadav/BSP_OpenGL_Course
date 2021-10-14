@@ -52,28 +52,34 @@ void CScene::CreateGameObjects()
 		CGameObject* pObject = new CGameObject(pTransform, nullptr, CMesh::CreateTilablePlane(50, 50), pMeshRenderer, CAssetManager::Get().GetMaterial("lit_diff_spec_normal"));
 		m_listGameObjects.push_back(pObject);
 	}
+	// Ground Wall
+	{
+		CTransform* pTransform = new CTransform(glm::vec3(0.0f), glm::vec3(-90.f, 0.0f, 0.0f), glm::vec3(1.0f));
+		CGameObject* pObject = new CGameObject(pTransform, nullptr, CMesh::CreateTilablePlane(10, 10), pMeshRenderer, CAssetManager::Get().GetMaterial("lit_diff_normal_depth"));
+		//m_listGameObjects.push_back(pObject);
+	}
 	// Back Wall
 	{
 		CTransform* pTransform = new CTransform(glm::vec3(0.0f, 3.0f, -5.0f), glm::vec3(0.0f), glm::vec3(1.0f));
-		CGameObject* pObject = new CGameObject(pTransform, nullptr, pWall, pMeshRenderer, CAssetManager::Get().GetMaterial("lit_orange"));
+		CGameObject* pObject = new CGameObject(pTransform, nullptr, pWall, pMeshRenderer, CAssetManager::Get().GetMaterial("lit_diff_normal_depth"));
 		m_listGameObjects.push_back(pObject);
 	}
 	// Front Wall
 	{
 		CTransform* pTransform = new CTransform(glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3(0.0f, 180.0f, 0.0f), glm::vec3(1.0f));
-		CGameObject* pObject = new CGameObject(pTransform, nullptr, pWall, pMeshRenderer, CAssetManager::Get().GetMaterial("lit_orange"));
+		CGameObject* pObject = new CGameObject(pTransform, nullptr, pWall, pMeshRenderer, CAssetManager::Get().GetMaterial("lit_diff_normal_depth"));
 		m_listGameObjects.push_back(pObject);
 	}
 	// Left Wall
 	{
 		CTransform* pTransform = new CTransform(glm::vec3(-5.0f, 3.0f, 0.0f), glm::vec3(0.0f, 90.0f, 0.0f), glm::vec3(1.0f));
-		CGameObject* pObject = new CGameObject(pTransform, nullptr, pWall, pMeshRenderer, CAssetManager::Get().GetMaterial("lit_orange"));
+		CGameObject* pObject = new CGameObject(pTransform, nullptr, pWall, pMeshRenderer, CAssetManager::Get().GetMaterial("lit_diff_normal_depth"));
 		m_listGameObjects.push_back(pObject);
 	}
 	// Right Wall
 	{
 		CTransform* pTransform = new CTransform(glm::vec3(5.0f, 3.0f, 0.0f), glm::vec3(0.0f, -90.0f, 0.0f), glm::vec3(1.0f));
-		CGameObject* pObject = new CGameObject(pTransform, nullptr, pWall, pMeshRenderer, CAssetManager::Get().GetMaterial("lit_orange"));
+		CGameObject* pObject = new CGameObject(pTransform, nullptr, pWall, pMeshRenderer, CAssetManager::Get().GetMaterial("lit_diff_normal_depth"));
 		m_listGameObjects.push_back(pObject);
 	}
 	// Green Cube
@@ -136,26 +142,25 @@ void CScene::CreateLights()
 	// Spot
 	m_listSpotLights.push_back(
 		new CSpotLight(
-			glm::vec3(2.f, 2.5f, 2.f),
+			glm::vec3(4.f, 2.5f, 0.0f),
 			glm::normalize(glm::vec3(0.0f, -1.0f, -1.0f)),
-			glm::vec3(0.0f, 0.0f, 1.0f),
-			glm::vec3(1.0f, 0.05f, 0.001f), 5.0f, 35.0f));
+			glm::vec3(1.0f, 1.0f, 1.0f),
+			glm::vec3(1.0f, 0.05f, 0.001f), 5.0f, 60.0f));
 
 	m_listSpotLights.push_back(
 		new CSpotLight(
 			glm::vec3(16.f, 5.5f, 2.f),
 			glm::normalize(glm::vec3(0.0f, -1.0f, 0.0f)),
-			glm::vec3(0.0f, 1.0f, 0.0f),
+			glm::vec3(1.0f, 1.0f, 1.0f),
 			glm::vec3(1.0f, 0.05f, 0.001f), 10.0f, 40.0f));
-	
+
 	// Point
 	m_listPointLights.push_back(
 		new CPointLight(
-			glm::vec3(2.f, 2.0f, 4.f),
+			glm::vec3(0.f, 2.0f, 6.f),
 			glm::vec3(1.0f, 1.0f, 1.0f),
 			glm::vec3(1.0f, 0.05f, 0.001f)));
 	
-
 	m_listPointLights.push_back(
 		new CPointLight(
 			glm::vec3(0.f, 2.5f, -4.f),

@@ -206,8 +206,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\media\shaders\common.frag" />
+    <None Include="..\media\shaders\lit_fragment_diffuse_normal_depth_shader.frag" />
     <None Include="..\media\shaders\lit_fragment_diffuse_specular_normal_shader.frag" />
     <None Include="..\media\shaders\lit_fragment_shader.frag" />
+    <None Include="..\media\shaders\lit_vertex_normal_shader.vert" />
     <None Include="..\media\shaders\lit_vertex_shader.vert" />
     <None Include="..\media\shaders\lit_fragment_diffuse_specular_shader.frag" />
     <None Include="..\media\shaders\unlit_fragment_shader.frag" />

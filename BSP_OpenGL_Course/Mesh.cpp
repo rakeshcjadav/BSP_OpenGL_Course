@@ -16,7 +16,7 @@ CMesh* CMesh::CreatePlane()
 		0, 1, 3, 2
 	};
 
-	for (int i = 0; i < meshData.aIndices.size() - 2; i++)
+	for (unsigned int i = 0; i < meshData.aIndices.size() - 2; i++)
 	{
 		SVertex& v1 = meshData.aVertices[meshData.aIndices[i]];
 		SVertex& v2 = meshData.aVertices[meshData.aIndices[i+1]];
@@ -59,7 +59,10 @@ CMesh* CMesh::CreateTilablePlane(int width, int height)
 	{
 		for (int x = 0; x <= width; x++)
 		{
-			meshData.aVertices.push_back(SVertex(glm::vec3(x-width/2.0f, y-height/2.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(x, y)));
+			SVertex vertex = SVertex(glm::vec3(x - width / 2.0f, y - height / 2.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(x, y));
+			vertex.tangent = glm::vec3(-1.0f, 0.0f, 0.0f);
+			vertex.bitangent = glm::vec3(0.0f, -1.0f, 0.0f);
+			meshData.aVertices.push_back(vertex);
 			if (x == width || y == height)
 				continue;
 
@@ -73,7 +76,8 @@ CMesh* CMesh::CreateTilablePlane(int width, int height)
 		}
 	}
 
-	for (int i = 0; i < meshData.aIndices.size(); i = i + 3)
+	/*
+	for (unsigned int i = 0; i < meshData.aIndices.size(); i = i + 3)
 	{
 		SVertex& v1 = meshData.aVertices[meshData.aIndices[i]];
 		SVertex& v2 = meshData.aVertices[meshData.aIndices[i + 1]];
@@ -101,7 +105,7 @@ CMesh* CMesh::CreateTilablePlane(int width, int height)
 		v1.bitangent = glm::normalize(v1.bitangent);
 		v2.bitangent = v1.bitangent;
 		v3.bitangent = v1.bitangent;
-	}
+	}*/
 
 	meshData.type = SMeshData::MESHTYPE::TRIANGLES;
 
@@ -155,7 +159,7 @@ CMesh* CMesh::CreateCube()
 	};
 
 	std::vector<glm::vec3> angles;
-	angles.push_back(glm::vec3(0.0f, 0.0f, 0.0f));  // Front
+	angles.push_back(glm::vec3(0.0f, 0.0f, 0.0f)); // Front
 	angles.push_back(glm::vec3(-90.0f, 0.0f, 0.0f)); // Top
 	angles.push_back(glm::vec3(-180.0f, 0.0f, 0.0f)); // Back
 	angles.push_back(glm::vec3(-270.0f, 0.0f, 0.0f)); // Bottom
@@ -182,7 +186,7 @@ CMesh* CMesh::CreateCube()
 		face++;
 	}
 
-	for (int i = 0; i < meshData.aIndices.size(); i=i+3)
+	for (unsigned int i = 0; i < meshData.aIndices.size(); i=i+3)
 	{
 		SVertex& v1 = meshData.aVertices[meshData.aIndices[i]];
 		SVertex& v2 = meshData.aVertices[meshData.aIndices[i + 1]];
