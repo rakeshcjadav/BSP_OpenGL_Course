@@ -123,7 +123,12 @@ void CAssetManager::LoadTextures()
 		"brickwall_normal.jpg",
 		"Stylized_Dry_Mud_001_basecolor.jpg",
 		"Stylized_Dry_Mud_001_normal.jpg",
-		"Stylized_Dry_Mud_001_roughness.jpg"
+		"Stylized_Dry_Mud_001_roughness.jpg",
+		"Substance_graph\\Substance_graph_BaseColor.jpg",
+		"Substance_graph\\Substance_graph_Normal.jpg",
+		"Substance_graph\\Substance_graph_Roughness.jpg",
+		"Substance_graph\\Substance_graph_Height.png",
+		"Substance_graph\\Substance_graph_AmbientOcclusion.jpg"
 	};
 	for (std::string texture : textures)
 	{
@@ -190,6 +195,13 @@ void CAssetManager::LoadMaterials()
 	mapWallTexture["NormalTex"] = GetTexture("bricks2\\bricks2_normal.jpg");
 	mapWallTexture["DepthTex"] = GetTexture("bricks2\\bricks2_disp.jpg");
 
+	std::map < std::string, const CTexture*> mapSubstanceGraph;
+	mapSubstanceGraph["DiffuseTex"] = GetTexture("Substance_graph\\Substance_graph_BaseColor.jpg");
+	mapSubstanceGraph["NormalTex"] = GetTexture("Substance_graph\\Substance_graph_Normal.jpg");
+	mapSubstanceGraph["SpecularTex"] = GetTexture("Substance_graph\\Substance_graph_Roughness.jpg");
+	mapSubstanceGraph["DepthTex"] = GetTexture("Substance_graph\\Substance_graph_Height.png");
+	mapSubstanceGraph["AmbientOcclusionTex"] = GetTexture("Substance_graph\\Substance_graph_AmbientOcclusion.jpg");
+
 	const CProgram* pProgramUnlit = GetProgram("unlit_program");
 	const CProgram* pProgramLit = GetProgram("lit_program");
 	const CProgram* pProgramDiffuseSpecular = GetProgram("lit_program_dif_spec");
@@ -219,13 +231,16 @@ void CAssetManager::LoadMaterials()
 	m_materials.Add("lit_diff_spec", new CMaterial("lit_diff_spec", pDefaultStates, pWhiteShinyProperties, pProgramDiffuseSpecular, mapDiffuseSpecularTextures));
 
 	// Diffuse Specular Normal
-	m_materials.Add("lit_diff_spec_normal", new CMaterial("lit_diff_spec_normal", pDefaultStates, pWhiteShinyProperties, pProgramDiffuseSpecularNormal, mapDiffuseNormalTextures));
+	m_materials.Add("lit_diff_spec_normal", new CMaterial("lit_diff_spec_normal", pDefaultStates, pWhiteShinyProperties, pProgramDiffuseSpecularNormal, mapDryMudGroundTexture));
 
 	// 
 	m_materials.Add("lit_diff_spec_normal_mud", new CMaterial("lit_diff_spec_normal_mud", pDefaultStates, pWhiteProperties, pProgramDiffuseSpecularNormal, mapDryMudGroundTexture));
 
 	// Diffuse Normal Depth
 	m_materials.Add("lit_diff_normal_depth", new CMaterial("lit_diff_normal_depth", pDefaultStates, pWhiteShinyProperties, pProgramDiffuseNormalDepth, mapWallTexture));
+
+	// Diffuse Normal Depth
+	m_materials.Add("substance_graph", new CMaterial("substance_graph", pDefaultStates, pWhiteShinyProperties, pProgramDiffuseNormalDepth, mapSubstanceGraph));
 }
 
 void CAssetManager::LoadModels()

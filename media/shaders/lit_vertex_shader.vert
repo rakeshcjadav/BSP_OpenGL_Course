@@ -20,9 +20,9 @@ void main()
 {
    gl_Position = ProjectionMat * CameraMat * TransformMat * vec4(Pos.x, Pos.y, Pos.z, 1.0);
    outWorldPos = vec3(TransformMat * vec4(Pos, 1.0));
-   outNormal = normalize(mat3(NormalMat) * Normal);
-   vec3 T = normalize(mat3(NormalMat) * Tangent);
-   vec3 B = normalize(mat3(NormalMat) * BiTangent);
+   outNormal = normalize(mat3(TransformMat) * Normal);
+   vec3 T = normalize(mat3(TransformMat) * Tangent);
+   vec3 B = normalize(mat3(TransformMat) * BiTangent);
    outTBNMat = mat3(T, B, outNormal);
    outTexCoord = TexCoord;
 }

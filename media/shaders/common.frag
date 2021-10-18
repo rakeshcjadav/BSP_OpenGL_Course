@@ -86,7 +86,7 @@ vec3 DiffuseDirectionalLight(vec3 normal, DirectionalLight light)
 
 vec3 DiffusePointLight(vec3 normal, vec3 worldPos, PointLight light)
 {
-    vec3 lightDirection = normalize(light.position- worldPos);
+    vec3 lightDirection = normalize(light.position - worldPos);
     return vec3(DiffuseComponent(normal, lightDirection)) * CalcAttenuation(worldPos, light.position, light.attenuation) * light.color;
 }
 

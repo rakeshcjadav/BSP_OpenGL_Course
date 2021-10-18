@@ -60,7 +60,7 @@ CMesh* CMesh::CreateTilablePlane(int width, int height)
 		for (int x = 0; x <= width; x++)
 		{
 			SVertex vertex = SVertex(glm::vec3(x - width / 2.0f, y - height / 2.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(x, y));
-			vertex.tangent = glm::vec3(-1.0f, 0.0f, 0.0f);
+			vertex.tangent = glm::vec3(1.0f, 0.0f, 0.0f);
 			vertex.bitangent = glm::vec3(0.0f, -1.0f, 0.0f);
 			meshData.aVertices.push_back(vertex);
 			if (x == width || y == height)

@@ -96,7 +96,7 @@ void CScene::CreateGameObjects()
 	}
 	// Plane with normal map
 	{
-		CTransform* pTransform = new CTransform(glm::vec3(2.0f, 1.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f));
+		CTransform* pTransform = new CTransform(glm::vec3(2.0f, 1.0f, -3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f));
 		CGameObject* pPlane = new CGameObject(pTransform, nullptr, CMesh::CreatePlane(), pMeshRenderer, CAssetManager::Get().GetMaterial("lit_diff_spec_normal"));
 		m_listGameObjects.push_back(pPlane);
 	}
@@ -144,26 +144,26 @@ void CScene::CreateLights()
 		new CSpotLight(
 			glm::vec3(4.f, 2.5f, 0.0f),
 			glm::normalize(glm::vec3(0.0f, -1.0f, -1.0f)),
-			glm::vec3(1.0f, 1.0f, 1.0f),
+			glm::vec3(0.0f, 0.0f, 1.0f),
 			glm::vec3(1.0f, 0.05f, 0.001f), 5.0f, 60.0f));
 
 	m_listSpotLights.push_back(
 		new CSpotLight(
 			glm::vec3(16.f, 5.5f, 2.f),
 			glm::normalize(glm::vec3(0.0f, -1.0f, 0.0f)),
-			glm::vec3(1.0f, 1.0f, 1.0f),
-			glm::vec3(1.0f, 0.05f, 0.001f), 10.0f, 40.0f));
-
-	// Point
+			glm::vec3(1.0f, 0.0f, 0.0f),
+			glm::vec3(1.0f, 0.05f, 0.001f), 10.0f, 40.0f));//
+			
+	// Point 
 	m_listPointLights.push_back(
 		new CPointLight(
-			glm::vec3(0.f, 2.0f, 6.f),
+			glm::vec3(0.f, 5.0f, 4.f),
 			glm::vec3(1.0f, 1.0f, 1.0f),
 			glm::vec3(1.0f, 0.05f, 0.001f)));
-	
+	//
 	m_listPointLights.push_back(
 		new CPointLight(
-			glm::vec3(0.f, 2.5f, -4.f),
+			glm::vec3(0.f, 1.5f, -4.f),
 			glm::vec3(1.0f, 1.0f, 1.0f),
-			glm::vec3(1.0f, 0.05f, 0.001f)));
+			glm::vec3(1.0f, 0.05f, 0.001f)));//
 }

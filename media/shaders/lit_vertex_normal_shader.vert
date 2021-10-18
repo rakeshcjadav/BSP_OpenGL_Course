@@ -21,37 +21,18 @@ uniform vec3 CameraPos;
 out VS_OUT
 {
     vec3 outWorldPos;
+    vec3 outNormal;
     vec2 outTexCoord;
-    vec3 outCameraPos;
     mat3 outTBNMat;
-    DirectionalLight directionalLight;
-    PointLight pointLight[MAX_LIGHTS];
-} vs_Out;
+} vs_out;
 
 void main()
 {
     gl_Position = ProjectionMat * CameraMat * TransformMat * vec4(Pos.x, Pos.y, Pos.z, 1.0);
-    vec3 T = normalize(mat3(NormalMat) * Tangent);
-    vec3 B = normalize(mat3(NormalMat) * BiTangent);
-    vec3 N = normalize(mat3(NormalMat) * Normal);
-
-    mat3 TBNMat = mat3(T, B, N);
-    vs_Out.outTBNMat = TBNMat;
-
-    mat3 outTBNMat = transpose(TBNMat);
-
-    vs_Out.outWorldPos = outTBNMat * vec3(TransformMat * vec4(Pos, 1.0));
-    vs_Out.outCameraPos = outTBNMat * CameraPos;
-
-    vs_Out.directionalLight.direction = outTBNMat * directionalLight.direction;
-    vs_Out.directionalLight.color = directionalLight.color;
-
-    /*
-    for(int i = 0; i < MAX_LIGHTS;i++)
-    {
-        vs_Out.pointLight[i] = pointLight[i];
-        vs_Out.pointLight[i].position = normalize(outTBNMat * pointLight[i].position);
-    }*/
-
-    vs_Out.outTexCoord = TexCoord;
+    vec3 T = normalize(mat3(TransformMat) * Tangent);
+    vec3 B = normalize(mat3(TransformMat) * BiTangent);
+    vec3 N = normalize(mat3(TransformMat) * Normal);
+    vs_out.outTBNMat = mat3(T, B, N);
+    vs_out.outWorldPos = vec3(TransformMat * vec4(Pos, 1.0));
+    vs_out.outTexCoord = TexCoord;
 }
