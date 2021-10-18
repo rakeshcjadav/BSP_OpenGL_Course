@@ -2,6 +2,8 @@
 
 OpenGL Course
 
+Parallax Mapping
+![alt text](OpenGLScreenShots/11.PNG)
 WIP: Parallax Mapping
 ![alt text](OpenGLScreenShots/10.PNG)
 Specular Reflection
