@@ -19,16 +19,26 @@ endif (UNIX)
 
 find_package(GLEW REQUIRED)
 
-FIND_PACKAGE(Boost 1.54 COMPONENTS log REQUIRED)
-FIND_PACKAGE(Threads)
+#FIND_PACKAGE(Boost 1.54 COMPONENTS log REQUIRED)
+#FIND_PACKAGE(Threads)
 
 include_directories(STB Dependencies/stb/include)
-include_directories(${Boost_INCLUDE_DIR})
+include_directories(GLM Dependencies/glm-0.9.9.8/include)
+include_directories(GLEW Dependencies/glew-2.1.0/include)
+include_directories(GLFW Dependencies/glfw-3.3.4.bin.WIN32/include)
+include_directories(ASSIMP Dependencies/assimp-5.0.1.WIN32/include)
+
+link_directories(Dependencies/assimp-5.0.1.WIN32/lib)
+link_directories(Dependencies/glew-2.1.0/lib)
+link_directories(Dependencies/glfw-3.3.4.bin.WIN32/lib-vc2019)
+link_directories(Dependencies/assimp-5.0.1.WIN32/lib)
+
+#include_directories(${Boost_INCLUDE_DIR})
 
 add_executable(BSP_OpenGL_Course ${SOURCES})
 
 if(UNIX)
     target_link_libraries(BSP_OpenGL_Course PRIVATE  glfw ${GLFW_LIBRARIES} ${Boost_LOG_LIBRARY} ${CMAKE_THREAD_LIBS_INIT} GLEW::GLEW GL)
 else(WIN32)
-    target_link_libraries(BSP_OpenGL_Course PRIVATE GLFW3 GLEW::GLEW)
+    target_link_libraries(BSP_OpenGL_Course PRIVATE GLFW3 GLEW::GLEW assimp-vc142-mt.lib)
 endif (UNIX)
