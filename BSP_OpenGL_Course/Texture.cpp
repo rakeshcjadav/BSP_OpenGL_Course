@@ -16,3 +16,8 @@ void CTexture::Bind(unsigned int textureIndex) const
 	glActiveTexture(GL_TEXTURE0 + textureIndex);
 	Bind();
 }
+
+unsigned int CTexture::GetID() const
+{
+	return m_IDTexture;
+}

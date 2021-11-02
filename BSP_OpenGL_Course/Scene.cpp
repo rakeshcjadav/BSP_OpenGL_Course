@@ -12,6 +12,7 @@
 #include"Mesh.h"
 #include"MeshRenderer.h"
 #include"Model.h"
+#include"FrameBuffer.h"
 
 CScene::CScene()
 {
@@ -20,6 +21,15 @@ CScene::CScene()
 
 void CScene::Update(CCamera* pCamera)
 {
+	// Shadow Pass
+	m_pShadowFrameBuffer->Bind();
+	const CMaterial * pShadowCaster = CAssetManager::Get().GetMaterial("shadow_caster");
+	for (CGameObject* pGameObject : m_listGameObjects)
+	{
+		pGameObject->Update();
+		pGameObject->ShadowCaster(pCamera, &m_listSpotLights, pShadowCaster);
+	}
+	m_pShadowFrameBuffer->UnBind();
 	for (CGameObject* pGameObject : m_listGameObjects)
 	{
 		pGameObject->Update();
@@ -48,8 +58,8 @@ void CScene::CreateGameObjects()
 	const CModel* pModel = CAssetManager::Get().GetModel("backpack/backpack.obj");
 	// Ground Plane
 	{
-		CTransform* pTransform = new CTransform(glm::vec3(0.0f), glm::vec3(-90.0f, 0.0f, 0.0f), glm::vec3(1.0f));
-		CGameObject* pObject = new CGameObject(pTransform, nullptr, CMesh::CreateTilablePlane(50, 50), pMeshRenderer, CAssetManager::Get().GetMaterial("lit_diff_spec_normal"));
+		CTransform* pTransform = new CTransform(glm::vec3(0.0f), glm::vec3(-90.0f, 0.0f, 0.0f), glm::vec3(20.0f));
+		CGameObject* pObject = new CGameObject(pTransform, nullptr, CMesh::CreateTilablePlane(1, 1), pMeshRenderer, CAssetManager::Get().GetMaterial("lit_diff_spec_normal"));
 		m_listGameObjects.push_back(pObject);
 	}
 	// Ground Wall
@@ -68,7 +78,7 @@ void CScene::CreateGameObjects()
 	{
 		CTransform* pTransform = new CTransform(glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3(0.0f, 180.0f, 0.0f), glm::vec3(1.0f));
 		CGameObject* pObject = new CGameObject(pTransform, nullptr, pWall, pMeshRenderer, CAssetManager::Get().GetMaterial("lit_diff_normal_depth"));
-		m_listGameObjects.push_back(pObject);
+		//m_listGameObjects.push_back(pObject);
 	}
 	// Left Wall
 	{
@@ -80,7 +90,7 @@ void CScene::CreateGameObjects()
 	{
 		CTransform* pTransform = new CTransform(glm::vec3(5.0f, 3.0f, 0.0f), glm::vec3(0.0f, -90.0f, 0.0f), glm::vec3(1.0f));
 		CGameObject* pObject = new CGameObject(pTransform, nullptr, pWall, pMeshRenderer, CAssetManager::Get().GetMaterial("lit_diff_normal_depth"));
-		m_listGameObjects.push_back(pObject);
+		//m_listGameObjects.push_back(pObject);
 	}
 	// Green Cube
 	{
@@ -110,8 +120,10 @@ void CScene::CreateGameObjects()
 	{
 		CTransform* pTransform = new CTransform(glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
 		CGameObject* pObject = new CGameObject(pTransform, pModel, nullptr, pMeshRenderer, CAssetManager::Get().GetMaterial("lit_orange"));
-		m_listGameObjects.push_back(pObject);
+		//m_listGameObjects.push_back(pObject);
 	}
+
+	m_pShadowFrameBuffer = new CFrameBuffer(glm::uvec2(1024, 1024));
 }
 
 void CScene::CreateCameras()
@@ -133,28 +145,29 @@ void CScene::CreateCameras()
 
 void CScene::CreateLights()
 {
-	// Directional
+	/* Directional
 	m_listDirectionalLights.push_back(
 		new CDirectionalLight(
-			glm::normalize(glm::vec3(-1.0f, -1.0f, -1.f)),
-			glm::vec3(0.2f)));
+			glm::normalize(glm::vec3(0.0f, -1.0f, 0.0f)),
+			glm::vec3(0.2f)));*/
 
 	// Spot
 	m_listSpotLights.push_back(
 		new CSpotLight(
-			glm::vec3(4.f, 2.5f, 0.0f),
-			glm::normalize(glm::vec3(0.0f, -1.0f, -1.0f)),
-			glm::vec3(0.0f, 0.0f, 1.0f),
-			glm::vec3(1.0f, 0.05f, 0.001f), 5.0f, 60.0f));
-
+			glm::vec3(0.f, 8.0f, 5.0f),
+			glm::normalize(glm::vec3(-1.0f, -1.0f, -1.0f)),
+			glm::vec3(1.0f, 1.0f, 1.0f),
+			glm::vec3(1.0f, 0.01f, 0.001f), 5.0f, 60.0f));
+	/*
 	m_listSpotLights.push_back(
 		new CSpotLight(
 			glm::vec3(16.f, 5.5f, 2.f),
 			glm::normalize(glm::vec3(0.0f, -1.0f, 0.0f)),
 			glm::vec3(1.0f, 0.0f, 0.0f),
-			glm::vec3(1.0f, 0.05f, 0.001f), 10.0f, 40.0f));//
+			glm::vec3(1.0f, 0.05f, 0.001f), 10.0f, 40.0f));*/
 			
 	// Point 
+	/*
 	m_listPointLights.push_back(
 		new CPointLight(
 			glm::vec3(0.f, 5.0f, 4.f),
@@ -165,5 +178,5 @@ void CScene::CreateLights()
 		new CPointLight(
 			glm::vec3(0.f, 1.5f, -4.f),
 			glm::vec3(1.0f, 1.0f, 1.0f),
-			glm::vec3(1.0f, 0.05f, 0.001f)));//
+			glm::vec3(1.0f, 0.05f, 0.001f)));*/
 }

@@ -4,7 +4,8 @@
 template<class T>
 T* CComponent<T>::GetComponent()
 {
-	return T;
+	T *a = nullptr;
+	return a;
 }
 
 template<class T>

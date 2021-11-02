@@ -71,6 +71,7 @@ private:
 	std::string LoadShaderFile(std::string shaderFile);
 	unsigned int LoadTextureFile(std::string strTextureFile);
 	unsigned char* GetTextureData(std::string strTextureFile, int& width, int& height, int& format);
+	unsigned int LoadDepthTexture(glm::uvec2 size);
 
 private:
 	static CAssetManager* s_pAssetManager;

@@ -79,13 +79,13 @@ bool CAssetManager::InitPrivate()
 	LoadShaders();
 	LoadTextures();
 	LoadMaterials();
-	LoadModels();
+	//LoadModels();
 	return true;
 }
 
 void CAssetManager::LoadShaders()
 {
-	std::vector shaders{
+	std::vector<std::string> shaders = {
 		"unlit_vertex_shader.vert",
 		"lit_vertex_shader.vert",
 		"lit_vertex_normal_shader.vert",
@@ -94,7 +94,10 @@ void CAssetManager::LoadShaders()
 		"lit_fragment_shader.frag",
 		"lit_fragment_diffuse_specular_shader.frag",
 		"lit_fragment_diffuse_specular_normal_shader.frag",
-		"lit_fragment_diffuse_normal_depth_shader.frag"
+		"lit_fragment_diffuse_normal_depth_shader.frag",
+
+		"shadowcaster.vert",
+		"shadowcaster.frag"
 	};
 	for (std::string shader : shaders)
 	{
@@ -106,34 +109,38 @@ void CAssetManager::LoadShaders()
 	m_programs.Add("lit_program_dif_spec", new CProgram("lit_vertex_shader.vert", "lit_fragment_diffuse_specular_shader.frag"));
 	m_programs.Add("lit_program_dif_spec_normal", new CProgram("lit_vertex_shader.vert", "lit_fragment_diffuse_specular_normal_shader.frag"));
 	m_programs.Add("lit_program_dif_normal_depth", new CProgram("lit_vertex_normal_shader.vert", "lit_fragment_diffuse_normal_depth_shader.frag"));
+
+	m_programs.Add("shadowcaster", new CProgram("shadowcaster.vert", "shadowcaster.frag"));
 }
 
 void CAssetManager::LoadTextures()
 {
-	std::vector textures{
+	std::vector<std::string> textures = {
 		"minion-transparent-background-9.png",
 		"minion.jpg",
 		"seamless_tileable_texture.jpg",
-		"container\\container.png",
-		"container\\container_specular.png",
-		"bricks2\\bricks2.jpg",
-		"bricks2\\bricks2_normal.jpg",
-		"bricks2\\bricks2_disp.jpg",
+		"container/container.png",
+		"container/container_specular.png",
+		"bricks2/bricks2.jpg",
+		"bricks2/bricks2_normal.jpg",
+		"bricks2/bricks2_disp.jpg",
 		"brickwall.jpg",
 		"brickwall_normal.jpg",
 		"Stylized_Dry_Mud_001_basecolor.jpg",
 		"Stylized_Dry_Mud_001_normal.jpg",
 		"Stylized_Dry_Mud_001_roughness.jpg",
-		"Substance_graph\\Substance_graph_BaseColor.jpg",
-		"Substance_graph\\Substance_graph_Normal.jpg",
-		"Substance_graph\\Substance_graph_Roughness.jpg",
-		"Substance_graph\\Substance_graph_Height.png",
-		"Substance_graph\\Substance_graph_AmbientOcclusion.jpg"
+		"Substance_graph/Substance_graph_BaseColor.jpg",
+		"Substance_graph/Substance_graph_Normal.jpg",
+		"Substance_graph/Substance_graph_Roughness.jpg",
+		"Substance_graph/Substance_graph_Height.png",
+		"Substance_graph/Substance_graph_AmbientOcclusion.jpg"
 	};
 	for (std::string texture : textures)
 	{
 		m_textures.Add(texture, LoadTexture(GetTexturesPath() + texture));
 	}
+
+	m_textures.Add("shadow", new CTexture(LoadDepthTexture(glm::uvec2(1024, 1024))));
 }
 
 void CAssetManager::LoadMaterials()
@@ -168,45 +175,57 @@ void CAssetManager::LoadMaterials()
 		true, true,
 		SMaterialRenderStates::FACE::BACK));
 
+	m_materialStates.Add("shadow", new SMaterialRenderStates(
+		SMaterialRenderStates::BLEND_TYPE::OPAQUE,
+		true, true,
+		SMaterialRenderStates::FACE::BACK));
+
 	std::map<std::string, const CTexture*> mapTextures;
 	mapTextures["MainTex"] = GetTexture("minion-transparent-background-9.png");
 	mapTextures["SecondTex"] = GetTexture("minion.jpg");
+	mapTextures["ShadowTex"] = GetTexture("shadow");
 
 	std::map<std::string, const CTexture*> mapDiffuseSpecularTextures;
-	mapDiffuseSpecularTextures["DiffuseTex"] = GetTexture("container\\container.png");
-	mapDiffuseSpecularTextures["SpecularTex"] = GetTexture("container\\container_specular.png");
+	mapDiffuseSpecularTextures["DiffuseTex"] = GetTexture("container/container.png");
+	mapDiffuseSpecularTextures["SpecularTex"] = GetTexture("container/container_specular.png");
+	mapDiffuseSpecularTextures["ShadowTex"] = GetTexture("shadow");
 
 	std::map<std::string, const CTexture*> mapDiffuseNormalTextures;
 	mapDiffuseNormalTextures["DiffuseTex"] = GetTexture("brickwall.jpg");
 	mapDiffuseNormalTextures["SpecularTex"] = GetTexture("brickwall.jpg");
 	mapDiffuseNormalTextures["NormalTex"] = GetTexture("brickwall_normal.jpg");
+	mapDiffuseNormalTextures["ShadowTex"] = GetTexture("shadow");
 
 	std::map<std::string, const CTexture*> mapGroundTexture;
 	mapGroundTexture["DiffuseTex"] = GetTexture("seamless_tileable_texture.jpg");
 	mapGroundTexture["SpecularTex"] = GetTexture("seamless_tileable_texture.jpg");
+	mapGroundTexture["ShadowTex"] = GetTexture("shadow");
 
 	std::map<std::string, const CTexture*> mapDryMudGroundTexture;
 	mapDryMudGroundTexture["DiffuseTex"] = GetTexture("Stylized_Dry_Mud_001_basecolor.jpg");
 	mapDryMudGroundTexture["SpecularTex"] = GetTexture("Stylized_Dry_Mud_001_roughness.jpg");
 	mapDryMudGroundTexture["NormalTex"] = GetTexture("Stylized_Dry_Mud_001_normal.jpg");
+	mapDryMudGroundTexture["ShadowTex"] = GetTexture("shadow");
 
 	std::map<std::string, const CTexture*> mapWallTexture;
-	mapWallTexture["DiffuseTex"] = GetTexture("bricks2\\bricks2.jpg");
-	mapWallTexture["NormalTex"] = GetTexture("bricks2\\bricks2_normal.jpg");
-	mapWallTexture["DepthTex"] = GetTexture("bricks2\\bricks2_disp.jpg");
+	mapWallTexture["DiffuseTex"] = GetTexture("bricks2/bricks2.jpg");
+	mapWallTexture["NormalTex"] = GetTexture("bricks2/bricks2_normal.jpg");
+	mapWallTexture["DepthTex"] = GetTexture("bricks2/bricks2_disp.jpg");
+	mapWallTexture["ShadowTex"] = GetTexture("shadow");
 
 	std::map < std::string, const CTexture*> mapSubstanceGraph;
-	mapSubstanceGraph["DiffuseTex"] = GetTexture("Substance_graph\\Substance_graph_BaseColor.jpg");
-	mapSubstanceGraph["NormalTex"] = GetTexture("Substance_graph\\Substance_graph_Normal.jpg");
-	mapSubstanceGraph["SpecularTex"] = GetTexture("Substance_graph\\Substance_graph_Roughness.jpg");
-	mapSubstanceGraph["DepthTex"] = GetTexture("Substance_graph\\Substance_graph_Height.png");
-	mapSubstanceGraph["AmbientOcclusionTex"] = GetTexture("Substance_graph\\Substance_graph_AmbientOcclusion.jpg");
+	mapSubstanceGraph["DiffuseTex"] = GetTexture("Substance_graph/Substance_graph_BaseColor.jpg");
+	mapSubstanceGraph["NormalTex"] = GetTexture("Substance_graph/Substance_graph_Normal.jpg");
+	mapSubstanceGraph["SpecularTex"] = GetTexture("Substance_graph/Substance_graph_Roughness.jpg");
+	mapSubstanceGraph["DepthTex"] = GetTexture("Substance_graph/Substance_graph_Height.png");
+	mapSubstanceGraph["AmbientOcclusionTex"] = GetTexture("Substance_graph/Substance_graph_AmbientOcclusion.jpg");
 
 	const CProgram* pProgramUnlit = GetProgram("unlit_program");
 	const CProgram* pProgramLit = GetProgram("lit_program");
 	const CProgram* pProgramDiffuseSpecular = GetProgram("lit_program_dif_spec");
 	const CProgram* pProgramDiffuseSpecularNormal = GetProgram("lit_program_dif_spec_normal");
 	const CProgram* pProgramDiffuseNormalDepth = GetProgram("lit_program_dif_normal_depth");
+	const CProgram* pProgramShadowCaster = GetProgram("shadowcaster");
 
 	const SMaterialProperties* pOrangeProperties = GetMaterialProperties("orange");
 	const SMaterialProperties* pGreenProperties = GetMaterialProperties("green");
@@ -215,6 +234,7 @@ void CAssetManager::LoadMaterials()
 	const SMaterialProperties* pWhiteShinyProperties = GetMaterialProperties("white_shiny");
 
 	const SMaterialRenderStates* pDefaultStates = CAssetManager::Get().GetMaterialStates("default");
+	const SMaterialRenderStates* pShadowStates = CAssetManager::Get().GetMaterialStates("shadow");
 
 	// Unlit
 	m_materials.Add("unlit_orange", new CMaterial("unlit_orange", pDefaultStates, pOrangeProperties, pProgramUnlit, mapTextures));
@@ -241,11 +261,14 @@ void CAssetManager::LoadMaterials()
 
 	// Diffuse Normal Depth
 	m_materials.Add("substance_graph", new CMaterial("substance_graph", pDefaultStates, pWhiteShinyProperties, pProgramDiffuseNormalDepth, mapSubstanceGraph));
+
+	// Shadow caster
+	m_materials.Add("shadow_caster", new CMaterial("shadow_caster", pShadowStates, pWhiteProperties, pProgramShadowCaster));
 }
 
 void CAssetManager::LoadModels()
 {
-	std::vector models{
+	std::vector<std::string> models = {
 		"backpack/backpack.obj"
 	};
 	for (std::string model : models)
@@ -333,6 +356,22 @@ unsigned int CAssetManager::LoadTextureFile(std::string strTextureFile)
 	return texture_id;
 }
 
+unsigned int CAssetManager::LoadDepthTexture(glm::uvec2 size)
+{
+	unsigned int idDepthMap;
+	glGenTextures(1, &idDepthMap);
+	glBindTexture(GL_TEXTURE_2D, idDepthMap);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, size.x, size.y, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+
+	return idDepthMap;
+}
+
 unsigned char* CAssetManager::GetTextureData(std::string strTextureFile, int& width, int& height, int& format)
 {
 	int nrChannels;
@@ -370,11 +409,11 @@ CProgram* CAssetManager::LoadProgram(std::string strProgramName)
 CModel * CAssetManager::LoadModel(std::string strModelFileName)
 {
 	Assimp::Importer importer;
-	std::filesystem::path path = std::filesystem::path(GetModelPath() + strModelFileName);
-	path.remove_filename();
-	std::string strModelPath(path.string());
+	std::filesystem::path filePath = std::filesystem::path(GetModelPath() + strModelFileName);
+	filePath.remove_filename();
+	std::string strModelPath(filePath.string());
 	const aiScene* pScene = importer.ReadFile(GetModelPath() + strModelFileName, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
-
+	
 	if (!pScene || pScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !pScene->mRootNode)
 	{
 		LOG_ERROR << "ERROR::ASSIMP::" << importer.GetErrorString() << LOG_END;
@@ -388,6 +427,7 @@ CModel * CAssetManager::LoadModel(std::string strModelFileName)
 	{
 		ProcessMaterial(pScene->mMaterials[i], strModelPath);
 	}
+	
 	aiString strMaterialName;
 	pScene->mMaterials[1]->Get(AI_MATKEY_NAME, strMaterialName);
 	return new CModel(listMeshData, GetMaterial(strMaterialName.C_Str()));
@@ -425,10 +465,9 @@ SMeshData* CAssetManager::ProcessMesh(aiMesh* pMesh, const aiScene* pScene)
 		}
 		pMeshData->aVertices.push_back(vertex);
 	}
-
 	for (unsigned int i = 0; i < pMesh->mNumFaces; i++)
 	{
-		aiFace face = pMesh->mFaces[i];
+		aiFace & face = pMesh->mFaces[i];
 		for (unsigned int j = 0; j < face.mNumIndices; j++)
 		{
 			pMeshData->aIndices.push_back(face.mIndices[j]);

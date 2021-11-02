@@ -25,4 +25,18 @@ void CSpotLight::Bind(const CMaterial* pMaterial, int index)
 	pMaterial->SetUniform("spotLight[" + std::to_string(index) + "].attenuation", m_vAttenuation);
 	pMaterial->SetUniform("spotLight[" + std::to_string(index) + "].innerAngle", glm::cos(glm::radians(m_fInnerCutOffAngle)));
 	pMaterial->SetUniform("spotLight[" + std::to_string(index) + "].outerAngle", glm::cos(glm::radians(m_fOuterCutOffAngle)));
+	glm::mat4 lightViewMat = GetViewMatrix();
+	glm::mat4 lightProjectionMat = GetProjectionMatrix();
+	glm::mat4 lightProjectionViewMat = lightProjectionMat * lightViewMat;
+	pMaterial->SetUniform("LightProjectionViewMat", lightProjectionViewMat);
+}
+
+glm::mat4 CSpotLight::GetViewMatrix() const
+{
+	return glm::lookAt(m_vPosition, m_vPosition+m_vDirection, glm::vec3(0.0f, 1.0f, 0.0f));
+}
+
+glm::mat4 CSpotLight::GetProjectionMatrix() const
+{
+	return glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 20.0f);
 }

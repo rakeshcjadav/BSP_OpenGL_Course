@@ -140,3 +140,21 @@ vec3 SpecularSpotLight(vec3 normal, vec3 worldPos, vec3 cameraPos, SpotLight lig
         * material.uSpecularColor
         * light.color;
 }
+
+float ShadowCalculation(sampler2D shadowTex, vec4 fragPosLightSpace, float fDiffuse)
+{
+    // perform perspective divide
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    // transform to [0,1] range
+    projCoords = projCoords * 0.5 + 0.5;
+    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+    float closestDepth = texture(shadowTex, projCoords.xy).r; 
+    // get depth of current fragment from light's perspective
+    float currentDepth = projCoords.z;
+
+    float bias = max(0.05 * (1.0f - fDiffuse), 0.005);
+    // check whether current frag pos is in shadow
+    float shadow = currentDepth < (closestDepth + bias) ? 1.0 : 0.0;
+
+    return shadow;
+}

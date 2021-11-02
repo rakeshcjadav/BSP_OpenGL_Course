@@ -4,7 +4,7 @@
 		{
 			"label": "COMPILE",
 			"type": "shell",
-			"command": "time g++ -g -Wall -std=c++2a -I ${cwd}/Dependencies/stb/include ${cwd}/BSP_OpenGL_Course/*.cpp -lGLEW -lGL -lglfw -o BSP_OpenGL_Course",
+			"command": "time g++ -g -Wall -std=c++2a -I ${cwd}/Dependencies/stb/include ${cwd}/BSP_OpenGL_Course/*.cpp -lGLEW -lGL -lglfw -lassimp -o BSP_OpenGL_Course",
 			"options": {
 				"cwd": "${workspaceRoot}/debug"
 			},

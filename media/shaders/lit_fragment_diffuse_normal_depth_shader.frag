@@ -8,11 +8,13 @@ in VS_OUT
     vec3 outNormal;
     vec2 outTexCoord;
     mat3 outTBNMat;
+    vec4 outLightSpaceFragPos;
 } fs_in;
 
 uniform sampler2D DiffuseTex;
 uniform sampler2D NormalTex;
 uniform sampler2D DepthTex;
+uniform sampler2D ShadowTex;
 uniform vec3 CameraPos;
 uniform DirectionalLight directionalLight;
 uniform int PointLightCount;
@@ -91,7 +93,9 @@ void main()
     diffuseColor *= material.uDiffuseColor;
     specularColor *= material.uSpecularColor;
 
-    vec3 final = ambientColor + diffuseColor + specularColor;
+    float fDuffuse = DiffusePointLight(fs_in.outNormal, fs_in.outWorldPos, pointLight[0]).r;
+    vec3 shadow = vec3(ShadowCalculation(ShadowTex, fs_in.outLightSpaceFragPos, fDuffuse));
+    vec3 final = ambientColor + (diffuseColor + specularColor)* shadow;
 
     FragColor = vec4(final, 1.0f);
 }

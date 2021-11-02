@@ -6,6 +6,8 @@ public:
 	CSpotLight(glm::vec3 position, glm::vec3 direction, glm::vec3 color, glm::vec3 atten, float innterAngle, float outerAngle);
 
 	void Bind(const CMaterial* pMaterial, int index) override;
+	glm::mat4 GetViewMatrix() const;
+	glm::mat4 GetProjectionMatrix() const;
 private:
 	glm::vec3 m_vPosition;
 	glm::vec3 m_vDirection;
