@@ -10,11 +10,13 @@ uniform mat4 TransformMat;
 uniform mat4 NormalMat;
 uniform mat4 CameraMat;
 uniform mat4 ProjectionMat;
+uniform mat4 LightProjectionViewMat;
 
 out vec3 outWorldPos;
 out vec3 outNormal;
 out vec2 outTexCoord;
 out mat3 outTBNMat;
+out vec4 outLightSpaceFragPos;
 
 void main()
 {
@@ -25,4 +27,5 @@ void main()
    vec3 B = normalize(mat3(TransformMat) * BiTangent);
    outTBNMat = mat3(T, B, outNormal);
    outTexCoord = TexCoord;
+   outLightSpaceFragPos = LightProjectionViewMat * TransformMat * vec4(Pos, 1.0);
 }

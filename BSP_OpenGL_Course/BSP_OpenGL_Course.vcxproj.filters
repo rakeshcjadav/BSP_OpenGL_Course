@@ -108,6 +108,9 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FrameBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -197,6 +200,9 @@
     <ClInclude Include="Assimp.h">
       <Filter>Source Files\ThirdParty</Filter>
     </ClInclude>
+    <ClInclude Include="FrameBuffer.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\media\shaders\unlit_program.prog">
@@ -229,6 +235,12 @@
     </None>
     <None Include="..\media\shaders\lit_vertex_normal_shader.vert">
       <Filter>Resource Files\Shaders\Lit</Filter>
+    </None>
+    <None Include="..\media\shaders\shadowcaster.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="..\media\shaders\shadowcaster.vert">
+      <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

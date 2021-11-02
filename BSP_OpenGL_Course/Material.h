@@ -12,7 +12,7 @@ public:
 public:
 	CMaterial(std::string strName, const SMaterialRenderStates* pStates, 
 		const SMaterialProperties * pProperties, 
-		const CProgram * pProgram, std::map<std::string, const CTexture*> mapTextures);
+		const CProgram* pProgram, std::map<std::string, const CTexture*> mapTextures = {});
 	void Bind() const;
 	void SetUniform(std::string name, int value) const;
 	void SetUniform(std::string name, float value) const;

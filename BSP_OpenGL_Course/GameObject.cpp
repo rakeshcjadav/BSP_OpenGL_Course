@@ -30,3 +30,11 @@ void CGameObject::Render(CCamera* pCamera,
 	else if(m_pModel)
 		m_pMeshRenderer->Render(m_pModel, m_pTransform, pCamera, pDirectionalLights, pPointLights, pSpotLights);
 }
+
+void CGameObject::ShadowCaster(CCamera* pCamera, std::list<CLight*>* pDirectionalLights, const CMaterial * pMaterial)
+{
+	if (m_pMesh)
+		m_pMeshRenderer->Render(m_pMesh, m_pTransform, pMaterial, pCamera, pDirectionalLights);
+	//else if (m_pModel)
+	//	m_pMeshRenderer->ShadowCaster(m_pModel, m_pTransform, pMaterial, pCamera, pDirectionalLights);
+}

@@ -22,13 +22,6 @@ void CMeshRenderer::Render(CMesh* pMesh, CTransform* pTransform, const CMaterial
 	{
 		pMaterial->Bind();
 		{
-			float currentTime = 0.0f;// (float)glfwGetTime();
-			float fScale = 0.1f + 1.5f * fabsf(sinf(0.05f * currentTime));
-			float fSineTime = 1.0f * sinf(currentTime);
-			
-			pMaterial->SetUniform("Scale", fScale);
-			pMaterial->SetUniform("SineTime", fSineTime);
-
 			glm::mat4 transformMat = pTransform->GetTransform();
 			glm::mat4 normalMat = glm::transpose(glm::inverse(glm::mat3(transformMat)));
 

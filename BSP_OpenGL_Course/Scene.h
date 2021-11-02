@@ -4,6 +4,7 @@ class CGameObject;
 class CLight;
 class CCamera;
 class CMaterial;
+class CFrameBuffer;
 
 class CScene
 {
@@ -26,4 +27,5 @@ private:
 	std::list<CLight*> m_listPointLights;
 	std::list<CLight*> m_listSpotLights;
 	std::map<std::string, CCamera*> m_mapCameras;
+	CFrameBuffer* m_pShadowFrameBuffer;
 };

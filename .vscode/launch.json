@@ -19,6 +19,7 @@
                     "value":"${workspaceFolder}/media"
                 } 
             ],
+            "miDebuggerPath": "/usr/bin/gdb",
             "externalConsole": false,
             "MIMode": "gdb",
             "setupCommands": [
