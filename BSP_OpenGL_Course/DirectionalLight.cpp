@@ -13,6 +13,10 @@ void CDirectionalLight::Bind(const CMaterial* pMaterial, int index)
 {
 	pMaterial->SetUniform("directionalLight.direction", m_vDirection);
 	pMaterial->SetUniform("directionalLight.color", m_vColor);
+	//glm::mat4 lightViewMat = GetViewMatrix();
+	//glm::mat4 lightProjectionMat = GetProjectionMatrix();
+	//glm::mat4 lightProjectionViewMat = lightProjectionMat * lightViewMat;
+	//pMaterial->SetUniform("LightProjectionViewMat", lightProjectionViewMat);
 }
 
 glm::mat4 CDirectionalLight::GetViewMatrix() const
@@ -24,5 +28,5 @@ glm::mat4 CDirectionalLight::GetViewMatrix() const
 
 glm::mat4 CDirectionalLight::GetProjectionMatrix() const
 {
-	return glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 100.0f);
+	return glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 50.0f);
 }

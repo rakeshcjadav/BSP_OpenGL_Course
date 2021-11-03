@@ -38,5 +38,5 @@ glm::mat4 CSpotLight::GetViewMatrix() const
 
 glm::mat4 CSpotLight::GetProjectionMatrix() const
 {
-	return glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 20.0f);
+	return glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 50.0f);
 }

@@ -22,13 +22,15 @@ void CFrameBuffer::Bind()
 {
     glGetIntegerv(GL_VIEWPORT, glm::value_ptr(m_ViewportSize));
     glViewport(0, 0, m_Size.x, m_Size.y);
+    glScissor(0, 0, m_Size.x, m_Size.y);
     glBindFramebuffer(GL_FRAMEBUFFER, m_IDFrameBuffer);
-    glClear(GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void CFrameBuffer::UnBind()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glViewport(m_ViewportSize.x, m_ViewportSize.y, m_ViewportSize.z, m_ViewportSize.w);
+    glScissor(m_ViewportSize.x, m_ViewportSize.y, m_ViewportSize.z, m_ViewportSize.w);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

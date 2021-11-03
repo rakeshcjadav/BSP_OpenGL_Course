@@ -9,17 +9,14 @@ layout (location = 4) in vec2 TexCoord;
 uniform mat4 TransformMat;
 uniform mat4 LightProjectionViewMat;
 
-/*
 out struct VS_OUT
 {
-    vec3 outWorldPos;
-    vec4 outColor;
-    vec3 outNormal;
     vec2 outTexCoord;
 }vs_out;
-*/
+
 
 void main()
 {
    gl_Position = LightProjectionViewMat * TransformMat * vec4(Pos.x, Pos.y, Pos.z, 1.0);
+   vs_out.outTexCoord = TexCoord;
 }
