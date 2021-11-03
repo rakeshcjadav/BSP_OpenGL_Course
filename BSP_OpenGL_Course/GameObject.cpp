@@ -26,15 +26,15 @@ void CGameObject::Render(CCamera* pCamera,
 	std::list<CLight*>* pSpotLights)
 {
 	if(m_pMesh)
-		m_pMeshRenderer->Render(m_pMesh, m_pTransform, m_pMaterial, pCamera, pDirectionalLights, pPointLights, pSpotLights);
+		m_pMeshRenderer->Render(m_pMesh, m_pTransform, m_pMaterial->GetPass(1), pCamera, pDirectionalLights, pPointLights, pSpotLights);
 	else if(m_pModel)
-		m_pMeshRenderer->Render(m_pModel, m_pTransform, pCamera, pDirectionalLights, pPointLights, pSpotLights);
+		m_pMeshRenderer->Render(m_pModel, m_pTransform, pCamera, pDirectionalLights, pPointLights, pSpotLights, true);
 }
 
-void CGameObject::ShadowCaster(CCamera* pCamera, std::list<CLight*>* pDirectionalLights, const CMaterial * pMaterial)
+void CGameObject::ShadowCaster(CCamera* pCamera, std::list<CLight*>* pDirectionalLights)
 {
 	if (m_pMesh)
-		m_pMeshRenderer->Render(m_pMesh, m_pTransform, pMaterial, pCamera, pDirectionalLights);
-	//else if (m_pModel)
-	//	m_pMeshRenderer->ShadowCaster(m_pModel, m_pTransform, pMaterial, pCamera, pDirectionalLights);
+		m_pMeshRenderer->Render(m_pMesh, m_pTransform, m_pMaterial->GetPass(0), pCamera, pDirectionalLights);
+	else if (m_pModel)
+		m_pMeshRenderer->Render(m_pModel, m_pTransform, pCamera, pDirectionalLights, nullptr, nullptr, true);
 }

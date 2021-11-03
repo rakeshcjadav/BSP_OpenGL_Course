@@ -8,8 +8,8 @@ class CMaterial;
 class CMesh;
 class CModel;
 class CCamera;
-struct SMaterialProperties;
-struct SMaterialRenderStates;
+struct SMaterialPassProperties;
+struct SMaterialPassRenderStates;
 struct SMeshData;
 
 
@@ -47,8 +47,8 @@ public:
 	const CMaterial* GetMaterial(std::string strMaterialName) const;
 	const CModel* GetModel(std::string strModelName) const;
 
-	const SMaterialProperties* GetMaterialProperties(std::string strName);
-	const SMaterialRenderStates* GetMaterialStates(std::string strName);
+	const SMaterialPassProperties* GetMaterialProperties(std::string strName);
+	const SMaterialPassRenderStates* GetMaterialStates(std::string strName);
 
 private:
 	CAssetManager();
@@ -85,6 +85,6 @@ private:
 	CAssetCollection<CMaterial> m_materials;
 	CAssetCollection<CModel> m_models;
 
-	CAssetCollection<SMaterialProperties> m_materialProperties;
-	CAssetCollection<SMaterialRenderStates> m_materialStates;
+	CAssetCollection<SMaterialPassProperties> m_materialProperties;
+	CAssetCollection<SMaterialPassRenderStates> m_materialStates;
 };

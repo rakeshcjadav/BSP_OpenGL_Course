@@ -12,7 +12,7 @@ class CMeshRenderer
 public:
 	CMeshRenderer();
 
-	void Render(CMesh * pMesh, CTransform * pTransform, const CMaterial * pMaterial, CCamera * pCamera, 
+	void Render(CMesh * pMesh, CTransform * pTransform, const CMaterialPass * pMaterial, CCamera * pCamera, 
 		std::list<CLight*>* pDirectionalLights = nullptr,
 		std::list<CLight*>* pPointLights = nullptr,
 		std::list<CLight*>* pSpotLights = nullptr);
@@ -21,7 +21,8 @@ public:
 	void Render(const CModel* pModel, CTransform* pTransform, CCamera* pCamera,
 		std::list<CLight*>* pDirectionalLights = nullptr,
 		std::list<CLight*>* pPointLights = nullptr,
-		std::list<CLight*>* pSpotLights = nullptr);
+		std::list<CLight*>* pSpotLights = nullptr,
+		bool bShadowCasterPass = false);
 
 private:
 

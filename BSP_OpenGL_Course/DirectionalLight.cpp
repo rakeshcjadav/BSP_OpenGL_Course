@@ -1,6 +1,6 @@
 #include"pch.h"
 #include"DirectionalLight.h"
-#include"Material.h"
+#include"MaterialPass.h"
 
 CDirectionalLight::CDirectionalLight(glm::vec3 direction, glm::vec3 color) :
 	m_vDirection(0.0f),
@@ -9,10 +9,10 @@ CDirectionalLight::CDirectionalLight(glm::vec3 direction, glm::vec3 color) :
 	m_vDirection = glm::normalize(direction);
 }
 
-void CDirectionalLight::Bind(const CMaterial* pMaterial, int index)
+void CDirectionalLight::Bind(const CMaterialPass* pPass, int index)
 {
-	pMaterial->SetUniform("directionalLight.direction", m_vDirection);
-	pMaterial->SetUniform("directionalLight.color", m_vColor);
+	pPass->SetUniform("directionalLight.direction", m_vDirection);
+	pPass->SetUniform("directionalLight.color", m_vColor);
 	//glm::mat4 lightViewMat = GetViewMatrix();
 	//glm::mat4 lightProjectionMat = GetProjectionMatrix();
 	//glm::mat4 lightProjectionViewMat = lightProjectionMat * lightViewMat;

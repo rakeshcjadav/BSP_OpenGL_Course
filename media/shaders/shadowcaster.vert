@@ -9,7 +9,7 @@ layout (location = 4) in vec2 TexCoord;
 uniform mat4 TransformMat;
 uniform mat4 LightProjectionViewMat;
 
-out struct VS_OUT
+out VS_OUT
 {
     vec2 outTexCoord;
 }vs_out;

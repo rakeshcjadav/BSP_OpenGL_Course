@@ -23,11 +23,10 @@ void CScene::Update(CCamera* pCamera)
 {
 	// Shadow Pass
 	m_pShadowFrameBuffer->Bind();
-	const CMaterial * pShadowCaster = CAssetManager::Get().GetMaterial("shadow_caster");
 	for (CGameObject* pGameObject : m_listGameObjects)
 	{
 		pGameObject->Update();
-		pGameObject->ShadowCaster(pCamera, &m_listSpotLights, pShadowCaster);
+		pGameObject->ShadowCaster(pCamera, &m_listSpotLights);
 	}
 	m_pShadowFrameBuffer->UnBind();
 	for (CGameObject* pGameObject : m_listGameObjects)
@@ -112,7 +111,7 @@ void CScene::CreateGameObjects()
 	}
 	// Circle
 	{
-		CTransform* pTransform = new CTransform(glm::vec3(-3.0f, 2.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
+		CTransform* pTransform = new CTransform(glm::vec3(-3.0f, 0.5f, 4.0f), glm::vec3(0.0f), glm::vec3(1.0f));
 		CGameObject* pObject = new CGameObject(pTransform, pModel, CMesh::CreateCircle(), pMeshRenderer, CAssetManager::Get().GetMaterial("unlit_orange"));
 		m_listGameObjects.push_back(pObject);
 	}

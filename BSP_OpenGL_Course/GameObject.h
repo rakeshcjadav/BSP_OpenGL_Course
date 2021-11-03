@@ -19,7 +19,7 @@ public:
 		std::list<CLight*>* pPointLights,
 		std::list<CLight*>* pSpotLights);
 
-	void ShadowCaster(CCamera* pCamera, std::list<CLight*>* pDirectionalLights, const CMaterial* pMaterial);
+	void ShadowCaster(CCamera* pCamera, std::list<CLight*>* pDirectionalLights);
 private:
 	CTransform* m_pTransform;
 	CMesh* m_pMesh;

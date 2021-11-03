@@ -2,12 +2,20 @@
 
 uniform sampler2D DiffuseMap;
 
-in struct VS_OUT
+in VS_OUT
 {
     vec2 outTexCoord;
 }fs_in;
 
 void main()
 {
-    gl_FragDepth = gl_FragCoord.z;// * texture(DiffuseMap, fs_in.outTexCoord).a;
+    if(texture(DiffuseMap, fs_in.outTexCoord).a < 0.5)
+    {
+        gl_FragDepth = 1.0;
+    }
+    else 
+    {
+        gl_FragDepth = gl_FragCoord.z;
+    }
+
 }
