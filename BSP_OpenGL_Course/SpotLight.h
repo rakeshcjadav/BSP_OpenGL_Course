@@ -1,11 +1,12 @@
 #pragma once
+#include "Light.h"
 
 class CSpotLight : public CLight
 {
 public:
 	CSpotLight(glm::vec3 position, glm::vec3 direction, glm::vec3 color, glm::vec3 atten, float innterAngle, float outerAngle);
 
-	void Bind(const CMaterial* pMaterial, int index) override;
+	void Bind(const CMaterialPass* pPass, int index) override;
 	glm::mat4 GetViewMatrix() const;
 	glm::mat4 GetProjectionMatrix() const;
 private:

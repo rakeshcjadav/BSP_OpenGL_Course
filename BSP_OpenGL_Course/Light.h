@@ -1,13 +1,13 @@
 #pragma once
 
-class CMaterial;
+class CMaterialPass;
 
 class CLight
 {
 public:
 	CLight(glm::vec3 color);
 
-	virtual void Bind(const CMaterial* pMaterial, int index) = 0;
+	virtual void Bind(const CMaterialPass* pPass, int index) = 0;
 
 protected:
 	glm::vec3 GetColor() const;

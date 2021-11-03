@@ -1,6 +1,6 @@
 #include"pch.h"
 #include"PointLight.h"
-#include"Material.h"
+#include"MaterialPass.h"
 
 CPointLight::CPointLight(glm::vec3 position, glm::vec3 color, glm::vec3 attenuation):
 	m_vPosition(0.0f),
@@ -11,9 +11,9 @@ CPointLight::CPointLight(glm::vec3 position, glm::vec3 color, glm::vec3 attenuat
 	m_vAttenuation = attenuation;
 }
 
-void CPointLight::Bind(const CMaterial* pMaterial, int index)
+void CPointLight::Bind(const CMaterialPass* pPass, int index)
 {
-	pMaterial->SetUniform("pointLight[" + std::to_string(index) + "].position", m_vPosition);
-	pMaterial->SetUniform("pointLight[" + std::to_string(index) + "].color", m_vColor);
-	pMaterial->SetUniform("pointLight[" + std::to_string(index) + "].attenuation", m_vAttenuation);
+	pPass->SetUniform("pointLight[" + std::to_string(index) + "].position", m_vPosition);
+	pPass->SetUniform("pointLight[" + std::to_string(index) + "].color", m_vColor);
+	pPass->SetUniform("pointLight[" + std::to_string(index) + "].attenuation", m_vAttenuation);
 }

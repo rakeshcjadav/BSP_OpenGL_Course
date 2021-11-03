@@ -4,6 +4,7 @@
 #include"Program.h"
 #include"Texture.h"
 #include"Material.h"
+#include"MaterialPass.h"
 #include"Mesh.h"
 #include"Model.h"
 #include"STB.h"
@@ -59,12 +60,12 @@ const CModel* CAssetManager::GetModel(std::string strModelName) const
 	return m_models.Get(strModelName);
 }
 
-const SMaterialProperties* CAssetManager::GetMaterialProperties(std::string strName)
+const SMaterialPassProperties* CAssetManager::GetMaterialProperties(std::string strName)
 {
 	return m_materialProperties.Get(strName);
 }
 
-const SMaterialRenderStates* CAssetManager::GetMaterialStates(std::string strName)
+const SMaterialPassRenderStates* CAssetManager::GetMaterialStates(std::string strName)
 {
 	return m_materialStates.Get(strName);
 }
@@ -145,40 +146,40 @@ void CAssetManager::LoadTextures()
 
 void CAssetManager::LoadMaterials()
 {
-	m_materialProperties.Add("orange", new SMaterialProperties(
+	m_materialProperties.Add("orange", new SMaterialPassProperties(
 		glm::vec3(1.0f, 0.5f, 0.31f),
 		glm::vec3(1.0f, 0.5f, 0.31f),
 		glm::vec3(1.0f, 0.5f, 0.31f), 1.0f, 0.0f));
 
-	m_materialProperties.Add("green", new SMaterialProperties(
+	m_materialProperties.Add("green", new SMaterialPassProperties(
 		glm::vec3(0.5f, 1.0f, 0.31f),
 		glm::vec3(0.5f, 1.0f, 0.31f),
 		glm::vec3(0.5f, 1.0f, 0.31f), 32, 1.0f));
 
-	m_materialProperties.Add("red", new SMaterialProperties(
+	m_materialProperties.Add("red", new SMaterialPassProperties(
 		glm::vec3(1.0f, 0.20f, 0.31f),
 		glm::vec3(1.0f, 0.20f, 0.31f),
 		glm::vec3(1.0f, 0.20f, 0.31f), 5, 1.0f));
 
-	m_materialProperties.Add("white", new SMaterialProperties(
+	m_materialProperties.Add("white", new SMaterialPassProperties(
 		glm::vec3(1.0f),
 		glm::vec3(1.0f),
 		glm::vec3(1.0f), 8.0f, 0.1f));
 
-	m_materialProperties.Add("white_shiny", new SMaterialProperties(
+	m_materialProperties.Add("white_shiny", new SMaterialPassProperties(
 		glm::vec3(1.0f),
 		glm::vec3(1.0f),
 		glm::vec3(1.0f), 225.0f, 0.20f));
 
-	m_materialStates.Add("default", new SMaterialRenderStates(
-		SMaterialRenderStates::BLEND_TYPE::TRANSPARENT,
+	m_materialStates.Add("default", new SMaterialPassRenderStates(
+		SMaterialPassRenderStates::BLEND_TYPE::TRANSPARENT,
 		true, true,
-		SMaterialRenderStates::FACE::BACK));
+		SMaterialPassRenderStates::FACE::BACK));
 
-	m_materialStates.Add("shadow", new SMaterialRenderStates(
-		SMaterialRenderStates::BLEND_TYPE::OPAQUE,
+	m_materialStates.Add("shadow", new SMaterialPassRenderStates(
+		SMaterialPassRenderStates::BLEND_TYPE::OPAQUE,
 		true, false,
-		SMaterialRenderStates::FACE::BACK));
+		SMaterialPassRenderStates::FACE::BACK));
 
 	std::map<std::string, const CTexture*> mapTextures;
 	mapTextures["MainTex"] = GetTexture("minion-transparent-background-9.png");
@@ -227,43 +228,100 @@ void CAssetManager::LoadMaterials()
 	const CProgram* pProgramDiffuseNormalDepth = GetProgram("lit_program_dif_normal_depth");
 	const CProgram* pProgramShadowCaster = GetProgram("shadowcaster");
 
-	const SMaterialProperties* pOrangeProperties = GetMaterialProperties("orange");
-	const SMaterialProperties* pGreenProperties = GetMaterialProperties("green");
-	const SMaterialProperties* pRedProperties = GetMaterialProperties("red");
-	const SMaterialProperties* pWhiteProperties = GetMaterialProperties("white");
-	const SMaterialProperties* pWhiteShinyProperties = GetMaterialProperties("white_shiny");
+	const SMaterialPassProperties* pOrangeProperties = GetMaterialProperties("orange");
+	const SMaterialPassProperties* pGreenProperties = GetMaterialProperties("green");
+	const SMaterialPassProperties* pRedProperties = GetMaterialProperties("red");
+	const SMaterialPassProperties* pWhiteProperties = GetMaterialProperties("white");
+	const SMaterialPassProperties* pWhiteShinyProperties = GetMaterialProperties("white_shiny");
 
-	const SMaterialRenderStates* pDefaultStates = CAssetManager::Get().GetMaterialStates("default");
-	const SMaterialRenderStates* pShadowStates = CAssetManager::Get().GetMaterialStates("shadow");
+	const SMaterialPassRenderStates* pDefaultStates = CAssetManager::Get().GetMaterialStates("default");
+	const SMaterialPassRenderStates* pShadowStates = CAssetManager::Get().GetMaterialStates("shadow");
 
 	// Unlit
-	m_materials.Add("unlit_orange", new CMaterial("unlit_orange", pDefaultStates, pOrangeProperties, pProgramUnlit, mapTextures));
-	m_materials.Add("unlit_green", new CMaterial("unlit_green", pDefaultStates, pGreenProperties, pProgramUnlit, mapTextures));
-	m_materials.Add("unlit_white", new CMaterial("unlit_white", pDefaultStates, pWhiteProperties, pProgramUnlit, mapTextures));
+	m_materials.Add("unlit_orange", 
+		new CMaterial("unlit_orange", {
+			new CMaterialPass("shadow", pShadowStates, pWhiteProperties, pProgramShadowCaster, mapTextures),
+			new CMaterialPass("unlit_green", pDefaultStates, pOrangeProperties, pProgramUnlit, mapTextures)
+		}
+	));
+	m_materials.Add("unlit_green", 
+		new CMaterial("unlit_green", {
+			new CMaterialPass("shadow", pShadowStates, pWhiteProperties, pProgramShadowCaster, mapTextures),
+			new CMaterialPass("unlit_green", pDefaultStates, pGreenProperties, pProgramUnlit, mapTextures)
+		}
+	));
+	m_materials.Add("unlit_white",
+		new CMaterial("unlit_white", {
+			new CMaterialPass("shadow", pShadowStates, pWhiteProperties, pProgramShadowCaster, mapTextures),
+			new CMaterialPass("unlit_white", pDefaultStates, pWhiteProperties, pProgramUnlit, mapTextures)
+			}
+	));
 
 	// Lit
-	m_materials.Add("lit_orange",  new CMaterial("lit_orange", pDefaultStates, pWhiteProperties, pProgramDiffuseSpecular, mapWallTexture));
-	m_materials.Add("lit_green",  new CMaterial("lit_green", pDefaultStates, pGreenProperties, pProgramLit, mapTextures));
-	m_materials.Add("lit_red", new CMaterial("lit_red", pDefaultStates, pRedProperties, pProgramLit, mapTextures));
-	m_materials.Add("lit_white", new CMaterial("lit_white", pDefaultStates, pWhiteShinyProperties, pProgramDiffuseSpecular, mapGroundTexture));
+	m_materials.Add("lit_orange",
+		new CMaterial("lit_orange", {
+			new CMaterialPass("shadow", pShadowStates, pWhiteProperties, pProgramShadowCaster, mapWallTexture),
+			new CMaterialPass("lit_orange", pDefaultStates, pWhiteProperties, pProgramDiffuseSpecular, mapWallTexture)
+			}
+	));
+	m_materials.Add("lit_green",
+		new CMaterial("lit_green", {
+			new CMaterialPass("shadow", pShadowStates, pWhiteProperties, pProgramShadowCaster, mapWallTexture),
+			new CMaterialPass("lit_green", pDefaultStates, pGreenProperties, pProgramLit, mapTextures)
+			}
+	));
+	m_materials.Add("lit_red",
+		new CMaterial("lit_red", {
+			new CMaterialPass("shadow", pShadowStates, pWhiteProperties, pProgramShadowCaster, mapWallTexture),
+			new CMaterialPass("lit_red", pDefaultStates, pRedProperties, pProgramLit, mapTextures)
+			}
+	));
+	m_materials.Add("lit_white",
+		new CMaterial("lit_white", {
+			new CMaterialPass("shadow", pShadowStates, pWhiteProperties, pProgramShadowCaster, mapWallTexture),
+			new CMaterialPass("lit_white", pDefaultStates, pWhiteShinyProperties, pProgramDiffuseSpecular, mapGroundTexture)
+			}
+	));
 
 	// Diffuse Specular
-	m_materials.Add("lit_diff_spec", new CMaterial("lit_diff_spec", pDefaultStates, pWhiteShinyProperties, pProgramDiffuseSpecular, mapDiffuseSpecularTextures));
+	m_materials.Add("lit_diff_spec",
+		new CMaterial("lit_diff_spec", {
+			new CMaterialPass("shadow", pShadowStates, pWhiteProperties, pProgramShadowCaster, mapDiffuseSpecularTextures),
+			new CMaterialPass("lit_diff_spec", pDefaultStates, pWhiteShinyProperties, pProgramDiffuseSpecular, mapDiffuseSpecularTextures)
+			}
+	));
 
 	// Diffuse Specular Normal
-	m_materials.Add("lit_diff_spec_normal", new CMaterial("lit_diff_spec_normal", pDefaultStates, pWhiteShinyProperties, pProgramDiffuseSpecularNormal, mapDryMudGroundTexture));
+	m_materials.Add("lit_diff_spec_normal",
+		new CMaterial("lit_diff_spec_normal", {
+			new CMaterialPass("shadow", pShadowStates, pWhiteProperties, pProgramShadowCaster, mapDryMudGroundTexture),
+			new CMaterialPass("lit_diff_spec_normal", pDefaultStates, pWhiteShinyProperties, pProgramDiffuseSpecularNormal, mapDryMudGroundTexture)
+			}
+	));
 
 	// 
-	m_materials.Add("lit_diff_spec_normal_mud", new CMaterial("lit_diff_spec_normal_mud", pDefaultStates, pWhiteProperties, pProgramDiffuseSpecularNormal, mapDryMudGroundTexture));
+	m_materials.Add("lit_diff_spec_normal_mud",
+		new CMaterial("lit_diff_spec_normal_mud", {
+			new CMaterialPass("shadow", pShadowStates, pWhiteProperties, pProgramShadowCaster, mapDryMudGroundTexture),
+			new CMaterialPass("lit_diff_spec_normal_mud", pDefaultStates, pWhiteProperties, pProgramDiffuseSpecularNormal, mapDryMudGroundTexture)
+			}
+	));
 
 	// Diffuse Normal Depth
-	m_materials.Add("lit_diff_normal_depth", new CMaterial("lit_diff_normal_depth", pDefaultStates, pWhiteShinyProperties, pProgramDiffuseNormalDepth, mapWallTexture));
+	m_materials.Add("lit_diff_normal_depth",
+		new CMaterial("lit_diff_normal_depth", {
+			new CMaterialPass("shadow", pShadowStates, pWhiteProperties, pProgramShadowCaster, mapWallTexture),
+			new CMaterialPass("lit_diff_normal_depth", pDefaultStates, pWhiteShinyProperties, pProgramDiffuseNormalDepth, mapWallTexture)
+			}
+	));
 
 	// Diffuse Normal Depth
-	m_materials.Add("substance_graph", new CMaterial("substance_graph", pDefaultStates, pWhiteShinyProperties, pProgramDiffuseNormalDepth, mapSubstanceGraph));
-
-	// Shadow caster
-	m_materials.Add("shadow_caster", new CMaterial("shadow_caster", pShadowStates, pWhiteProperties, pProgramShadowCaster));
+	m_materials.Add("substance_graph",
+		new CMaterial("substance_graph", {
+			new CMaterialPass("shadow", pShadowStates, pWhiteProperties, pProgramShadowCaster, mapSubstanceGraph),
+			new CMaterialPass("substance_graph", pDefaultStates, pWhiteShinyProperties, pProgramDiffuseNormalDepth, mapSubstanceGraph)
+			}
+	));
 }
 
 void CAssetManager::LoadModels()
@@ -495,7 +553,7 @@ void CAssetManager::ProcessMaterial(aiMaterial* pMaterial, std::string strModelP
 	aiBlendMode blendMode;
 	pMaterial->Get(AI_MATKEY_BLEND_FUNC, blendMode);
 
-	m_materialProperties.Add(name.C_Str(), new SMaterialProperties(
+	m_materialProperties.Add(name.C_Str(), new SMaterialPassProperties(
 		glm::make_vec3(&ambientColor.r),
 		glm::make_vec3(&diffuseColor.r),
 		glm::make_vec3(&specularColor.r), shininess, 1.0f));
@@ -528,8 +586,14 @@ void CAssetManager::ProcessMaterial(aiMaterial* pMaterial, std::string strModelP
 	mapTextures["AmbientOcclusionTex"] = CAssetManager::Get().GetTexture(aoTexture.C_Str());
 
 	std::string strMaterialName = name.C_Str();
-	CMaterial* pMat = new CMaterial(strMaterialName,
-		GetMaterialStates("default"), GetMaterialProperties(name.C_Str()), 
-		GetProgram("lit_program_dif_spec_normal"), mapTextures);
+	CMaterial* pMat = new CMaterial(strMaterialName, {
+		new CMaterialPass("shadow", 
+			GetMaterialStates("default"), GetMaterialProperties(name.C_Str()), 
+			GetProgram("shadow_caster"), mapTextures),
+		new CMaterialPass(strMaterialName,
+			GetMaterialStates("default"), GetMaterialProperties(name.C_Str()),
+			GetProgram("lit_program_dif_spec_normal"), mapTextures) 
+		}
+	);
 	m_materials.Add(name.C_Str(), pMat);
 }

@@ -1,6 +1,6 @@
 #include"pch.h"
 #include"SpotLight.h"
-#include"Material.h"
+#include"MaterialPass.h"
 
 CSpotLight::CSpotLight(glm::vec3 position, glm::vec3 direction, glm::vec3 color, glm::vec3 atten, float innterAngle, float outerAngle):
 	m_vPosition(0.0f),
@@ -17,18 +17,18 @@ CSpotLight::CSpotLight(glm::vec3 position, glm::vec3 direction, glm::vec3 color,
 	m_fOuterCutOffAngle = outerAngle;
 }
 
-void CSpotLight::Bind(const CMaterial* pMaterial, int index)
+void CSpotLight::Bind(const CMaterialPass* pPass, int index)
 {
-	pMaterial->SetUniform("spotLight[" + std::to_string(index) + "].position", m_vPosition);
-	pMaterial->SetUniform("spotLight[" + std::to_string(index) + "].direction", m_vDirection);
-	pMaterial->SetUniform("spotLight[" + std::to_string(index) + "].color", m_vColor);
-	pMaterial->SetUniform("spotLight[" + std::to_string(index) + "].attenuation", m_vAttenuation);
-	pMaterial->SetUniform("spotLight[" + std::to_string(index) + "].innerAngle", glm::cos(glm::radians(m_fInnerCutOffAngle)));
-	pMaterial->SetUniform("spotLight[" + std::to_string(index) + "].outerAngle", glm::cos(glm::radians(m_fOuterCutOffAngle)));
+	pPass->SetUniform("spotLight[" + std::to_string(index) + "].position", m_vPosition);
+	pPass->SetUniform("spotLight[" + std::to_string(index) + "].direction", m_vDirection);
+	pPass->SetUniform("spotLight[" + std::to_string(index) + "].color", m_vColor);
+	pPass->SetUniform("spotLight[" + std::to_string(index) + "].attenuation", m_vAttenuation);
+	pPass->SetUniform("spotLight[" + std::to_string(index) + "].innerAngle", glm::cos(glm::radians(m_fInnerCutOffAngle)));
+	pPass->SetUniform("spotLight[" + std::to_string(index) + "].outerAngle", glm::cos(glm::radians(m_fOuterCutOffAngle)));
 	glm::mat4 lightViewMat = GetViewMatrix();
 	glm::mat4 lightProjectionMat = GetProjectionMatrix();
 	glm::mat4 lightProjectionViewMat = lightProjectionMat * lightViewMat;
-	pMaterial->SetUniform("LightProjectionViewMat", lightProjectionViewMat);
+	pPass->SetUniform("LightProjectionViewMat", lightProjectionViewMat);
 }
 
 glm::mat4 CSpotLight::GetViewMatrix() const

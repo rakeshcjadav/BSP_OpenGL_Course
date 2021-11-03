@@ -1,14 +1,12 @@
 #pragma once
 #include "Light.h"
 
-class CMaterial;
-
 class CPointLight : public CLight
 {
 public:
 	CPointLight(glm::vec3 position, glm::vec3 color, glm::vec3 attenuation);
 
-	void Bind(const CMaterial* pMaterial, int index) override;
+	void Bind(const CMaterialPass* pPass, int index) override;
 private:
 	glm::vec3 m_vPosition;
 	glm::vec3 m_vAttenuation;

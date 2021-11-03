@@ -156,7 +156,7 @@ float ShadowCalculation(sampler2D shadowTex, vec4 fragPosLightSpace, float fDiff
     if(currentDepth > 1.0)
         currentDepth = 1.0;
 
-    float bias = max(0.01 * (1.0f - fDiffuse), 0.001);
+    float bias = max(0.01 * (1.0f - fDiffuse), 0.0015);
     // check whether current frag pos is in shadow
     float shadow = 0.0f;
     
