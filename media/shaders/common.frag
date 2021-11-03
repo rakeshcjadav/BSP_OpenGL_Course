@@ -148,13 +148,29 @@ float ShadowCalculation(sampler2D shadowTex, vec4 fragPosLightSpace, float fDiff
     // transform to [0,1] range
     projCoords = projCoords * 0.5 + 0.5;
     // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-    float closestDepth = texture(shadowTex, projCoords.xy).r; 
+
+    float closestDepth = texture(shadowTex, projCoords.xy).r;
+    
     // get depth of current fragment from light's perspective
-    float currentDepth = projCoords.z;
+    float currentDepth = max(projCoords.z, 0.0);
+    if(currentDepth > 1.0)
+        currentDepth = 1.0;
 
-    float bias = max(0.05 * (1.0f - fDiffuse), 0.005);
+    float bias = max(0.01 * (1.0f - fDiffuse), 0.001);
     // check whether current frag pos is in shadow
-    float shadow = currentDepth < (closestDepth + bias) ? 1.0 : 0.0;
+    float shadow = 0.0f;
+    
+    //shadow = currentDepth < (closestDepth + bias) ? 1.0 : max((currentDepth-closestDepth)*2.0, 0.0);
+    //return shadow;
+    vec2 texelSize = 1.0f / textureSize(shadowTex, 0);
+    for(int x = -1; x <= 1; ++x)
+    {
+        for(int y = -1; y <= 1; ++y)
+        {
+            float closestDepth = texture(shadowTex, projCoords.xy + vec2(x, y) * texelSize).r;
+            shadow += currentDepth < (closestDepth + bias) ? 1.0 : clamp(currentDepth-closestDepth, 0.0, 1.0);
+        }
+    }
 
-    return shadow;
+    return shadow / 9;
 }

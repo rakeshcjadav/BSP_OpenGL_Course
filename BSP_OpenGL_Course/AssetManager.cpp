@@ -177,7 +177,7 @@ void CAssetManager::LoadMaterials()
 
 	m_materialStates.Add("shadow", new SMaterialRenderStates(
 		SMaterialRenderStates::BLEND_TYPE::OPAQUE,
-		true, true,
+		true, false,
 		SMaterialRenderStates::FACE::BACK));
 
 	std::map<std::string, const CTexture*> mapTextures;

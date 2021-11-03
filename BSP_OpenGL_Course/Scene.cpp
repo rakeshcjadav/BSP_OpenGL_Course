@@ -58,8 +58,8 @@ void CScene::CreateGameObjects()
 	const CModel* pModel = CAssetManager::Get().GetModel("backpack/backpack.obj");
 	// Ground Plane
 	{
-		CTransform* pTransform = new CTransform(glm::vec3(0.0f), glm::vec3(-90.0f, 0.0f, 0.0f), glm::vec3(20.0f));
-		CGameObject* pObject = new CGameObject(pTransform, nullptr, CMesh::CreateTilablePlane(1, 1), pMeshRenderer, CAssetManager::Get().GetMaterial("lit_diff_spec_normal"));
+		CTransform* pTransform = new CTransform(glm::vec3(0.0f), glm::vec3(-90.0f, 0.0f, 0.0f), glm::vec3(1.0f));
+		CGameObject* pObject = new CGameObject(pTransform, nullptr, CMesh::CreateTilablePlane(50, 50), pMeshRenderer, CAssetManager::Get().GetMaterial("lit_diff_spec_normal"));
 		m_listGameObjects.push_back(pObject);
 	}
 	// Ground Wall
@@ -94,20 +94,20 @@ void CScene::CreateGameObjects()
 	}
 	// Green Cube
 	{
-		CTransform* pTransform = new CTransform(glm::vec3(-2.0f, 1.0f, -2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f));
+		CTransform* pTransform = new CTransform(glm::vec3(-2.0f, 0.5f, -2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f));
 		CGameObject* pObject = new CGameObject(pTransform, nullptr, pCubeMesh, pMeshRenderer, CAssetManager::Get().GetMaterial("lit_green"));
 		m_listGameObjects.push_back(pObject);
 	}
 	// Wooden Crate
 	{
-		CTransform* pTransform = new CTransform(glm::vec3(3.0f, 1.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f));
+		CTransform* pTransform = new CTransform(glm::vec3(3.0f, 0.5f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f));
 		CGameObject* pPlane = new CGameObject(pTransform, nullptr, pCubeMesh, pMeshRenderer, CAssetManager::Get().GetMaterial("lit_diff_spec"));
 		m_listGameObjects.push_back(pPlane);
 	}
 	// Plane with normal map
 	{
 		CTransform* pTransform = new CTransform(glm::vec3(2.0f, 1.0f, -3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f));
-		CGameObject* pPlane = new CGameObject(pTransform, nullptr, CMesh::CreatePlane(), pMeshRenderer, CAssetManager::Get().GetMaterial("lit_diff_spec_normal"));
+		CGameObject* pPlane = new CGameObject(pTransform, nullptr, CMesh::CreatePlane(), pMeshRenderer, CAssetManager::Get().GetMaterial("unlit_green"));
 		m_listGameObjects.push_back(pPlane);
 	}
 	// Circle
@@ -145,11 +145,11 @@ void CScene::CreateCameras()
 
 void CScene::CreateLights()
 {
-	/* Directional
+	// Directional
 	m_listDirectionalLights.push_back(
 		new CDirectionalLight(
-			glm::normalize(glm::vec3(0.0f, -1.0f, 0.0f)),
-			glm::vec3(0.2f)));*/
+			glm::normalize(glm::vec3(-2.0f, -1.0f, -1.0f)),
+			glm::vec3(0.2f)));
 
 	// Spot
 	m_listSpotLights.push_back(
