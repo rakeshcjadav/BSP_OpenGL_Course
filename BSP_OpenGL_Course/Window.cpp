@@ -103,6 +103,7 @@ bool CWindow::Init(int width, int height, std::string strName)
 	glfwSetCursorPosCallback(m_pWindow, CWindow::CursorPosCallback);
 	glfwSetScrollCallback(m_pWindow, CWindow::ScrollCallback);
 	glfwSetMouseButtonCallback(m_pWindow, CWindow::MouseButtonCallback);
+	glfwSetFramebufferSizeCallback(m_pWindow, CWindow::WindowResizeCallback);
 
 	// TODO: Move to material
 	glEnable(GL_SCISSOR_TEST);
@@ -173,6 +174,16 @@ void CWindow::MouseButtonCallback(GLFWwindow* pGLFWWindow, int button, int actio
 	{
 		CWindow* pWindow = itr->second;
 		pWindow->NotifyMouseButton(button, action, mod);
+	}
+}
+
+void CWindow::WindowResizeCallback(GLFWwindow* pGLFWWindow, int width, int height)
+{
+	std::map<GLFWwindow*, CWindow*>::iterator itr = s_mapWindows.find(pGLFWWindow);
+	if (itr != s_mapWindows.end())
+	{
+		CWindow* pWindow = itr->second;
+		pWindow->OnWindowResize(width, height);
 	}
 }
 
@@ -263,6 +274,11 @@ void CWindow::GetMousePos(double& xPos, double& yPos)
 bool CWindow::IsKeyPressed(int key)
 {
 	return (GLFW_PRESS == glfwGetKey(m_pWindow, key));
+}
+
+void CWindow::OnWindowResize(int width, int height)
+{
+	m_pViewport->SetSize(width, height);
 }
 
 #pragma endregion

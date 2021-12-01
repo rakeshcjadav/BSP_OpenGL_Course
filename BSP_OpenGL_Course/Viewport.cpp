@@ -25,6 +25,12 @@ int CViewport::GetHeight() const
 	return m_iHeight;
 }
 
+void CViewport::SetSize(int width, int height)
+{
+	m_iWidth = width;
+	m_iHeight = height;
+}
+
 void CViewport::Clear(glm::vec4 color)
 {
 	glViewport(m_posX, m_posY, m_iWidth, m_iHeight);

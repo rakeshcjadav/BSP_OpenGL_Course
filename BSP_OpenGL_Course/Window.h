@@ -30,6 +30,7 @@ private:
 	static void CursorPosCallback(GLFWwindow* pWindow, double xPos, double yPos);
 	static void ScrollCallback(GLFWwindow* pWindow, double xOffset, double yOffset);
 	static void MouseButtonCallback(GLFWwindow* pWindow, int button, int action, int mod);
+	static void WindowResizeCallback(GLFWwindow* pWindow, int width, int height);
 
 	// IInputDelegator
 	void NotifyKeyPressed(int key, int mod) override;
@@ -40,6 +41,7 @@ private:
 	void NotifyMouseButton(int button, int action, int mod) override;
 	void GetMousePos(double& xPos, double& yPos) override;
 	bool IsKeyPressed(int key) override;
+	void OnWindowResize(int width, int height);
 
 private:
 	GLFWwindow* m_pWindow;
