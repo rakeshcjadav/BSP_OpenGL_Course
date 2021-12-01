@@ -58,7 +58,7 @@ void CScene::CreateGameObjects()
 	// Ground Plane
 	{
 		CTransform* pTransform = new CTransform(glm::vec3(0.0f), glm::vec3(-90.0f, 0.0f, 0.0f), glm::vec3(1.0f));
-		CGameObject* pObject = new CGameObject(pTransform, nullptr, CMesh::CreateTilablePlane(50, 50), pMeshRenderer, CAssetManager::Get().GetMaterial("lit_diff_spec_normal"));
+		CGameObject* pObject = new CGameObject(pTransform, nullptr, CMesh::CreateTilablePlane(100, 100), pMeshRenderer, CAssetManager::Get().GetMaterial("lit_diff_spec_normal"));
 		m_listGameObjects.push_back(pObject);
 	}
 	// Ground Wall
@@ -99,7 +99,7 @@ void CScene::CreateGameObjects()
 	}
 	// Wooden Crate
 	{
-		CTransform* pTransform = new CTransform(glm::vec3(3.0f, 0.5f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f));
+		CTransform* pTransform = new CTransform(glm::vec3(-2.0f, 0.5f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f));
 		CGameObject* pPlane = new CGameObject(pTransform, nullptr, pCubeMesh, pMeshRenderer, CAssetManager::Get().GetMaterial("lit_diff_spec"));
 		m_listGameObjects.push_back(pPlane);
 	}
@@ -153,8 +153,8 @@ void CScene::CreateLights()
 	// Spot
 	m_listSpotLights.push_back(
 		new CSpotLight(
-			glm::vec3(0.f, 8.0f, 5.0f),
-			glm::normalize(glm::vec3(-1.0f, -1.0f, -1.0f)),
+			glm::vec3(0.0f, 8.0f, 5.0f),
+			glm::normalize(glm::vec3(-1.0f, -2.0f, -1.0f)),
 			glm::vec3(1.0f, 1.0f, 1.0f),
 			glm::vec3(1.0f, 0.01f, 0.001f), 5.0f, 60.0f));
 	/*

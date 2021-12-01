@@ -9,6 +9,7 @@ public:
 	float GetAspectRatio() const;
 	int GetWidth() const;
 	int GetHeight() const;
+	void SetSize(int width, int height);
 	void Clear(glm::vec4 color);
 	void Update(CCamera* pCamera);
 private:
