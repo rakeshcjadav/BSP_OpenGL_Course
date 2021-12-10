@@ -474,7 +474,7 @@ CModel * CAssetManager::LoadModel(std::string strModelFileName)
 	
 	if (!pScene || pScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !pScene->mRootNode)
 	{
-		LOG_ERROR << "ERROR::ASSIMP::" << importer.GetErrorString() << LOG_END;
+		LOG_ERROR << "ERROR::ASSIMP::" << importer.GetErrorString();
 		return nullptr;
 	}
 	std::list<SMeshData*> listMeshData;

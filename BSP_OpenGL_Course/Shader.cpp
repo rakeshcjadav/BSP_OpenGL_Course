@@ -31,7 +31,7 @@ CShader::CShader(SHADER_TYPE type, std::string shaderSource)
 		if (!success)
 		{
 			glGetShaderInfoLog(m_IDShader, 512, NULL, infoLog);
-			LOG_ERROR << "SHADER::"<< shaderType <<"::COMPILATION_FAILED" << LOG_END;;
+			LOG_ERROR << "SHADER::"<< shaderType <<"::COMPILATION_FAILED";
 			LOG_ERROR << infoLog;
 		}
 	}
@@ -54,7 +54,7 @@ void CShader::Print() const
 	int i = 0;
 	while(std::getline(stream, line))
 	{
-		LOG_INFO << i++ <<": " << line << LOG_END;
+		LOG_INFO << i++ <<": " << line;
 	}
 	std::cout << flush;
 	//LOG_ERROR << m_strSource << std::endl;
