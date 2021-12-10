@@ -88,8 +88,8 @@ bool CProgram::LinkProgram()
 		glGetProgramiv(m_IDProgram, GL_LINK_STATUS, &success);
 		if (!success) {
 			glGetProgramInfoLog(m_IDProgram, 512, NULL, infoLog);
-			LOG_ERROR << "PROGRAM::LINKING_FAILED" << LOG_END;
-			LOG_ERROR << infoLog << LOG_END;
+			LOG_ERROR << "PROGRAM::LINKING_FAILED";
+			LOG_ERROR << infoLog;
 			return false;
 		}
 	}
